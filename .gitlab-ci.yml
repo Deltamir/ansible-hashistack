@@ -7,7 +7,7 @@ run:
   stage: run
   image: 
     name: registry.gitlab.com/p8811/raspberry-arm-image/docker-ansible:main
-    entrypoint: [""]
+    entrypoint: ["/bin/bash"]
   script:
     - echo $ID_RSA > id_rsa
     - export ANSIBLE_HOST_KEY_CHECKING=False
