@@ -13,7 +13,7 @@ run:
     - rm -rf /var/lib/apt/lists/* \
     - ansible-galaxy install git+https://github.com/ansible-community/ansible-vault.git
     - echo $ID_RSA > id_rsa
-    - chmod 640 id_rsa 
+    - chmod 400 id_rsa 
     - export ANSIBLE_HOST_KEY_CHECKING=False
     - apt-get update -qqy
     - apt-get install sshpass -qqy
