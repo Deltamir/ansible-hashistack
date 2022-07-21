@@ -7,7 +7,6 @@ run:
   stage: run
   image: 
     name: arm64v8/debian
-    entrypoint: ["/bin/bash"]
   script:
     - RUN apt-get update -qqy 
     - apt-get install -qqy --no-install-recommends python3 python3-pip git ansible
