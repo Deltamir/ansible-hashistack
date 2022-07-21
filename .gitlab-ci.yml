@@ -1,5 +1,5 @@
 variables:
-  - VAULT_VERSION: "1.11.1"
+  VAULT_VERSION: "1.11.1"
 
 stages:
   - run
