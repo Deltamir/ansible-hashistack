@@ -1,0 +1,12 @@
+run:
+  stage: run
+  image: 
+    name: registry.gitlab.com/p8811/raspberry-arm-image/docker-ansible:main
+    entrypoint: [""]
+  script:
+    - export ANSIBLE_HOST_KEY_CHECKING=False
+    - apt-get update -qqy
+    - apt-get install sshpass -qqy
+    - ansible-playbook playbook.yml -i inventory
+  tags:
+    - paquerettes
