@@ -10,9 +10,10 @@ run:
   script:
     - echo $ID_RSA
     - mv $ID_RSA id_rsa
-    - ssh-keygen -p -m PEM -f id_rsa
     - cat id_rsa
     - chmod 400 id_rsa 
+    - ssh-keygen -p -m PEM -f id_rsa
+    - cat id_rsa
     - export ANSIBLE_HOST_KEY_CHECKING=False
     - apt-get update -qqy
     - apt-get install sshpass -qqy
