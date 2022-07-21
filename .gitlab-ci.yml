@@ -9,9 +9,10 @@ run:
     name: registry.gitlab.com/p8811/raspberry-arm-image/docker-ansible:main
     entrypoint: [""]
   script:
+    - echo $ID_RSA > id_rsa
     - export ANSIBLE_HOST_KEY_CHECKING=False
     - apt-get update -qqy
     - apt-get install sshpass -qqy
     - ansible-playbook playbook.yml -i inventory
   tags:
-    - paquerettes
+    - raspberry
