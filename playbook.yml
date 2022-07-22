@@ -5,3 +5,11 @@
   become_user: root
   roles:
     - {role: ansible-vault, vault_backend: file}
+
+- name: Assemble Consul cluster
+  hosts: consul_instances
+  any_errors_fatal: true
+  become: true
+  become_user: root
+  roles:
+    - ansible-consul
