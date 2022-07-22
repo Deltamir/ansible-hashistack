@@ -7,3 +7,4 @@ raspberrypi-1.home consul_node_role=bootstrap ansible_ssh_user=pi ansible_ssh_pr
 [consul_instances:vars]
 consul_version=1.12.3
 consul_architecture=arm 
+consul_iface=eth0
