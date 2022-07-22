@@ -12,6 +12,6 @@
   become: true
   become_user: root
   roles:
-    - {role: ansible-vault, vault_backend: file}
+    - {role: ansible-vault}
 
 
