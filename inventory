@@ -5,8 +5,8 @@ raspberrypi-1.home consul_node_role=bootstrap ansible_ssh_user=pi ansible_ssh_pr
 consul_version=1.12.3
 consul_architecture=arm 
 consul_client_address=0.0.0.0
-consul_connect_enabled=true
-consul_encrypt_enable=false
+;consul_connect_enabled=true
+;consul_encrypt_enable=false
 ;consul_raw_key={{ lookup('env','GOSSIP_KEY') }}
 
 [vault_instances]
