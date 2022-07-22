@@ -19,7 +19,7 @@ raspberrypi-1.home ansible_ssh_user=pi ansible_ssh_private_key_file=./id_rsa
 vault_backend=consul
 
 [nomad_instances]
-raspberrypi-1.home consul_node_role=both ansible_ssh_user=pi ansible_ssh_private_key_file=./id_rsa
+raspberrypi-1.home nomad_node_role=both ansible_ssh_user=pi ansible_ssh_private_key_file=./id_rsa
 
 [nomad_instances:vars]
 nomad_version=1.3.2
