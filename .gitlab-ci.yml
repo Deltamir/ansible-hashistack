@@ -18,4 +18,4 @@ run:
     - apt-get install sshpass -qqy
     - ansible-playbook playbook.yml -i inventory
   tags:
-    - raspberry
+    - paquerettes
