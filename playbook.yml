@@ -4,7 +4,7 @@
   become: true
   become_user: root
   roles:
-    - ansible-consul
+    - {role: ansible-consul}
 
 - name: Install Vault Vagrant Development Server
   hosts: vault_instances
@@ -12,7 +12,7 @@
   become: true
   become_user: root
   roles:
-    - ansible-vault
+    - {role: ansible-vault}
 
 - name: Installing Nomad
   hosts: nomad_instances
@@ -20,6 +20,6 @@
   become: true
   become_user: root
   roles:
-    - ansible-nomad
+    - {role: ansible-nomad}
 
 
