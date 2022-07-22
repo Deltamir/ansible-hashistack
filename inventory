@@ -11,3 +11,9 @@ consul_raw_key={{ lookup('env','GOSSIP_KEY') }}
 consul_raft_protocol=3
 consul_bootstrap_expect=true
 consul_bootstrap_expect_value=1
+
+[vault_instances]
+raspberrypi-1.home ansible_ssh_user=pi ansible_ssh_private_key_file=./id_rsa
+
+[vault_instances:vars]
+vault_backend=file
