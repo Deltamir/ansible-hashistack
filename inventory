@@ -7,6 +7,7 @@ consul_architecture=arm
 consul_client_address=0.0.0.0
 consul_connect_enabled=true
 consul_encrypt_enable=true
+consul_raw_key={{ lookup('env','GOSSIP_KEY') }}
 
 [vault_instances]
 raspberrypi-1.home ansible_ssh_user=pi ansible_ssh_private_key_file=./id_rsa
