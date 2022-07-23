@@ -56,7 +56,7 @@
     - {role: ansible-vault}
 
 - name: init Vault
-  hashivault_init:
+  ansible-modules-hashivault.hashivault_init:
     secret_shares: 1
     secret_threshold: 1
     url: "{{ nomad_vault_address }}"
