@@ -91,10 +91,6 @@
       debug:
         msg: "{{ vault_init.keys }}"
 
-    - name: debug
-      debug:
-        msg: "{{ vault_init.keys | dict2items }}"
-
     - name: Simple PUT operation
       amazon.aws.aws_s3:
         bucket: vault-bucket-paquerettes
@@ -102,7 +98,7 @@
         object: "key_{{ my_idx }}.enc"
         content: "{{ item }}"
         mode: put
-      loop: "{{ vault_init.keys | dict2items }}"
+      loop: "{{ vault_init.keys }}"
       loop_control:
         index_var: my_idx
 
