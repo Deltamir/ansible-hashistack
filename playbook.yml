@@ -17,7 +17,6 @@
           - python3-pip
           - python3-setuptools
           - python3-virtualenv
-          - hvac
       become: true
 
     - name: Install docker python package
@@ -27,6 +26,7 @@
       vars:
         packages:
           - boto3
+          - hvac
       become: true
 
     - name: create aws key
