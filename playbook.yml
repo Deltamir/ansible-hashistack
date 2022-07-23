@@ -56,34 +56,13 @@
   roles:
     - {role: ansible-vault}
 
-- hosts: vault_instances
+- hosts: localhost
   tasks:
-    - name: Ensure python and dependencies are installed
-      apt:
-        name: '{{ packages }}'
-      vars:
-        packages:
-          - python3
-          - python3-pip
-          - python3-setuptools
-          - python3-virtualenv
-      become: true
-
-    - name: Install docker python package
-      pip:
-        name: '{{ packages }}'
-        executable: pip3
-      vars:
-        packages:
-          - hvac
-          - boto3
-      become: true
-
     - name: init Vault
       hashivault_init:
         secret_shares: 1
         secret_threshold: 1
-        url: "{{ nomad_vault_address }}"
+        url: "http://192.168.1.40:8200"
       register: vault_init
       run_once: yes
     
