@@ -71,7 +71,7 @@
 
     - name: retrieve root token from AWS Secrets Manager
       set_fact:
-        root_token: "{{ lookup('amazon.aws.aws_secret', 'paquerettes_vault_root_token', region='eu-west-3') }}"
+        root_token: "{{ lookup('amazon.aws.aws_secret', 'paquerettes_vault_root_token-ELmzFS', region='eu-west-3') }}"
 
     - name: Create nomad-server policy
       hashivault_policy:
