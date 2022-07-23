@@ -87,6 +87,14 @@
       register: vault_init
       run_once: yes
     
+    - name: debug
+      debug:
+        msg: "{{ vault_init.keys }}"
+
+    - name: debug
+      debug:
+        msg: "{{ vault_init.keys | dict2items }}"
+
     - name: Simple PUT operation
       amazon.aws.aws_s3:
         bucket: vault-bucket-paquerettes
@@ -94,7 +102,7 @@
         object: "key_{{ my_idx }}.enc"
         content: "{{ item }}"
         mode: put
-      loop: "{{ vault_init.keys }}"
+      loop: "{{ vault_init.keys | dict2items }}"
       loop_control:
         index_var: my_idx
 
@@ -106,9 +114,6 @@
         content: "{{ vault_init.root_token }}"
         mode: put
 
-    - name: debug
-      debug:
-        msg: "{{ vault_init }}"
 
 - name: Installing Nomad
   hosts: nomad_instances
