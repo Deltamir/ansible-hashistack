@@ -69,13 +69,10 @@
         region: eu-west-3
       when: vault_init['changed'] == true
 
-    - set_fact:
+    - name: retrieve root token from AWS Secrets Manager
+      set_fact:
         root_token: "{{ lookup('amazon.aws.aws_secret', 'paquerettes_vault_root_token', region='eu-west-3',
    aws_access_key=lookup('env','AWS_ACCESS_KEY'), aws_secret_key=lookup('env','AWS_SECRET_KEY')) }}"
-
-
-    - debug:
-        msg: "{{ root_token }}"
 
     - name: Create nomad-server policy
       hashivault_policy:
@@ -87,7 +84,8 @@
     - name: create nomad-cluster token role
       hashivault_write_from_file:
         key: nomad-cluster-role.json
-        path: /auth/token/roles/nomad-cluster
+        secret: nomad-cluster
+        path: /auth/token/roles
 
 - name: Installing Nomad
   hosts: nomad_instances
