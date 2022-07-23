@@ -61,7 +61,6 @@
     - name: Install docker python package
       pip:
         name: '{{ packages }}'
-        executable: pip3
       vars:
         packages:
           - hvac
