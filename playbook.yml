@@ -75,7 +75,7 @@
         state: present
         secret_type: 'string'
         secret: "{{ vault_init.root_token }}"
-        when: vault_init['changed'] == true
+      when: vault_init['changed'] == true
 
 
 - name: Installing Nomad
