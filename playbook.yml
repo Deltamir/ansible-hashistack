@@ -76,6 +76,7 @@
       vars:
         packages:
           - hvac
+          - boto3
       become: true
 
     - name: init Vault
@@ -85,6 +86,25 @@
         url: "{{ nomad_vault_address }}"
       register: vault_init
       run_once: yes
+    
+    - name: Simple PUT operation
+      amazon.aws.aws_s3:
+        bucket: vault-bucket-paquerettes
+        region: eu-west-3
+        object: "key_{{ my_idx }}.enc"
+        content: "{{ item }}"
+        mode: put
+      loop: "{{ vault_init.keys }}"
+      loop_control:
+        index_var: my_idx
+
+    - name: Simple PUT operation
+      amazon.aws.aws_s3:
+        bucket: vault-bucket-paquerettes
+        region: eu-west-3
+        object: "root_token.enc"
+        content: "{{ vault_init.root_token }}"
+        mode: put
 
     - name: debug
       debug:

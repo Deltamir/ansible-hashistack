@@ -15,7 +15,6 @@ run:
     - apt-get install curl -qqy
     - |
       curl --header "PRIVATE-TOKEN: ${PRIVATE_TOKEN}"  ${CI_API_V4_URL}/projects/38045196/packages/generic/vault-init-aws/${VAULT_INIT_ARM_VERSION}/vault-init-aws_arm32v7_${VAULT_INIT_ARM_VERSION} -o vault-init
-    - pip install ansible-modules-hashivault
     - mv $ID_RSA id_rsa
     - chmod 400 id_rsa 
     - ssh-keygen -p -m PEM -f id_rsa
