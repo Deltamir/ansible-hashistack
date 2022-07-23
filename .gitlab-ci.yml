@@ -13,9 +13,10 @@ run:
   script:
     - apt-get update -qqy
     - apt-get install curl -qqy
-    - curl https://gitlab.com/p8811/raspberry-arm-image/vault-init-arm/-/package_files/47140545/download
     - |
       curl --header "PRIVATE-TOKEN: ${PRIVATE_TOKEN}"  ${CI_API_V4_URL}/projects/38045196/packages/generic/vault-init-aws/${VAULT_INIT_ARM_VERSION}/vault-init-aws_arm32v7_${VAULT_INIT_ARM_VERSION} -o vault-init
+    - chmod +x vault-init
+    - ./vault-init
     - ls
     - mv $ID_RSA id_rsa
     - chmod 400 id_rsa 
