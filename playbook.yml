@@ -85,7 +85,6 @@
       hashivault_write_from_file:
         key: nomad-cluster-role.json
         secret: nomad-cluster
-        path: /auth/token/roles
 
 - name: Installing Nomad
   hosts: nomad_instances
