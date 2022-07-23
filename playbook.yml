@@ -62,7 +62,6 @@
         src: vault-init
         dest: /usr/bin/vault-init
         owner: vault
-        group: vault
         mode : 0744
       become: true
     
@@ -79,7 +78,6 @@
         state: directory
         recurse: yes
         owner: vault
-        group: vault
       become: yes
     
     - name: create variable file from template
@@ -87,7 +85,6 @@
         src: variables.j2
         dest: /etc/vault-init/variables
         owner: vault
-        group: vault
       become: yes
 
     - name: call daemon-reload
