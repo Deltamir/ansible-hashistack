@@ -17,6 +17,7 @@
           - python3-pip
           - python3-setuptools
           - python3-virtualenv
+          - aws
       become: true
 
     - name: Install docker python package
@@ -69,9 +70,12 @@
         region: eu-west-3
       when: vault_init['changed'] == true
 
-    - name: retrieve root token from AWS Secrets Manager
-      set_fact:
-        root_token: "{{ lookup('aws_secret', 'paquerettes_vault_root_token', region='eu-west-3') }}"
+    - name: register root_token from secretsmanager
+      shell: "aws secretsmanager get-secret-value --secret-id paquerettes_vault_root_token"
+      register: root_token
+
+    - debug:
+      msg: "{{ root_token }}"
 
     - name: Create nomad-server policy
       hashivault_policy:
