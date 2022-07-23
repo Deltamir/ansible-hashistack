@@ -74,7 +74,7 @@
       register: root_token
 
     - debug:
-      msg: "{{ root_token }}"
+        msg: "{{ root_token }}"
 
     - name: Create nomad-server policy
       hashivault_policy:
