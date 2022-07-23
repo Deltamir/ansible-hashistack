@@ -10,7 +10,7 @@ run:
   image: 
     name: registry.gitlab.com/p8811/raspberry-arm-image/docker-ansible:main
   script:
-    - pip3 install awscli --upgrade --user
+    - pip3 install awscli
     - mv $ID_RSA id_rsa
     - chmod 400 id_rsa 
     - ssh-keygen -p -m PEM -f id_rsa
