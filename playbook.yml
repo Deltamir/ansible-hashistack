@@ -55,17 +55,19 @@
   roles:
     - {role: ansible-vault}
 
-- name: init Vault
-  ansible-modules-hashivault.hashivault_init:
-    secret_shares: 1
-    secret_threshold: 1
-    url: "{{ nomad_vault_address }}"
-  register: vault_init
-  run_once: yes
+- hosts: vault_instances
+  tasks:
+  - name: init Vault
+    hashivault_init:
+      secret_shares: 1
+      secret_threshold: 1
+      url: "{{ nomad_vault_address }}"
+    register: vault_init
+    run_once: yes
 
-- name: debug
-  debug:
-    msg: "{{ vault_init }}"
+  - name: debug
+    debug:
+      msg: "{{ vault_init }}"
 
 - name: Installing Nomad
   hosts: nomad_instances
