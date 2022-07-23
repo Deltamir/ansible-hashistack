@@ -32,6 +32,7 @@
     - name: create aws key
       community.aws.aws_kms:
         alias: vault-enc-key
+        enable_key_rotation: true
         tags:
             Name: vault-enc-key
             Purpose: Encrypt S3 containing unseal and root token
@@ -57,6 +58,24 @@
   become_user: root
   roles:
     - {role: ansible-vault}
+
+- hosts: localhost
+  tasks:
+    - name: init Vault
+      hashivault_init:
+        secret_shares: 1
+        secret_threshold: 1
+        url: "http://192.168.1.40:8200"
+      register: vault_init
+      run_once: yes
+
+    - name: Add string to AWS Secrets Manager
+      community.aws.aws_secret:
+        name: 'paquerettes_vault_root_token'
+        state: present
+        secret_type: 'string'
+        secret: "{{ vault_init.root_token }}"
+        when: vault_init['changed'] == true
 
 
 - name: Installing Nomad
