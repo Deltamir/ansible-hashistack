@@ -82,12 +82,30 @@
         url: "http://192.168.1.40:8200"
 
     - name: create nomad-cluster token role
-      hashivault_write_from_file:
-        key: nomad-cluster-role.json
-        secret: nomad-cluster
+      uri:
+        url: http://192.168.1.40:8200/v1/auth/token/roles/nomad-cluster
+        method: POST
+        body: "{{ lookup('file','nomad-cluster-role.json') }}"
+        body_format: json
+        headers:
+          X-Vault-Token: "{{ root_token }}"
+    
+    - name: Create a nomad token
+      hashivault_token_create:
+        display_name: "nomad-server"
+        policies: ["nomad-server"]
+        orphan: true
+        period: "72h"
+        token: "{{root_token}}"
+      register: "nomad_vault_token"
+
+    - debug:
+        msg: "{{ nomad_vault_token }}"
 
 - name: Installing Nomad
   hosts: nomad_instances
+  vars:
+    nomad_vault_token: "{{ hostvars['localhost'].nomad_vault_token }}"
   any_errors_fatal: true
   become: true
   become_user: root
