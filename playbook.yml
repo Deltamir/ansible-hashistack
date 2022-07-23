@@ -6,6 +6,47 @@
   roles:
     - {role: ansible-consul}
 
+- hosts: localhost
+  tasks:
+    - name: Ensure python and dependencies are installed
+      apt:
+        name: '{{ packages }}'
+      vars:
+        packages:
+          - python3
+          - python3-pip
+          - python3-setuptools
+          - python3-virtualenv
+      become: true
+
+    - name: Install docker python package
+      pip:
+        name: '{{ packages }}'
+        executable: pip3
+      vars:
+        packages:
+          - boto3
+      become: true
+
+    - name: create aws key
+      community.aws.aws_kms:
+        alias: vault-enc-key
+        tags:
+            Name: vault-enc-key
+            Purpose: Encrypt S3 containing unseal and root token
+        region: eu-west-3
+      register: kms_key
+      run_once: true
+
+    - name: Create an empty bucket
+      amazon.aws.s3_bucket:
+        name: vault-bucket-paquerettes
+        state: present
+        region: eu-west-3
+        acl: private
+        delete_public_access: yes
+      run_once: true 
+    
 - name: Install Vault cluster
   hosts: vault_instances
   any_errors_fatal: true
