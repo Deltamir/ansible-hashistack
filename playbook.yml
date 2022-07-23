@@ -69,9 +69,10 @@
         region: eu-west-3
       when: vault_init['changed'] == true
 
-    - name: register root_token from secretsmanager
-      shell: "aws secretsmanager get-secret-value --secret-id paquerettes_vault_root_token"
-      register: root_token
+    - set_fact:
+        root_token: "{{ lookup('amazon.aws.aws_secret', 'paquerettes_vault_root_token', region='eu-west-3',
+   aws_access_key=lookup('env','AWS_ACCESS_KEY'), aws_secret_key=lookup('env','AWS_SECRET_KEY')) }}"
+
 
     - debug:
         msg: "{{ root_token }}"
