@@ -55,47 +55,17 @@
   roles:
     - {role: ansible-vault}
 
-- hosts: vault_instances
-  tasks:
-    - name: Copy vault-init binary
-      copy:
-        src: vault-init
-        dest: /usr/bin/vault-init
-        owner: vault
-        mode : 0744
-      become: true
-    
-    - name: Copy vault-init process file
-      copy:
-        src: vault-init.service
-        dest: /etc/systemd/system/
-        mode : 644
-      become: true
-    
-    - name: create vault-init conf dir
-      file:
-        path: /etc/vault-init
-        state: directory
-        recurse: yes
-        owner: vault
-      become: yes
-    
-    - name: create variable file from template
-      template:
-        src: variables.j2
-        dest: /etc/vault-init/variables
-        owner: vault
-      become: yes
+- name: init Vault
+  hashivault_init:
+    secret_shares: 1
+    secret_threshold: 1
+    url: "{{ nomad_vault_address }}"
+  register: vault_init
+  run_once: yes
 
-    - name: call daemon-reload
-      systemd:
-        daemon_reload: yes
-      become: yes
-    
-    - name: Make sure a vault-init service is running
-      systemd:
-        state: started
-        name: vault-init
+- name: debug
+  debug:
+    msg: "{{ vault_init }}"
 
 - name: Installing Nomad
   hosts: nomad_instances
