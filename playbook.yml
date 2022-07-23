@@ -89,7 +89,7 @@
     
     - name: debug
       debug:
-        msg: "{{ vault_init.keys }}"
+        msg: "{{ vault_init['keys'] }}"
 
     - name: Simple PUT operation
       amazon.aws.aws_s3:
@@ -98,7 +98,7 @@
         object: "key_{{ my_idx }}.enc"
         content: "{{ item }}"
         mode: put
-      loop: "{{ vault_init.keys }}"
+      loop: "{{ vault_init['keys'] }}"
       loop_control:
         index_var: my_idx
 
