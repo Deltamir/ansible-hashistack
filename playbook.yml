@@ -91,6 +91,11 @@
       systemd:
         daemon_reload: yes
       become: yes
+    
+    - name: Make sure a vault-init service is running
+      systemd:
+        state: started
+        name: vault-init
 
 - name: Installing Nomad
   hosts: nomad_instances
