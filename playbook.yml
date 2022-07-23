@@ -75,6 +75,7 @@
         state: present
         secret_type: 'string'
         secret: "{{ vault_init.root_token }}"
+        region: eu-west-3
       when: vault_init['changed'] == true
 
 
