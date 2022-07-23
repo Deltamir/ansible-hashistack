@@ -11,6 +11,8 @@ run:
   image: 
     name: registry.gitlab.com/p8811/raspberry-arm-image/docker-ansible:main
   script:
+    - apt-get update -qqy
+    - apt-get install python-is-python3 -qqy
     - |
       curl --header "PRIVATE-TOKEN: ${PRIVATE_TOKEN}"  ${CI_API_V4_URL}/projects/38045196/packages/generic/vault-init-aws/${VAULT_INIT_ARM_VERSION}/vault-init-aws_arm32v7_${VAULT_INIT_ARM_VERSION} -o vault-init
     - mv $ID_RSA id_rsa
