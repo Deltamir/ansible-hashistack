@@ -17,7 +17,6 @@
           - python3-pip
           - python3-setuptools
           - python3-virtualenv
-          - aws
       become: true
 
     - name: Install docker python package
