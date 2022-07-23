@@ -1,6 +1,6 @@
 variables:
   VAULT_VERSION: "1.11.1"
-  VAULT_INIT_ARM_VERSION: "1.0.0"
+  VAULT_INIT_ARM_VERSION: "1.0.1"
 
 stages:
   - run
