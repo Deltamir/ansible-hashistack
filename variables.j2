@@ -2,5 +2,5 @@ AWS_REGION="eu-west-3"
 S3_BUCKET_NAME="vault-bucket-paquerettes"
 KMS_KEY_ID="{{ hostvars['localhost'].kms_key.key_arn }}"
 VAULT_ADDR="http://127.0.0.1:8200"
-AWS_ACCESS_KEY={{ lookup('env','AWS_VAULT_INIT_ACCESS_KEY') }}
-AWS_SECRET_KEY={{ lookup('env','AWS_VAULT_INIT_SECRET_KEY') }}
+AWS_ACCESS_KEY="{{ lookup('env','AWS_VAULT_INIT_ACCESS_KEY') }}"
+AWS_SECRET_KEY="{{ lookup('env','AWS_VAULT_INIT_SECRET_KEY') }}"
