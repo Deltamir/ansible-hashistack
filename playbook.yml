@@ -39,15 +39,6 @@
         region: eu-west-3
       register: kms_key
       run_once: true
-
-    - name: Create an empty bucket
-      amazon.aws.s3_bucket:
-        name: vault-bucket-paquerettes
-        state: present
-        region: eu-west-3
-        acl: private
-        delete_public_access: yes
-      run_once: true 
     
 - name: Install Vault cluster
   hosts: vault_instances
@@ -69,7 +60,7 @@
       register: vault_init
       run_once: yes
 
-    - name: Add string to AWS Secrets Manager
+    - name: Add root token to AWS Secrets Manager
       community.aws.aws_secret:
         name: 'paquerettes_vault_root_token'
         state: present
@@ -78,6 +69,21 @@
         region: eu-west-3
       when: vault_init['changed'] == true
 
+    - name: retrieve root token from AWS Secrets Manager
+      set_fact:
+        root_token: "{{ lookup('amazon.aws.aws_secret', 'paquerettes_vault_root_token', region='eu-west-3') }}"
+
+    - name: Create nomad-server policy
+      hashivault_policy:
+        token: "{{ root_token }}"
+        name: nomad-server
+        rules_file : nomad-server-policy.hcl
+        url: "http://192.168.1.40:8200"
+
+    - name: create nomad-cluster token role
+      hashivault_write_from_file:
+        key: nomad-cluster-role.json
+        path: /auth/token/roles/nomad-cluster
 
 - name: Installing Nomad
   hosts: nomad_instances
