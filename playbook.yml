@@ -58,17 +58,25 @@
 
 - hosts: vault_instances
   tasks:
-  - name: init Vault
-    hashivault_init:
-      secret_shares: 1
-      secret_threshold: 1
-      url: "{{ nomad_vault_address }}"
-    register: vault_init
-    run_once: yes
+    - name: Install docker python package
+      pip:
+        name: '{{ packages }}'
+        executable: pip3
+      vars:
+        packages:
+          - hvac
+      become: true
+    - name: init Vault
+      hashivault_init:
+        secret_shares: 1
+        secret_threshold: 1
+        url: "{{ nomad_vault_address }}"
+      register: vault_init
+      run_once: yes
 
-  - name: debug
-    debug:
-      msg: "{{ vault_init }}"
+    - name: debug
+      debug:
+        msg: "{{ vault_init }}"
 
 - name: Installing Nomad
   hosts: nomad_instances
