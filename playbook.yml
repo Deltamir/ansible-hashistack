@@ -38,7 +38,7 @@
         cmd: openssl rand -base64 32
       register: encryption_key
       run_once: yes
-      when: consul_gossip_key == [] or consul_key_force_rotate
+      when: "{{ consul_gossip_key == [] or consul_key_force_rotate }}"
 
     - name: Upload Consul Gossip key to AWS Secrets Manager
       community.aws.aws_secret:
