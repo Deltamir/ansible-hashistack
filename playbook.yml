@@ -90,10 +90,10 @@
         status_code: [200, 204]
         headers:
           X-Vault-Token: "{{ root_token }}"
-    
+
     - name: Create a nomad token
-      hashivault_token_create:
-        display_name: "nomad-server"
+      community.hashi_vault.vault_token_create:
+        url: http://192.168.1.70:8200
         policies: ["nomad-server"]
         orphan: true
         period: "72h"
