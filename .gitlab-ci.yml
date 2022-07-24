@@ -10,6 +10,7 @@ run:
   image: 
     name: registry.gitlab.com/p8811/raspberry-arm-image/docker-ansible:main
   script:
+    - apt-get update -qqy
     - apt-get install dnsutils -qqy
     - dig raspberry-1.home
     - ansible-galaxy install "git+https://github.com/Deltamir/ansible-consul.git,Deltamir-patch-1" --force
