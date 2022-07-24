@@ -3,8 +3,8 @@ consul_key_force_rotate=false
 nomad_key_force_rotate=false
 
 [consul_instances]
-raspberrypi-1.home consul_node_role=server ansible_ssh_user=pi ansible_ssh_private_key_file=./id_rsa ansible_python_interpreter=/usr/bin/python3
-raspberrypi-2.home consul_node_role=server ansible_ssh_user=pi ansible_ssh_private_key_file=./id_rsa ansible_python_interpreter=/usr/bin/python3
+raspberrypi-1.home consul_node_name=rasperrypi-1 consul_node_role=server ansible_ssh_user=pi ansible_ssh_private_key_file=./id_rsa ansible_python_interpreter=/usr/bin/python3 
+raspberrypi-2.home consul_node_name=rasperrypi-2 consul_node_role=server ansible_ssh_user=pi ansible_ssh_private_key_file=./id_rsa ansible_python_interpreter=/usr/bin/python3
 
 [consul_instances:vars]
 consul_version=1.12.3
@@ -32,6 +32,7 @@ vault_awskms_access_key={{ lookup('env','AWS_VAULT_ACCESS_KEY') }}
 vault_awskms_secret_key={{ lookup('env','AWS_VAULT_SECRET_KEY') }}
 vault_use_config_path=true
 vault_consul=consul.service.consul:8500
+vault_install_remotely=true
 
 [nomad_instances]
 raspberrypi-1.home nomad_node_role=both ansible_ssh_user=pi ansible_ssh_private_key_file=./id_rsa ansible_python_interpreter=/usr/bin/python3
