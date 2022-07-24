@@ -80,7 +80,6 @@
         name: nomad-server
         rules_file : nomad-server-policy.hcl
         url: "http://192.168.1.40:8200"
-        status_code: [200, 204]
 
     - name: create nomad-cluster token role
       uri:
@@ -88,6 +87,7 @@
         method: POST
         body: "{{ lookup('file','nomad-cluster-role.json') }}"
         body_format: raw
+        status_code: [200, 204]
         headers:
           X-Vault-Token: "{{ root_token }}"
     
