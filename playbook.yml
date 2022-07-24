@@ -26,7 +26,7 @@
         consul_gossip_key: "{{ lookup('amazon.aws.aws_secret', 'paquerettes_consul_key', region='eu-west-3', on_missing='skip',
    aws_access_key=lookup('env','AWS_ACCESS_KEY'), aws_secret_key=lookup('env','AWS_SECRET_KEY')) }}"
 
-    - name: generate a consul encyption key
+    - name: Generate a consul encyption key
       local_action:
         module: command
         cmd: openssl rand -base64 32
@@ -43,8 +43,15 @@
         region: eu-west-3
       when: consul_gossip_key == [] or consul_key_force_rotate
 
+    - name: Register Consul Gossip key
+      set_fact:
+        consul_gossip_key:  "{{ encryption_key.stdout }}" 
+      when: consul_gossip_key == [] or consul_key_force_rotate
+
 - name: Assemble Consul cluster
   hosts: consul_instances
+  vars:
+    consul_raw_key: "{{ hostvars['localhost'].consul_gossip_key }}"
   any_errors_fatal: true
   become: true
   become_user: root
