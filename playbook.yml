@@ -80,6 +80,7 @@
         name: nomad-server
         rules_file : nomad-server-policy.hcl
         url: "http://192.168.1.40:8200"
+        status_code: [200, 204]
 
     - name: create nomad-cluster token role
       uri:
