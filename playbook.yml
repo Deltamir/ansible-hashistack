@@ -114,7 +114,7 @@
       hashivault_init:
         recovery_shares: 1
         recovery_threshold: 1
-        url: "http://192.168.1.40:8200"
+        url: "http://vault.service.consul:8200"
       register: vault_init
       run_once: yes
 
@@ -137,11 +137,11 @@
         token: "{{ root_token }}"
         name: nomad-server
         rules_file : nomad-server-policy.hcl
-        url: "http://192.168.1.40:8200"
+        url: "http://vault.service.consul:8200"
 
     - name: create nomad-cluster token role
       uri:
-        url: http://192.168.1.40:8200/v1/auth/token/roles/nomad-cluster
+        url: http://vault.service.consul:8200/v1/auth/token/roles/nomad-cluster
         method: POST
         body: "{{ lookup('file','nomad-cluster-role.json') }}"
         body_format: json
@@ -151,7 +151,7 @@
 
     - name: Create a nomad token
       community.hashi_vault.vault_token_create:
-        url: http://192.168.1.40:8200
+        url: http://vault.service.consul:8200"
         policies: ["nomad-server"]
         orphan: true
         period: "72h"

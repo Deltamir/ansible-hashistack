@@ -29,6 +29,7 @@ vault_awskms_region="eu-west-3"
 vault_awskms_access_key={{ lookup('env','AWS_VAULT_ACCESS_KEY') }}
 vault_awskms_secret_key={{ lookup('env','AWS_VAULT_SECRET_KEY') }}
 vault_use_config_path=true
+vault_consul=consul.service.consul
 
 [nomad_instances]
 raspberrypi-1.home nomad_node_role=both ansible_ssh_user=pi ansible_ssh_private_key_file=./id_rsa ansible_python_interpreter=/usr/bin/python3
@@ -43,3 +44,5 @@ nomad_raft_protocol=3
 nomad_bootstrap_expect=1
 nomad_vault_create_from_role="nomad-cluster"
 nomad_consul_servers_service_name=nomad
+nomad_bind_address=nomad.service.consul
+nomad_consul_address=consul.service.consul
