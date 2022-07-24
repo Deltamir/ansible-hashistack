@@ -38,8 +38,8 @@ vault_consul=consul.service.consul:8500
 vault_install_remotely=true
 
 [nomad_instances]
-raspberrypi-1.home nomad_node_role=both
-raspberrypi-2.home nomad_node_role=both
+raspberrypi-1.home nomad_node_role=both nomad_node_name=rasperrypi-1
+raspberrypi-2.home nomad_node_role=both nomad_node_name=rasperrypi-2
 
 [nomad_instances:vars]
 nomad_version=1.3.2
