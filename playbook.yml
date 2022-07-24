@@ -86,7 +86,7 @@
         url: http://192.168.1.40:8200/v1/auth/token/roles/nomad-cluster
         method: POST
         body: "{{ lookup('file','nomad-cluster-role.json') }}"
-        body_format: raw
+        body_format: json
         status_code: [200, 204]
         headers:
           X-Vault-Token: "{{ root_token }}"
