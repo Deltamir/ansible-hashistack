@@ -32,7 +32,7 @@
         cmd: openssl rand -base64 32
       register: encryption_key
       run_once: yes
-      when: consul_gossip_key == [] or consul_key_force_rotate
+      when: consul_gossip_key == [] or hostvars['consul_instances'].consul_key_force_rotate
 
     - name: Upload Consul Gossip key to AWS Secrets Manager
       community.aws.aws_secret:
@@ -41,7 +41,7 @@
         secret: "{{ encryption_key.stdout }}" 
         secret_type: 'string'
         region: eu-west-3
-      when: consul_gossip_key == [] or consul_key_force_rotate
+      when: consul_gossip_key == [] or hostvars['consul_instances'].consul_key_force_rotate
 
 - name: Assemble Consul cluster
   hosts: consul_instances
