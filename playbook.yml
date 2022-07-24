@@ -25,13 +25,12 @@
       set_fact:
         consul_gossip_key: "{{ lookup('amazon.aws.aws_secret', 'paquerettes_consul_gossip_key', region='eu-west-3', on_missing='skip',
    aws_access_key=lookup('env','AWS_ACCESS_KEY'), aws_secret_key=lookup('env','AWS_SECRET_KEY')) }}"
-      register: fact_consul_gossip
 
     - debug:
-        msg: "{{ fact_consul_gossip }}"
+        msg: "{{ consul_gossip_key == [] }}"
 
     - debug:
-        msg: "{{ consul_gossip_key }}"
+        msg: "{{ consul_gossip_key is undefined }}"
  
 
     - name: Upload Consul Gossip key to AWS Secrets Manager
@@ -41,7 +40,7 @@
         secret: "test"
         secret_type: 'string'
         region: eu-west-3
-      when: fact_consul_gossip['skipped'] == true
+      when: consul_gossip_key == []
 
 - name: Assemble Consul cluster
   hosts: consul_instances
