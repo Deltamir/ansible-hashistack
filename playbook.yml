@@ -93,7 +93,7 @@
 
     - name: Create a nomad token
       community.hashi_vault.vault_token_create:
-        url: http://192.168.1.70:8200
+        url: http://192.168.1.40:8200
         policies: ["nomad-server"]
         orphan: true
         period: "72h"
