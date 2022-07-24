@@ -42,3 +42,4 @@ nomad_vault_address=http://127.0.0.1:8200
 nomad_raft_protocol=3
 nomad_bootstrap_expect=1
 nomad_vault_create_from_role="nomad-cluster"
+nomad_consul_servers_service_name=nomad
