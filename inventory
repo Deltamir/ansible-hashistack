@@ -1,9 +1,12 @@
 [all:vars]
 consul_key_force_rotate=false
 nomad_key_force_rotate=false
+ansible_ssh_user=pi
+ansible_ssh_private_key_file=./id_rsa
+ansible_python_interpreter=/usr/bin/python3
 
 [consul_instances]
-raspberrypi-1.home consul_node_name=rasperrypi-1 consul_node_role=server ansible_ssh_user=pi ansible_ssh_private_key_file=./id_rsa ansible_python_interpreter=/usr/bin/python3 
+raspberrypi-1.home consul_node_name=rasperrypi-1 
 
 [consul_instances:vars]
 consul_version=1.12.3
@@ -19,7 +22,7 @@ consul_dnsmasq_enable=true
 consul_dnsmasq_servers=["192.168.1.1"]
 
 [vault_instances]
-raspberrypi-1.home ansible_ssh_user=pi ansible_ssh_private_key_file=./id_rsa ansible_python_interpreter=/usr/bin/python3
+raspberrypi-1.home
 
 [vault_instances:vars]
 vault_backend=consul
@@ -33,7 +36,7 @@ vault_consul=consul.service.consul:8500
 vault_install_remotely=true
 
 [nomad_instances]
-raspberrypi-1.home nomad_node_role=both ansible_ssh_user=pi ansible_ssh_private_key_file=./id_rsa ansible_python_interpreter=/usr/bin/python3
+raspberrypi-1.home nomad_node_role=both
 
 [nomad_instances:vars]
 nomad_version=1.3.2
