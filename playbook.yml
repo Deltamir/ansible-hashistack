@@ -72,7 +72,7 @@
 
     - name: Register Nomad Gossip key
       set_fact:
-        consul_gossip_key:  "{{ encryption_key.stdout }}" 
+        nomad_gossip_key:  "{{ encryption_key.stdout }}" 
       when: nomad_gossip_key == [] or nomad_key_force_rotate
 
 - name: Assemble Consul cluster
