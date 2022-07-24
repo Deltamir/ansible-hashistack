@@ -151,7 +151,7 @@
 
     - name: Create a nomad token
       community.hashi_vault.vault_token_create:
-        url: http://vault.service.consul:8200"
+        url: http://vault.service.consul:8200
         policies: ["nomad-server"]
         orphan: true
         period: "72h"
