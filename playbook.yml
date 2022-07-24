@@ -30,7 +30,7 @@
         msg: "{{ consul_gossip_key }}"
     
     - debug:
-        msg: "{{ consul_gossip_key == [] }}"
+        msg: "{{ consul_gossip_key == [] or consul_key_force_rotate }}"
 
     - name: Generate a consul encyption key
       local_action:
