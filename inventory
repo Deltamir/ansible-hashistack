@@ -50,3 +50,4 @@ nomad_vault_create_from_role="nomad-cluster"
 nomad_consul_servers_service_name=nomad
 nomad_bind_address=0.0.0.0
 nomad_consul_address=127.0.0.1:8500
+nomad_retry_join=true
