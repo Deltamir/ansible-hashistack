@@ -114,7 +114,7 @@
       hashivault_init:
         recovery_shares: 1
         recovery_threshold: 1
-        url: "http://127.0.0.1:8200"
+        url: "http://{{ groups['vault_instances'][0] }}:8200"
       register: vault_init
       run_once: yes
 
