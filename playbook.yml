@@ -101,12 +101,12 @@
       register: "nomad_vault_token"
 
     - debug:
-        msg: "{{ nomad_vault_token }}"
+        msg: "{{ nomad_vault_token.login.auth.accessor }}"
 
 - name: Installing Nomad
   hosts: nomad_instances
   vars:
-    nomad_vault_token: "{{ hostvars['localhost'].nomad_vault_token }}"
+    nomad_vault_token: "{{ hostvars['localhost'].nomad_vault_token.login.auth.accessor }}"
   any_errors_fatal: true
   become: true
   become_user: root
