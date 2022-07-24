@@ -1,11 +1,3 @@
-- name: Assemble Consul cluster
-  hosts: consul_instances
-  any_errors_fatal: true
-  become: true
-  become_user: root
-  roles:
-    - {role: ansible-consul}
-
 - hosts: localhost
   tasks:
     - name: Ensure python and dependencies are installed
@@ -29,6 +21,38 @@
           - hvac
       become: true
 
+    - name: retrieve Consul Gossip key from AWS Secrets Manager
+      set_fact:
+        consul_gossip_key: "{{ lookup('amazon.aws.aws_secret', 'paquerettes_consul_gossip_key', region='eu-west-3', on_missing='skip'
+   aws_access_key=lookup('env','AWS_ACCESS_KEY'), aws_secret_key=lookup('env','AWS_SECRET_KEY')) }}"
+      register: fact_consul_gossip
+
+    - debug:
+        msg: "{{ fact_consul_gossip }}"
+
+    - debug:
+        msg: "{{ consul_gossip_key }}"
+ 
+
+    - name: Upload Consul Gossip key to AWS Secrets Manager
+      community.aws.aws_secret:
+        name: 'paquerettes_consul_gossip_key'
+        state: present
+        secret: "test"
+        secret_type: 'string'
+        region: eu-west-3
+      when: fact_consul_gossip['skipped'] == true
+
+- name: Assemble Consul cluster
+  hosts: consul_instances
+  any_errors_fatal: true
+  become: true
+  become_user: root
+  roles:
+    - {role: ansible-consul}
+
+- hosts: localhost
+  tasks:
     - name: create aws key
       community.aws.aws_kms:
         alias: vault-enc-key
