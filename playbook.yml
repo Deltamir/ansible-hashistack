@@ -48,6 +48,33 @@
         consul_gossip_key:  "{{ encryption_key.stdout }}" 
       when: consul_gossip_key == [] or consul_key_force_rotate
 
+    - name: retrieve Nomad Gossip key from AWS Secrets Manager
+      set_fact:
+        nomad_gossip_key: "{{ lookup('amazon.aws.aws_secret', 'paquerettes_nomad_key', region='eu-west-3', on_missing='skip',
+   aws_access_key=lookup('env','AWS_ACCESS_KEY'), aws_secret_key=lookup('env','AWS_SECRET_KEY')) }}"
+
+    - name: Generate a nomad encyption key
+      local_action:
+        module: command
+        cmd: openssl rand -base64 32
+      register: encryption_key
+      run_once: yes
+      when: nomad_gossip_key == [] or nomad_key_force_rotate
+
+    - name: Upload Nomad Gossip key to AWS Secrets Manager
+      community.aws.aws_secret:
+        name: 'paquerettes_nomad_key'
+        state: present
+        secret: "{{ encryption_key.stdout }}" 
+        secret_type: 'string'
+        region: eu-west-3
+      when: nomad_gossip_key == [] or nomad_key_force_rotate
+
+    - name: Register Nomad Gossip key
+      set_fact:
+        consul_gossip_key:  "{{ encryption_key.stdout }}" 
+      when: nomad_gossip_key == [] or nomad_key_force_rotate
+
 - name: Assemble Consul cluster
   hosts: consul_instances
   vars:
@@ -135,6 +162,7 @@
   hosts: nomad_instances
   vars:
     nomad_vault_token: "{{ hostvars['localhost'].nomad_vault_token.login.auth.client_token }}"
+    nomad_encrypt: "{{ hostvars['localhost'].nomad_gossip_key }}"
   any_errors_fatal: true
   become: true
   become_user: root
