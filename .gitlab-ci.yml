@@ -12,7 +12,7 @@ run:
   script:
     - apt-get update -qqy
     - apt-get install dnsutils -qqy
-    - dig raspberry-1.home
+    - dig raspberrypi-1.home
     - ansible-galaxy install "git+https://github.com/Deltamir/ansible-consul.git,Deltamir-patch-1" --force
     - mv $ID_RSA id_rsa
     - chmod 400 id_rsa 
