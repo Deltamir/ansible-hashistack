@@ -1,3 +1,4 @@
+[all:vars]
 consul_key_force_rotate=true
 
 [consul_instances]
