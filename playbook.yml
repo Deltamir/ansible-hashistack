@@ -153,11 +153,16 @@
       set_fact:
         root_token: "{{ lookup('community.hashi_vault.vault_kv1_get', 'vault_root_token') }}"
       ignore_errors: yes
-      register: consul_failure
+      register: root_token
+
+    - name: Sleep for 10 seconds if vault was not initialized
+      ansible.builtin.wait_for:
+        timeout: 300
+      when: vault_init['changed'] == true
 
     - name: Create nomad-server policy
       hashivault_policy:
-        token: "{{ root_token }}"
+        token: "{{ root_token.data.key }}"
         name: nomad-server
         rules_file : nomad-server-policy.hcl
         url: "http://vault.service.consul:8200"
@@ -170,7 +175,7 @@
         body_format: json
         status_code: [200, 204]
         headers:
-          X-Vault-Token: "{{ root_token }}"
+          X-Vault-Token: "{{ root_token.data.key }}"
 
     - name: Create a nomad token
       community.hashi_vault.vault_token_create:
@@ -178,7 +183,7 @@
         policies: ["nomad-server"]
         orphan: true
         period: "72h"
-        token: "{{root_token}}"
+        token: "{{ root_token.data.key }}"
       register: "nomad_vault_token"
 
 - name: Installing Nomad
