@@ -35,5 +35,12 @@
         path: transit/keys/autounseal
       register: test
 
-    - debug:
-        msg: "{{ test }}"
+    - name: Create autounseal policy
+      hashivault_policy:
+        name: autounseal
+        rules_file : autounseal.hcl 
+
+    - name: Create a autounseal token
+      community.hashi_vault.vault_token_create:
+      register: "autounseal_token"
+
