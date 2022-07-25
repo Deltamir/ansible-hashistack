@@ -111,6 +111,9 @@
       community.hashi_vault.vault_token_create:
       register: "autounseal_token"
 
+    - debug:
+        msg: "{{ autounseal_token }}"      
+
 - name: Assemble Consul cluster
   hosts: consul_instances
   vars:
@@ -123,7 +126,7 @@
 
 - hosts: vault_instances
   vars:
-    autounseal_token: "{{ hostvars['localhost'].autounseal_token }}"
+    autounseal_token: "{{ hostvars['localhost']autounseal_token.login.auth.client_token }}"
   tasks:
     - name: Ensures vault config dir exists
       file: 
