@@ -95,6 +95,25 @@
         nomad_gossip_key:  "{{ nomad_gossip_key.data.key }}"
       when: nomad_failure['failed'] == false
 
+    - name: enable transit secret engine
+      hashivault_secret_engine:
+        name: transit
+        state: enabled
+        
+    - name: create autounseal secret
+      community.hashi_vault.vault_write:
+        path: transit/keys/autounseal
+      register: test
+
+    - name: Create autounseal policy
+      hashivault_policy:
+        name: autounseal
+        rules_file : autounseal.hcl 
+
+    - name: Create a autounseal token
+      community.hashi_vault.vault_token_create:
+      register: "autounseal_token"
+
 - name: Assemble Consul cluster
   hosts: consul_instances
   vars:
@@ -105,19 +124,22 @@
   roles:
     - {role: ansible-consul}
 
-- hosts: localhost
+- hosts: vault_instances
+  vars:
+    autounseal_token: "{{ hostvars['localhost'].autounseal_token }}"
   tasks:
-    - name: create aws key
-      community.aws.aws_kms:
-        alias: vault-enc-key
-        enable_key_rotation: true
-        tags:
-            Name: vault-enc-key
-            Purpose: Encrypt S3 containing unseal and root token
-        region: eu-west-3
-      register: kms_key
-      run_once: true
-    
+    - name: Ensures vault config dir exists
+      file: 
+        path: /etc/vault.d/
+        state: directory
+      become: true
+
+    - name: Copy consul seal config script 
+      template:
+        src: vault_seal.j2
+        dest: /etc/vault.d/vault_seal.hcl
+      become: true
+
 - name: Install Vault cluster
   hosts: vault_instances
   vars:
@@ -171,16 +193,6 @@
         url: http://vault.service.consul:8200
         path: auth/token/roles/nomad-cluster
         data: "{{ lookup('file','nomad-cluster-role.json') | from_json }}"
-
-#    - name: create nomad-cluster token role
-#      uri:
-#        url: http://vault.service.consul:8200/v1/auth/token/roles/nomad-cluster
-#        method: POST
-#        body: "{{ lookup('file','nomad-cluster-role.json') }}"
-#        body_format: json
-#        status_code: [200, 204]
-#        headers:
-#          X-Vault-Token: "{{ root_token.data.key }}"
 
     - name: Create a nomad token
       community.hashi_vault.vault_token_create:
