@@ -33,6 +33,11 @@
     - name: retrieve Consul Gossip key from AWS Secrets Manager
       set_fact:
         consul_gossip_key: "{{ lookup('community.hashi_vault.vault_kv1_get', 'consul_gossip_key') }}"
+        fail_when: false
+      register: consul_failure
+
+    - debug:
+        msg: "{{ consul_failure }}"
 
     - debug:
         msg: "{{ consul_gossip_key }}"
