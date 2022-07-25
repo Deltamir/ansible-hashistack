@@ -1,4 +1,3 @@
-
 - hosts: localhost
   tasks:
     - name: Ensure python and dependencies are installed
@@ -28,7 +27,12 @@
         url: "https://vault-cluster-public-vault-69dbd168.2abff579.z1.hashicorp.cloud:8200/"
         state: enabled
         authtype: token
-        token: "{{ lookup('env','ROOT_TOKEN') }}"
         verify: no
         namespace: "admin"
-      run_once: yes
+
+    - name: retrieve Consul Gossip key from AWS Secrets Manager
+      set_fact:
+        consul_gossip_key: "{{ lookup('vault_kv1_get', 'consul_gossip_key') }}"
+
+    - debug:
+        msg: "{{ consul_gossip_key }}"

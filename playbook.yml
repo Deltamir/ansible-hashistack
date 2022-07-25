@@ -21,10 +21,18 @@
           - hvac
       become: true
 
+    - name: enable kv-v1 secret engine
+      hashivault_secret_engine:
+        name: kv
+        url: "https://vault-cluster-public-vault-69dbd168.2abff579.z1.hashicorp.cloud:8200/"
+        state: enabled
+        authtype: token
+        verify: no
+        namespace: "admin"
+
     - name: retrieve Consul Gossip key from AWS Secrets Manager
       set_fact:
-        consul_gossip_key: "{{ lookup('amazon.aws.aws_secret', 'paquerettes_consul_key', region='eu-west-3', on_missing='skip',
-   aws_access_key=lookup('env','AWS_ACCESS_KEY'), aws_secret_key=lookup('env','AWS_SECRET_KEY')) }}"
+        consul_gossip_key: "{{ lookup('vault_kv1_get', 'consul_gossip_key') }}"
 
     - name: Generate a consul encyption key
       local_action:
