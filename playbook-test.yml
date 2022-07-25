@@ -60,7 +60,7 @@
 
     - name: Register Consul Gossip key
       set_fact:
-        consul_gossip_key:  "{{ consul_gossip_key.data }}"
+        consul_gossip_key:  "{{ consul_gossip_key.data.key }}"
       when: consul_failure['failed'] == false
     
     - debug:
