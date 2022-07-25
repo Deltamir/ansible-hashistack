@@ -18,7 +18,7 @@ consul_encrypt_enable=true
 consul_raw_key={{ lookup('env','GOSSIP_KEY') }}
 consul_raft_protocol=3
 consul_bootstrap_expect=true
-consul_bootstrap_expect_value=1
+consul_bootstrap_expect_value={{ groups['consul_instances'] | length }}
 consul_dnsmasq_enable=true
 consul_dnsmasq_servers=["192.168.1.1"]
 
