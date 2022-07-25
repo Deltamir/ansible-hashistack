@@ -45,9 +45,10 @@
 
     - name: write consul gossip encryption key to vault
       hashivault_secret:
-        secret: "/kv/consul_gossip_key"
+        secret: "consul_gossip_key"
         data:
           key: "{{ encryption_key.stdout }}"
         verify: no
         version: 1
+        mount_point: "kv"
       when: consul_failure['failed'] == true
