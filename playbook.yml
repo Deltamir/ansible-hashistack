@@ -25,9 +25,6 @@
       hashivault_secret_engine:
         name: kv
         state: enabled
-        authtype: token
-        verify: no
-        namespace: "admin"
 
     - name: retrieve Consul Gossip key from HCP
       set_fact:
