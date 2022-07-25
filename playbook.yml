@@ -167,7 +167,7 @@
         url: "http://vault.service.consul:8200"
 
     - name: create nomad-cluster token role
-      hashi_vault.vault_write:
+      community.hashi_vault.vault_write:
         token: "{{ root_token.data.key }}"
         url: http://vault.service.consul:8200/v1/auth/token/roles/nomad-cluster
         path: auth/token/roles/nomad-cluster
