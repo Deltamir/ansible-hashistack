@@ -153,10 +153,6 @@
       set_fact:
         root_token: "{{ lookup('community.hashi_vault.vault_kv1_get', 'vault_root_token') }}"
       ignore_errors: yes
-      register: root_token
-
-    - debug:
-        msg: "{{ root_token }}"
 
     - name: Sleep for 10 seconds if vault was not initialized
       ansible.builtin.wait_for:
