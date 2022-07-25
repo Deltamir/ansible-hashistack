@@ -30,4 +30,5 @@
         authtype: token
         token: "{{ lookup('env','ROOT_TOKEN') }}"
         verify: no
+        namespace: "admin"
       run_once: yes
