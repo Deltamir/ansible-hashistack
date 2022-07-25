@@ -52,3 +52,11 @@
         version: 1
         mount_point: "kv"
       when: consul_failure['failed'] == true
+
+    - name: Register Consul Gossip key
+      set_fact:
+        consul_gossip_key:  "{{ encryption_key.stdout }}" 
+      when: consul_failure['failed'] == true
+    
+    - debug:
+        msg: "{{ consul_gossip_key }}"
