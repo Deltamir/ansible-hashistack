@@ -139,19 +139,21 @@
       register: vault_init
       run_once: yes
 
-    - name: Add root token to AWS Secrets Manager
-      community.aws.aws_secret:
-        name: 'paquerettes_vault_root_token'
-        state: present
-        secret_type: 'string'
-        secret: "{{ vault_init.root_token }}"
-        region: eu-west-3
+    - name: Write root token to vault
+      hashivault_secret:
+        secret: "vault_root_token"
+        data:
+          key: "{{ vault_init.root_token }}"
+        verify: no
+        version: 1
+        mount_point: "kv"
       when: vault_init['changed'] == true
 
-    - name: retrieve root token from AWS Secrets Manager
+    - name: retrieve root token from HCP
       set_fact:
-        root_token: "{{ lookup('amazon.aws.aws_secret', 'paquerettes_vault_root_token', region='eu-west-3',
-   aws_access_key=lookup('env','AWS_ACCESS_KEY'), aws_secret_key=lookup('env','AWS_SECRET_KEY')) }}"
+        root_token: "{{ lookup('community.hashi_vault.vault_kv1_get', 'vault_root_token') }}"
+      ignore_errors: yes
+      register: consul_failure
 
     - name: Create nomad-server policy
       hashivault_policy:
