@@ -33,3 +33,7 @@
     - name: create autounseal secret
       community.hashi_vault.vault_write:
         path: transit/keys/autounseal
+      register: test
+
+    - debug:
+        msg: "{{ test }}"
