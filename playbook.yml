@@ -167,14 +167,21 @@
         url: "http://vault.service.consul:8200"
 
     - name: create nomad-cluster token role
-      uri:
+      hashi_vault.vault_write:
+        token: "{{ root_token.data.key }}"
         url: http://vault.service.consul:8200/v1/auth/token/roles/nomad-cluster
-        method: POST
-        body: "{{ lookup('file','nomad-cluster-role.json') }}"
-        body_format: json
-        status_code: [200, 204]
-        headers:
-          X-Vault-Token: "{{ root_token.data.key }}"
+        path: auth/token/roles/nomad-cluster
+        data: "{{ lookup('file','nomad-cluster-role.json') | from_json }}"
+
+#    - name: create nomad-cluster token role
+#      uri:
+#        url: http://vault.service.consul:8200/v1/auth/token/roles/nomad-cluster
+#        method: POST
+#        body: "{{ lookup('file','nomad-cluster-role.json') }}"
+#        body_format: json
+#        status_code: [200, 204]
+#        headers:
+#          X-Vault-Token: "{{ root_token.data.key }}"
 
     - name: Create a nomad token
       community.hashi_vault.vault_token_create:
