@@ -32,6 +32,5 @@
         
     - name: create autounseal secret
       community.hashi_vault.vault_write:
-        token: "{{ root_token.data.key }}"
         url: http://vault.service.consul:8200
         path: transit/keys/autounseal
