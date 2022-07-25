@@ -126,7 +126,7 @@
 
 - hosts: vault_instances
   vars:
-    autounseal_token: "{{ hostvars['localhost']autounseal_token.login.auth.client_token }}"
+    autounseal_token: "{{ hostvars['localhost'].autounseal_token.login.auth.client_token }}"
   tasks:
     - name: Ensures vault config dir exists
       file: 
@@ -134,7 +134,7 @@
         state: directory
       become: true
 
-    - name: Copy consul seal config script 
+    - name: Copy vault seal config script 
       template:
         src: vault_seal.j2
         dest: /etc/vault.d/vault_seal.hcl
