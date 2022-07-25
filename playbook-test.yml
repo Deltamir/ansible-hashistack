@@ -30,14 +30,24 @@
         verify: no
         namespace: "admin"
 
-    - name: retrieve Consul Gossip key from AWS Secrets Manager
+    - name: retrieve Consul Gossip key from HCP
       set_fact:
         consul_gossip_key: "{{ lookup('community.hashi_vault.vault_kv1_get', 'consul_gossip_key') }}"
       ignore_errors: yes
       register: consul_failure
 
-    - debug:
-        msg: "{{ consul_failure }}"
+    - name: Generate a consul encyption key
+      local_action:
+        module: command
+        cmd: openssl rand -base64 32
+      register: encryption_key
+      when: consul_failure['failed'] == true
 
-    - debug:
-        msg: "{{ consul_gossip_key }}"
+    - name: write consul gossip encryption key to vault
+      hashivault_secret:
+        secret: "consul_gossip_key"
+        data:
+          key: "{{ encryption_key.stdout }}"
+        verify: no
+        version: 1
+      when: consul_failure['failed'] == true
