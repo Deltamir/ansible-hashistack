@@ -45,7 +45,7 @@
 
     - name: write consul gossip encryption key to vault
       hashivault_secret:
-        secret: "consul_gossip_key"
+        secret: "/kv/consul_gossip_key"
         data:
           key: "{{ encryption_key.stdout }}"
         verify: no
