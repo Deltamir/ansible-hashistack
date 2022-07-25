@@ -32,7 +32,7 @@
 
     - name: retrieve Consul Gossip key from HCP
       set_fact:
-        consul_gossip_key: "{{ lookup('community.hashi_vault.vault_kv1_get', 'consul_gossip_key').data.raw }}"
+        consul_gossip_key: "{{ lookup('community.hashi_vault.vault_kv1_get', 'consul_gossip_key') }}"
       ignore_errors: yes
       register: consul_failure
 
@@ -57,6 +57,11 @@
       set_fact:
         consul_gossip_key:  "{{ encryption_key.stdout }}" 
       when: consul_failure['failed'] == true
+
+    - name: Register Consul Gossip key
+      set_fact:
+        consul_gossip_key:  consul_gossip_key.data.raw
+      when: consul_failure['failed'] == false
     
     - debug:
         msg: "{{ consul_gossip_key }}"
