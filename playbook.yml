@@ -30,56 +30,71 @@
         verify: no
         namespace: "admin"
 
-    - name: retrieve Consul Gossip key from AWS Secrets Manager
+    - name: retrieve Consul Gossip key from HCP
       set_fact:
-        consul_gossip_key: "{{ lookup('vault_kv1_get', 'consul_gossip_key') }}"
+        consul_gossip_key: "{{ lookup('community.hashi_vault.vault_kv1_get', 'consul_gossip_key') }}"
+      ignore_errors: yes
+      register: consul_failure
 
     - name: Generate a consul encyption key
       local_action:
         module: command
         cmd: openssl rand -base64 32
       register: encryption_key
-      when: "consul_gossip_key == [] or consul_key_force_rotate == true" 
+      when: consul_failure['failed'] == true
 
-    - name: Upload Consul Gossip key to AWS Secrets Manager
-      community.aws.aws_secret:
-        name: 'paquerettes_consul_key'
-        state: present
-        secret: "{{ encryption_key.stdout }}" 
-        secret_type: 'string'
-        region: eu-west-3
-      when: "consul_gossip_key == [] or consul_key_force_rotate == true"
+    - name: write consul gossip encryption key to vault
+      hashivault_secret:
+        secret: "consul_gossip_key"
+        data:
+          key: "{{ encryption_key.stdout }}"
+        verify: no
+        version: 1
+        mount_point: "kv"
+      when: consul_failure['failed'] == true
 
     - name: Register Consul Gossip key
       set_fact:
         consul_gossip_key:  "{{ encryption_key.stdout }}" 
-      when: "consul_gossip_key == [] or consul_key_force_rotate == true"
+      when: consul_failure['failed'] == true
 
-    - name: retrieve Nomad Gossip key from AWS Secrets Manager
+    - name: Register Consul Gossip key
       set_fact:
-        nomad_gossip_key: "{{ lookup('amazon.aws.aws_secret', 'paquerettes_nomad_key', region='eu-west-3', on_missing='skip',
-   aws_access_key=lookup('env','AWS_ACCESS_KEY'), aws_secret_key=lookup('env','AWS_SECRET_KEY')) }}"
+        consul_gossip_key:  "{{ consul_gossip_key.data.key }}"
+      when: consul_failure['failed'] == false
+
+    - name: retrieve Nomad Gossip key from HCP
+      set_fact:
+        nomad_gossip_key: "{{ lookup('community.hashi_vault.vault_kv1_get', 'nomad_gossip_key') }}"
+      ignore_errors: yes
+      register: nomad_failure
 
     - name: Generate a nomad encyption key
       local_action:
         module: command
         cmd: openssl rand -base64 32
       register: encryption_key
-      when: "nomad_gossip_key == [] or nomad_key_force_rotate == true"
+      when: nomad_failure['failed'] == true
 
-    - name: Upload Nomad Gossip key to AWS Secrets Manager
-      community.aws.aws_secret:
-        name: 'paquerettes_nomad_key'
-        state: present
-        secret: "{{ encryption_key.stdout }}" 
-        secret_type: 'string'
-        region: eu-west-3
-      when: "nomad_gossip_key == [] or nomad_key_force_rotate == true"
+    - name: write nomad gossip encryption key to vault
+      hashivault_secret:
+        secret: "nomad_gossip_key"
+        data:
+          key: "{{ encryption_key.stdout }}"
+        verify: no
+        version: 1
+        mount_point: "kv"
+      when: nomad_failure['failed'] == true
 
     - name: Register Nomad Gossip key
       set_fact:
         nomad_gossip_key:  "{{ encryption_key.stdout }}" 
-      when: "nomad_gossip_key == [] or nomad_key_force_rotate == true"
+      when: nomad_failure['failed'] == true
+
+    - name: Register Nomad Gossip key
+      set_fact:
+        nomad_gossip_key:  "{{ nomad_gossip_key.data.key }}"
+      when: nomad_failure['failed'] == false
 
 - name: Assemble Consul cluster
   hosts: consul_instances
