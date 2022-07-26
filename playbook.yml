@@ -29,6 +29,12 @@
         mount_point: gitlab-jwt
       register: hcp_vault_token
 
+    - debug:
+        msg: "{{ hcp_vault_token }}"
+
+    - debug:
+        msg: "{{ hcp_vault_token.login.auth.client_token }}"
+
     - name: Set HCP Vault Token as env variables
       shell: "export VAULT_TOKEN={{ hcp_vault_token.login.auth.client_token }}"
 
@@ -36,7 +42,6 @@
       hashivault_secret_engine:
         name: kv
         state: enabled
-        token: hcp_vault_token.login.auth.client_token
 
     - name: retrieve Consul Gossip key from HCP
       set_fact:
