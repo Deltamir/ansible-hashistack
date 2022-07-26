@@ -31,6 +31,6 @@ test:
     - echo $VAULT_TOKEN
     - export VAULT_TOKEN="$(vault write -field=token auth/gitlab-jwt/login jwt=$CI_JOB_JWT)"
     - echo $VAULT_TOKEN
-    - echo "$(vault read secrets/kv/consul-gossip-key/key)"
+    - echo "$(vault read secrets/kv/consul_gossip_key/key)"
   tags:
     - vps
