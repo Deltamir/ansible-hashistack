@@ -4,6 +4,7 @@ nomad_key_force_rotate=false
 ansible_ssh_user=pi
 ansible_ssh_private_key_file=./id_rsa
 ansible_python_interpreter=/usr/bin/python3
+hcp_vault_address={{ lookup('env','VAULT_ADDR') }}
 
 [consul_instances]
 raspberrypi-1.home consul_node_name=rasperrypi-1 consul_node_role=server
@@ -27,10 +28,6 @@ raspberrypi-1.home
 [vault_instances:vars]
 vault_backend=consul
 vault_address=0.0.0.0
-vault_awskms=true
-vault_awskms_region="eu-west-3"
-vault_awskms_access_key={{ lookup('env','AWS_VAULT_ACCESS_KEY') }}
-vault_awskms_secret_key={{ lookup('env','AWS_VAULT_SECRET_KEY') }}
 vault_use_config_path=true
 vault_consul=127.0.0.1:8500
 vault_install_remotely=true
@@ -50,4 +47,3 @@ nomad_vault_create_from_role="nomad-cluster"
 nomad_consul_servers_service_name=nomad
 nomad_bind_address=0.0.0.0
 nomad_consul_address=127.0.0.1:8500
-nomad_retry_join=true

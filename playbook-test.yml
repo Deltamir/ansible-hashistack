@@ -1,0 +1,45 @@
+- hosts: localhost
+  tasks:
+    - name: Ensure python and dependencies are installed
+      apt:
+        name: '{{ packages }}'
+      vars:
+        packages:
+          - python3
+          - python3-pip
+          - python3-setuptools
+          - python3-virtualenv
+      become: true
+
+    - name: Install docker python package
+      pip:
+        name: '{{ packages }}'
+        executable: pip3
+      vars:
+        packages:
+          - boto3
+          - hvac
+      become: true
+
+    - name: Enable JWT auth method
+      hashivault_auth_method:
+        method_type: jwt
+        mount_point: gitlab-jwt
+
+    - name: Write jwt config
+      community.hashi_vault.vault_write:
+        path: auth/gitlab-jwt/config
+        data: "{{ lookup('file', 'auth-jwt-config.json') | from_json }}"
+
+    - name: Create gitlab policy
+      hashivault_policy:
+        name: gitlab-policy
+        rules_file : gitlab-policy.hcl 
+
+    - name: Write role
+      community.hashi_vault.vault_write:
+        path: auth/gitlab-jwt/role/gitlab-jwt
+        data: "{{ lookup('file', 'gitlab-jwt-role.json') | from_json }}"
+
+
+

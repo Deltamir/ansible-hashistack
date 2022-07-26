@@ -1,0 +1,8 @@
+seal "transit" {
+  address = "{{ hcp_vault_address }}"
+  disable_renewal = "false"
+  key_name = "autounseal"
+  mount_path = "transit/"
+  token = "{{ autounseal_token }}"
+  namespace = "admin"
+}
