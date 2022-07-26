@@ -18,19 +18,6 @@ run:
     - chmod 400 id_rsa 
     - ssh-keygen -p -m PEM -f id_rsa
     - export ANSIBLE_HOST_KEY_CHECKING=False
-    - ansible-playbook playbook-test.yml -i inventory
+    - ansible-playbook playbook.yml -i inventory
   tags:
     - paquerettes
-
-test:
-  stage: test
-  image: 
-    name: hashicorp/vault
-    entrypoint: [""]
-  script:
-    - echo $VAULT_TOKEN
-    - export VAULT_TOKEN="$(vault write -field=token auth/gitlab-jwt/login jwt=$CI_JOB_JWT)"
-    - echo $VAULT_TOKEN
-    - echo "$(vault read kv/consul_gossip_key)"
-  tags:
-    - vps
