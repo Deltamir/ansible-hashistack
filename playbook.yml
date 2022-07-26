@@ -21,6 +21,9 @@
           - hvac
       become: true
 
+    - debug:
+        msg: "{{ lookup('env', 'CI_JOB_TOKEN') }}"
+
     - name: Authenticate with JWT against HCP
       community.hashi_vault.vault_login:
         auth_method: jwt
