@@ -1,0 +1,5 @@
+{
+    "jwks_url":"https://gitlab.com/-/jwks",
+    "bound_issuer":"https://gitlab.com",
+    "default_role": "gitlab-jwt"
+}

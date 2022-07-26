@@ -21,22 +21,19 @@
           - hvac
       become: true
 
-    - name: enable transit secret engine
-      hashivault_secret_engine:
-        name: transit
-        state: enabled
-        
-    - name: create autounseal secret
-      community.hashi_vault.vault_write:
-        path: transit/keys/autounseal
-      register: test
+    - name: Enable JWT auth method
+      hashivault_auth_method:
+        method_type: jwt
+        mount_point: gitlab-jwt
+        config: "{{ lookup('file', 'auth-jwt-config.json') | from_json }}"
 
     - name: Create autounseal policy
       hashivault_policy:
-        name: autounseal
-        rules_file : autounseal.hcl 
+        name: gitlab-policy
+        rules_file : gitlab-policy.hcl 
 
-    - name: Create a autounseal token
-      community.hashi_vault.vault_token_create:
-      register: "autounseal_token"
+    - name: Write secret to Vault using key value V2 engine
+      community.hashi_vault.vault_write:
+        path: auth/jwt/role/gitlab-jwt
+        data: "{{ lookup('file', 'gitlab-jwt-role.json') | from_json }}"
 

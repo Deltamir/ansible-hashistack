@@ -72,7 +72,7 @@
       register: encryption_key
       when: nomad_failure['failed'] == true
 
-    - name: write nomad gossip encryption key to vault
+    - name: write nomad gossip encryption key to HCP
       hashivault_secret:
         secret: "nomad_gossip_key"
         data:
