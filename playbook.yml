@@ -27,7 +27,6 @@
         jwt: "{{ lookup('env', 'CI_JOB_JWT') }}"
         role_id: gitlab-jwt
         mount_point: gitlab-jwt
-        token_validate: false
       register: hcp_vault_token
 
     - debug:
