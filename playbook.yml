@@ -36,6 +36,7 @@
       community.hashi_vault.vault_write:
         path: sys/mounts/kv
         data:  {"type":"kv", "options":{"version":"1"}}
+        token: "{{ hcp_vault_token.login.auth.client_token }}"
 
     - name: enable kv-v1 secret engine on HCP
       hashivault_secret_engine:
