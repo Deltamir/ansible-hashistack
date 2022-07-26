@@ -1,6 +1,6 @@
 variables:
   VAULT_VERSION: "1.11.1"
-  VAULT_ADDR: "https://vault-cluster-public-vault-69dbd168.2abff579.z1.hashicorp.cloud:8200/"
+  VAULT_ADDR: "https://vault-cluster-public-vault-7dc00120.aa9a44f3.z1.hashicorp.cloud:8200/"
   VAULT_NAMESPACE: admin
 
 stages:

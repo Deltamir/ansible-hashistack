@@ -109,10 +109,7 @@
 
     - name: Create a autounseal token
       community.hashi_vault.vault_token_create:
-      register: "autounseal_token"
-
-    - debug:
-        msg: "{{ autounseal_token }}"      
+      register: "autounseal_token"  
 
 - name: Assemble Consul cluster
   hosts: consul_instances
@@ -177,7 +174,7 @@
 
     - name: Sleep for 10 seconds if vault was not initialized
       ansible.builtin.wait_for:
-        timeout: 300
+        timeout: 60
       when: vault_init['changed'] == true
 
     - name: Create nomad-server policy
