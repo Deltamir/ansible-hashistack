@@ -32,8 +32,8 @@
         name: gitlab-policy
         rules_file : gitlab-policy.hcl 
 
-    - name: Write secret to Vault using key value V2 engine
+    - name: Write role
       community.hashi_vault.vault_write:
-        path: auth/jwt/role/gitlab-jwt
+        path: auth/gitlab-jwt/role/gitlab-jwt
         data: "{{ lookup('file', 'gitlab-jwt-role.json') | from_json }}"
 
