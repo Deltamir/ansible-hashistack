@@ -25,9 +25,13 @@
       hashivault_auth_method:
         method_type: jwt
         mount_point: gitlab-jwt
-        config: "{{ lookup('file', 'auth-jwt-config.json') | from_json }}"
 
-    - name: Create autounseal policy
+    - name: Write jwt config
+      community.hashi_vault.vault_write:
+        path: auth/jwt/config
+        data: "{{ lookup('file', 'auth-jwt-config.json') | from_json }}"
+
+    - name: Create gitlab policy
       hashivault_policy:
         name: gitlab-policy
         rules_file : gitlab-policy.hcl 
@@ -36,4 +40,6 @@
       community.hashi_vault.vault_write:
         path: auth/gitlab-jwt/role/gitlab-jwt
         data: "{{ lookup('file', 'gitlab-jwt-role.json') | from_json }}"
+
+
 
