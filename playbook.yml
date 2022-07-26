@@ -29,9 +29,10 @@
         mount_point: gitlab-jwt
       register: hcp_vault_token
 
-    - name: Set HCP Vault Token as env variables
-      shell: "export VAULT_TOKEN={{ hcp_vault_token.login.auth.client_token }}"
-
+- hosts: localhost
+  environment:
+    VAULT_TOKEN: "{{ hcp_vault_token.login.auth.client_token }}"
+  tasks:
     - name: enable kv-v1 secret engine on HCP
       hashivault_secret_engine:
         name: kv
@@ -160,6 +161,8 @@
     - {role: ansible-vault}
 
 - hosts: localhost
+  environment:
+    VAULT_TOKEN: "{{ hcp_vault_token.login.auth.client_token }}"
   tasks:
     - name: init Vault
       hashivault_init:
