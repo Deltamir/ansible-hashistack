@@ -1,4 +1,4 @@
-path "secrets/kv/*" {
+path "kv/*" {
   capabilities = [ "read", "create", "update" ]
 }
 
