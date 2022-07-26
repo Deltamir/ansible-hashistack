@@ -23,7 +23,7 @@
 
     - name: Authenticate with JWT against HCP
       community.hashi_vault.vault_login:
-        auth_method: JWT
+        auth_method: jwt
         jwt: "{{ lookup('env', 'CI_JOB_TOKEN') }}"
         mount_point: gitlab-jwt
       register: hcp_vault_token
