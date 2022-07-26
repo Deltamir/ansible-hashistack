@@ -32,16 +32,11 @@
     - name: Set HCP Vault Token as env variables
       shell: "export VAULT_TOKEN={{ hcp_vault_token.login.auth.client_token }}"
 
-    - name: Write jwt config
-      community.hashi_vault.vault_write:
-        path: sys/mounts/kv
-        data:  {"type":"kv", "options":{"version":"1"}}
-        token: "{{ hcp_vault_token.login.auth.client_token }}"
-
     - name: enable kv-v1 secret engine on HCP
       hashivault_secret_engine:
         name: kv
         state: enabled
+        token: "{{ hcp_vault_token.login.auth.client_token }}"
 
     - name: retrieve Consul Gossip key from HCP
       set_fact:
