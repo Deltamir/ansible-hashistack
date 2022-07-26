@@ -5,6 +5,7 @@ variables:
 
 stages:
   - run
+  - test
 
 
 run:
@@ -20,3 +21,16 @@ run:
     - ansible-playbook playbook-test.yml -i inventory
   tags:
     - paquerettes
+
+test:
+  stage: test
+  image: 
+    name: hashicorp/vault
+    entrypoint: [""]
+  script:
+    - echo $VAULT_TOKEN
+    - export VAULT_TOKEN="$(vault write -field=token auth/gitlab-jwt/login jwt=$CI_JOB_JWT)"
+    - echo $VAULT_TOKEN
+    - echo "$(vault read secret/kv/consul-gossip-key)"
+  tags:
+    - vps
