@@ -21,7 +21,20 @@
           - hvac
       become: true
 
-    - name: enable kv-v1 secret engine
+    - name: Authenticate with JWT against HCP
+      community.hashi_vault.vault_login:
+        auth_method: JWT
+        jwt: "{{ lookup('env', 'CI_JOB_TOKEN') }}"
+        mount_point: gitlab-jwt
+      register: hcp_vault_token
+
+    - debug:
+        msg: "{{ hcp_vault_token }}"
+
+    - name: Set HCP Vault Token as env variables
+      shell: "export VAULT_TOKEN={{ hcp_vault_token }}"
+
+    - name: enable kv-v1 secret engine on HCP
       hashivault_secret_engine:
         name: kv
         state: enabled
@@ -39,7 +52,7 @@
       register: encryption_key
       when: consul_failure['failed'] == true
 
-    - name: write consul gossip encryption key to vault
+    - name: write consul gossip encryption key to HCP
       hashivault_secret:
         secret: "consul_gossip_key"
         data:
@@ -49,14 +62,14 @@
         mount_point: "kv"
       when: consul_failure['failed'] == true
 
-    - name: Register Consul Gossip key
+    - name: Register Consul Gossip key if necessary
       set_fact:
         consul_gossip_key:  "{{ encryption_key.stdout }}" 
       when: consul_failure['failed'] == true
 
-    - name: Register Consul Gossip key
+    - name: Register Consul Gossip key if necessary
       set_fact:
-        consul_gossip_key:  "{{ consul_gossip_key.data.key }}"
+        consul_gossip_key:  "{{ consul_gossip_key.data.key }}" 
       when: consul_failure['failed'] == false
 
     - name: retrieve Nomad Gossip key from HCP
@@ -82,32 +95,32 @@
         mount_point: "kv"
       when: nomad_failure['failed'] == true
 
-    - name: Register Nomad Gossip key
+    - name: Register Nomad Gossip key if necessary
       set_fact:
         nomad_gossip_key:  "{{ encryption_key.stdout }}" 
       when: nomad_failure['failed'] == true
 
-    - name: Register Nomad Gossip key
+    - name: Register Nomad Gossip key if necessary
       set_fact:
         nomad_gossip_key:  "{{ nomad_gossip_key.data.key }}"
       when: nomad_failure['failed'] == false
 
-    - name: enable transit secret engine
+    - name: enable transit secret engine on GCP
       hashivault_secret_engine:
         name: transit
         state: enabled
         
-    - name: create autounseal secret
+    - name: create autounseal secret on HCP
       community.hashi_vault.vault_write:
         path: transit/keys/autounseal
       register: test
 
-    - name: Create autounseal policy
+    - name: Create autounseal policy on HCP
       hashivault_policy:
         name: autounseal
         rules_file : autounseal.hcl 
 
-    - name: Create a autounseal token
+    - name: Create a autounseal token from HCP
       community.hashi_vault.vault_token_create:
       register: "autounseal_token"  
 
@@ -172,26 +185,26 @@
         root_token: "{{ lookup('community.hashi_vault.vault_kv1_get', 'vault_root_token') }}"
       ignore_errors: yes
 
-    - name: Sleep for 10 seconds if vault was not initialized
+    - name: Sleep for 30s if vault was not initialized
       ansible.builtin.wait_for:
-        timeout: 60
+        timeout: 30
       when: vault_init['changed'] == true
 
-    - name: Create nomad-server policy
+    - name: Create nomad-server policy on local vault
       hashivault_policy:
         token: "{{ root_token.data.key }}"
         name: nomad-server
         rules_file : nomad-server-policy.hcl
         url: "http://vault.service.consul:8200"
 
-    - name: create nomad-cluster token role
+    - name: create nomad-cluster token role on local vault
       community.hashi_vault.vault_write:
         token: "{{ root_token.data.key }}"
         url: http://vault.service.consul:8200
         path: auth/token/roles/nomad-cluster
         data: "{{ lookup('file','nomad-cluster-role.json') | from_json }}"
 
-    - name: Create a nomad token
+    - name: Create a nomad token from local vault
       community.hashi_vault.vault_token_create:
         url: http://vault.service.consul:8200
         policies: ["nomad-server"]
