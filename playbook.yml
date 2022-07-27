@@ -28,36 +28,28 @@
         role_id: gitlab-jwt
         mount_point: gitlab-jwt
       register: hcp_vault_token
-
-    - debug:
-        msg: "{{ hcp_vault_token.login.auth.client_token }}"
-
-    - debug:
-        msg: "{{ lookup('env', 'VAULT_TOKEN') }}"
-      environment:
-        VAULT_TOKEN: "{{ hcp_vault_token.login.auth.client_token }}"
+    
+    - name: Set fact for JWT
+      set_fact:
+        hcp_vault_token: "{{ hcp_vault_token.login.auth.client_token }}"
 
 - hosts: localhost
   environment:
-    VAULT_TOKEN: "{{ hcp_vault_token.login.auth.client_token }}"
+    VAULT_TOKEN: "{{ hcp_vault_token }}"
   tasks:
+    - debug:
+        msg: "{{ lookup('env', 'VAULT_TOKEN') }}"
+
     - name: enable kv-v1 secret engine on HCP
       hashivault_secret_engine:
         name: kv
         state: enabled
-
-    - debug:
-        msg: "{{ lookup('env', 'VAULT_TOKEN') }}"
-      environment:
-        VAULT_TOKEN: {{ hcp_vault_token.login.auth.client_token }}
 
     - name: 
       set_fact:
         consul_gossip_key: "{{ lookup('community.hashi_vault.vault_kv1_get', 'consul_gossip_key') }}"
       ignore_errors: yes
       register: consul_failure
-      environment:
-        VAULT_TOKEN: "{{ hcp_vault_token.login.auth.client_token }}"
 
     - name: Generate a consul encyption key
       local_action:
