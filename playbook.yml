@@ -124,7 +124,8 @@
 
     - name: Create a autounseal token from HCP
       community.hashi_vault.vault_token_create:
-        policies: ["autounseal"]
+        policies: ["autounseal", "default"]
+        orphan: true
       register: autounseal_token
       
 
