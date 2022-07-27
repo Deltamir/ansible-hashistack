@@ -29,9 +29,28 @@
         mount_point: gitlab-jwt
       register: hcp_vault_token
     
+    - debug:
+        msg: "{{ hcp_vault_token }}"
+
+    - debug:
+        msg: "{{ hcp_vault_token.login.auth.client_token }}"
+
+    - debug:
+        msg: "{{ lookup('env', 'VAULT_TOKEN') }}"
+      environment:
+        VAULT_TOKEN: "{{ hcp_vault_token.login.auth.client_token }}"
+
     - name: Set fact for JWT
       set_fact:
         hcp_vault_token: "{{ hcp_vault_token.login.auth.client_token }}"
+
+    - debug:
+        msg: "{{ hcp_vault_token }}"
+
+    - debug:
+        msg: "{{ lookup('env', 'VAULT_TOKEN') }}"
+      environment:
+        VAULT_TOKEN: "{{ hcp_vault_token }}"
 
 - hosts: localhost
   environment:
