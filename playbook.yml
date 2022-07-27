@@ -29,9 +29,17 @@
         mount_point: gitlab-jwt
       register: hcp_vault_token
 
+    - debug:
+        msg: "{{ hcp_vault_token.login.auth.client_token }}"
+
+    - debug:
+        msg: "{{ lookup('env', 'VAULT_TOKEN') }}"
+      environment:
+        VAULT_TOKEN: {{ hcp_vault_token.login.auth.client_token }}
+
 - hosts: localhost
   environment:
-    VAULT_TOKEN: "{{ hcp_vault_token.login.auth.client_token }}"
+    VAULT_TOKEN: {{ hcp_vault_token.login.auth.client_token }}
   tasks:
     - name: enable kv-v1 secret engine on HCP
       hashivault_secret_engine:
@@ -41,7 +49,7 @@
     - debug:
         msg: "{{ lookup('env', 'VAULT_TOKEN') }}"
       environment:
-        VAULT_TOKEN: "{{ hcp_vault_token.login.auth.client_token }}"
+        VAULT_TOKEN: {{ hcp_vault_token.login.auth.client_token }}
 
     - name: 
       set_fact:
