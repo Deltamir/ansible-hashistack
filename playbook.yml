@@ -48,7 +48,7 @@
         msg: "{{ hcp_vault_token }}"
 
     - debug:
-      msg: ansible_facts['hcp_vault_token']
+        msg: ansible_facts['hcp_vault_token']
 
     - debug:
         msg: "{{ lookup('env', 'VAULT_TOKEN') }}"
