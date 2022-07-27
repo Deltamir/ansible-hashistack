@@ -48,13 +48,16 @@
         msg: "{{ hcp_vault_token }}"
 
     - debug:
+      msg: ansible_facts['hcp_vault_token']
+
+    - debug:
         msg: "{{ lookup('env', 'VAULT_TOKEN') }}"
       environment:
         VAULT_TOKEN: "{{ hcp_vault_token }}"
 
 - hosts: localhost
   environment:
-    VAULT_TOKEN: "{{ hcp_vault_token }}"
+    VAULT_TOKEN: ansible_facts['hcp_vault_token']
   tasks:
     - debug:
         msg: "{{ lookup('env', 'VAULT_TOKEN') }}"
