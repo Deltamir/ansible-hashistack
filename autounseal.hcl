@@ -6,6 +6,3 @@ path "transit/decrypt/autounseal" {
    capabilities = [ "update" ]
 }
 
-path "/auth/token/renew-self" {
-   capabilities = [ "update", "create" ]
-}
