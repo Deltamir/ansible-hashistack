@@ -38,7 +38,10 @@
         name: kv
         state: enabled
 
-    - name: retrieve Consul Gossip key from HCP
+    - debug:
+        msg: "{{ lookup('env', 'VAULT_TOKEN') }}"
+
+    - name: 
       set_fact:
         consul_gossip_key: "{{ lookup('community.hashi_vault.vault_kv1_get', 'consul_gossip_key') }}"
       ignore_errors: yes
