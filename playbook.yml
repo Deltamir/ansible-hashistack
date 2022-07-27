@@ -42,14 +42,11 @@
         name: kv
         state: enabled
 
-    - name: Read a kv1 secret from Vault via the remote host with userpass auth
+    - name: retrieve Consul Gossip key from HCP
       community.hashi_vault.vault_kv1_get:
         path: consul_gossip_key
       ignore_errors: yes
       register: consul_gossip_key
-
-    - debug:
-        msg: "{{ consul_gossip_key }}"
 
     - name: Generate a consul encyption key
       local_action:
@@ -79,17 +76,17 @@
       when: consul_gossip_key['failed'] == false
 
     - name: retrieve Nomad Gossip key from HCP
-      set_fact:
-        nomad_gossip_key: "{{ lookup('community.hashi_vault.vault_kv1_get', 'nomad_gossip_key') }}"
+      community.hashi_vault.vault_kv1_get:
+        path: nomad_gossip_key
       ignore_errors: yes
-      register: nomad_failure
+      register: nomad_gossip_key
 
     - name: Generate a nomad encyption key
       local_action:
         module: command
         cmd: openssl rand -base64 32
       register: encryption_key
-      when: nomad_failure['failed'] == true
+      when: nomad_gossip_key['failed'] == true
 
     - name: write nomad gossip encryption key to HCP
       hashivault_secret:
@@ -99,17 +96,17 @@
         verify: no
         version: 1
         mount_point: "kv"
-      when: nomad_failure['failed'] == true
+      when: nomad_gossip_key['failed'] == true
 
     - name: Register Nomad Gossip key if necessary
       set_fact:
         nomad_gossip_key:  "{{ encryption_key.stdout }}" 
-      when: nomad_failure['failed'] == true
+      when: nomad_gossip_key['failed'] == true
 
     - name: Register Nomad Gossip key if necessary
       set_fact:
         nomad_gossip_key:  "{{ nomad_gossip_key.data.key }}"
-      when: nomad_failure['failed'] == false
+      when: nomad_gossip_key['failed'] == false
 
     - name: enable transit secret engine on GCP
       hashivault_secret_engine:
@@ -168,7 +165,7 @@
 
 - hosts: localhost
   environment:
-    VAULT_TOKEN: "{{ hcp_vault_token.login.auth.client_token }}"
+    VAULT_TOKEN: "{{ hcp_vault_token }}"
   tasks:
     - name: init Vault
       hashivault_init:
@@ -189,9 +186,10 @@
       when: vault_init['changed'] == true
 
     - name: retrieve root token from HCP
-      set_fact:
-        root_token: "{{ lookup('community.hashi_vault.vault_kv1_get', 'vault_root_token') }}"
+      community.hashi_vault.vault_kv1_get:
+        path: vault_root_token
       ignore_errors: yes
+      register: root_token
 
     - name: Sleep for 30s if vault was not initialized
       ansible.builtin.wait_for:
