@@ -47,7 +47,7 @@
         engine_mount_point: gitlab/kv
         path: consul_gossip_key
       ignore_errors: yes
-      register: consul_gossip_key
+      register: consul_gossip_result
 
     - debug:
         msg: "{{ consul_gossip_key }}"
@@ -57,7 +57,7 @@
         module: command
         cmd: openssl rand -base64 32
       register: encryption_key
-      when: consul_gossip_key['failed'] == true
+      when: consul_gossip_result['failed'] == true
 
     - name: write consul gossip encryption key to HCP
       hashivault_secret:
@@ -67,31 +67,31 @@
         verify: no
         version: 1
         mount_point: "gitlab/kv"
-      when: consul_gossip_key['failed'] == true
+      when: consul_gossip_result['failed'] == true
 
     - name: Register Consul Gossip key if necessary
       set_fact:
         consul_gossip_key:  "{{ encryption_key.stdout }}" 
-      when: consul_gossip_key['failed'] == true
+      when: consul_gossip_result['failed'] == true
 
     - name: Register Consul Gossip key if necessary
       set_fact:
-        consul_gossip_key:  "{{ consul_gossip_key.data.key }}" 
-      when: consul_gossip_key['failed'] == false
+        consul_gossip_key:  "{{ consul_gossip_result.data.key }}" 
+      when: consul_gossip_result['failed'] == false
 
     - name: retrieve Nomad Gossip key from HCP
       community.hashi_vault.vault_kv1_get:
         engine_mount_point: gitlab/kv
         path: nomad_gossip_key
       ignore_errors: yes
-      register: nomad_gossip_key
+      register: nomad_gossip_result
 
     - name: Generate a nomad encyption key
       local_action:
         module: command
         cmd: openssl rand -base64 32
       register: encryption_key
-      when: nomad_gossip_key['failed'] == true
+      when: nomad_gossip_result['failed'] == true
 
     - name: write nomad gossip encryption key to HCP
       hashivault_secret:
@@ -101,17 +101,17 @@
         verify: no
         version: 1
         mount_point: "gitlab/kv"
-      when: nomad_gossip_key['failed'] == true
+      when: nomad_gossip_result['failed'] == true
 
     - name: Register Nomad Gossip key if necessary
       set_fact:
         nomad_gossip_key:  "{{ encryption_key.stdout }}" 
-      when: nomad_gossip_key['failed'] == true
+      when: nomad_gossip_result['failed'] == true
 
     - name: Register Nomad Gossip key if necessary
       set_fact:
-        nomad_gossip_key:  "{{ nomad_gossip_key.data.key }}"
-      when: nomad_gossip_key['failed'] == false
+        nomad_gossip_key:  "{{ nomad_gossip_result.data.key }}"
+      when: nomad_gossip_result['failed'] == false
 
     - name: enable transit secret engine on GCP
       hashivault_secret_engine:
