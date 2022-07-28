@@ -49,9 +49,6 @@
       ignore_errors: yes
       register: consul_gossip_result
 
-    - debug:
-        msg: "{{ consul_gossip_key }}"
-
     - name: Generate a consul encyption key
       local_action:
         module: command
