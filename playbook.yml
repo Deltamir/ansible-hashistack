@@ -169,11 +169,8 @@
 
 - hosts: localhost
   environment:
-    VAULT_TOKEN: "{{ ansible_facts['hcp_vault_token'] }}"
+    VAULT_TOKEN: "{{ hcp_vault_token }}"
   tasks:
-    - debug:
-        msg: "{{ ansible_facts['hcp_vault_token'] }}"
-
     - name: init Vault
       hashivault_init:
         recovery_shares: 1
