@@ -261,6 +261,14 @@
     consul_gossip_token: "{{ hostvars['localhost'].consul_gossip_token.login.auth.client_token }}"
     nomad_gossip_token: "{{ hostvars['localhost'].nomad_gossip_token.login.auth.client_token }}"
   tasks:
+
+    - name: Ensure jq and dependencies are installed
+      apt:
+        name: '{{ packages }}'
+      vars:
+        packages:
+          - jq
+
     - name: get consul-template checksums
       uri:
         url: "{{ hashicorp_url }}/{{ consul_template_uri }}/{{ consul_template_version }}/consul-template_{{ consul_template_version }}_SHA256SUMS"
