@@ -29,7 +29,7 @@ done
 
 echo "==> Writing next gossip encryption key to vault..."
 
-curl  --header "X-Vault-Token: {{ root_token }}" --request POST --data "{\"key\": \"$(consul keygen)\", \"ttl\": \"{{ consul_template_gossip_key_ttl }}\"}" -k  http://{{ hcp_vault_address }}:8200/v1/gitlab/kv/consul_gossip_key
+curl  --header "X-Vault-Token: {{ consul_gossip_token }}" --request POST --data "{\"key\": \"$(consul keygen)\", \"ttl\": \"{{ consul_template_gossip_key_ttl }}\"}" -k  http://{{ hcp_vault_address }}:8200/v1/gitlab/kv/consul_gossip_key
 
 echo "==> Done at $(date). Waiting for next ttl."
 
