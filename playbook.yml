@@ -129,6 +129,28 @@
         policies: ["autounseal", "default"]
         orphan: true
       register: autounseal_token
+
+    - name: Create consul_gossip policy on HCP
+      hashivault_policy:
+        name: consul_gossip
+        rules_file : consul_gossip-policy.hcl 
+
+    - name: Create a consul_gossip_token from HCP
+      community.hashi_vault.vault_token_create:
+        policies: ["consul_gossip", "default"]
+        orphan: true
+      register: consul_gossip_token
+
+    - name: Create nomad_gossip policy on HCP
+      hashivault_policy:
+        name: nomad_gossip
+        rules_file : nomad_gossip-policy.hcl
+
+    - name: Create a nomad_gossip_token from HCP
+      community.hashi_vault.vault_token_create:
+        policies: ["nomad_gossip", "default"]
+        orphan: true
+      register: nomad_gossip_token
       
 
 - name: Assemble Consul cluster
@@ -159,8 +181,6 @@
 
 - name: Install Vault cluster
   hosts: vault_instances
-  vars:
-    vault_awskms_key_id: "{{ hostvars['localhost'].kms_key.key_arn }}"
   any_errors_fatal: true
   become: true
   become_user: root
@@ -237,6 +257,9 @@
 
 
 - hosts: consul_instances
+  vars:
+    consul_gossip_token: "{{ hostvars['localhost'].consul_gossip_token.login.auth.client_token }}"
+    nomad_gossip_token: "{{ hostvars['localhost'].nomad_gossip_token.login.auth.client_token }}"
   tasks:
     - name: get consul-template checksums
       uri:

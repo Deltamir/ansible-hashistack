@@ -1,13 +1,14 @@
 vault {
-  address      = "http://{{ inventory_hostname }}:8200"
-  token        = "{{ root_token }}"
+  address      = "http://{{ hcp_vault_address }}:8200"
+  token        = "{{ nomad_gossip_token }}"
   unwrap_token = false
-  renew_token  = false
+  renew_token  = true
+  namespace    = admin
 }
 
 template {
   source      = "/opt/nomad/templates/gossip.key.tpl"
-  destination = "/opt/nomad/gossip/gossip.key"
+  destination = "/opt/nomad/templates/gossip.key"
   perms       = 0700
   command     = "/opt/nomad_rotate_key.sh"
 }
