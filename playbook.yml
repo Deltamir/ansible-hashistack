@@ -309,7 +309,6 @@
       template:
         src: nomad_gossip_rotation.hcl.j2
         dest: /opt/nomad/templates/nomad_gossip_rotation.hcl
-        owner: nomad
         mode: '0644'
       become: yes
     
@@ -325,8 +324,6 @@
       copy:
         src: nomad_gossip.key.tpl
         dest: /opt/nomad/templates/gossip.key.tpl
-        owner: nomad
-        group: nomad
         mode: '0644'
       become: yes
 
@@ -335,7 +332,6 @@
         src: consul_rotate_key.sh.j2
         dest: /opt/consul_rotate_key.sh
         owner: consul
-        group: consul
         mode: '0744'
       become: yes
 
@@ -343,7 +339,5 @@
       template:
         src: nomad_rotate_key.sh.j2
         dest: /opt/nomad_rotate_key.sh
-        owner: nomad
-        group: nomad
         mode: '0744'
       become: yes
