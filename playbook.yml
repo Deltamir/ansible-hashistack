@@ -39,11 +39,12 @@
   tasks:
     - name: enable kv-v1 secret engine on HCP
       hashivault_secret_engine:
-        name: kv
-        state: enabled
+        backend: kv
+        name: gitlab/kv
 
     - name: retrieve Consul Gossip key from HCP
       community.hashi_vault.vault_kv1_get:
+        engine_mount_point: gitlab/kv
         path: consul_gossip_key
       ignore_errors: yes
       register: consul_gossip_key
@@ -62,7 +63,7 @@
           key: "{{ encryption_key.stdout }}"
         verify: no
         version: 1
-        mount_point: "kv"
+        mount_point: "gitlab/kv"
       when: consul_gossip_key['failed'] == true
 
     - name: Register Consul Gossip key if necessary
@@ -77,6 +78,7 @@
 
     - name: retrieve Nomad Gossip key from HCP
       community.hashi_vault.vault_kv1_get:
+        engine_mount_point: gitlab/kv
         path: nomad_gossip_key
       ignore_errors: yes
       register: nomad_gossip_key
@@ -95,7 +97,7 @@
           key: "{{ encryption_key.stdout }}"
         verify: no
         version: 1
-        mount_point: "kv"
+        mount_point: "gitlab/kv"
       when: nomad_gossip_key['failed'] == true
 
     - name: Register Nomad Gossip key if necessary
@@ -110,12 +112,12 @@
 
     - name: enable transit secret engine on GCP
       hashivault_secret_engine:
-        name: transit
-        state: enabled
+        backend: transit
+        name: gitlab/transit
         
     - name: create autounseal secret on HCP
       community.hashi_vault.vault_write:
-        path: transit/keys/autounseal
+        path: gitlab/transit/keys/autounseal
 
     - name: Create autounseal policy on HCP
       hashivault_policy:
@@ -184,11 +186,12 @@
           key: "{{ vault_init.root_token }}"
         verify: no
         version: 1
-        mount_point: "kv"
+        mount_point: "gitlab/kv"
       when: vault_init['changed'] == true
 
     - name: retrieve root token from HCP
       community.hashi_vault.vault_kv1_get:
+        engine_mount_point: gitlab/kv
         path: vault_root_token
       ignore_errors: yes
       register: root_token

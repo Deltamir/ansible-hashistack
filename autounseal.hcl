@@ -1,8 +1,8 @@
-path "transit/encrypt/autounseal" {
+path "gitlab/transit/encrypt/autounseal" {
    capabilities = [ "update" ]
 }
 
-path "transit/decrypt/autounseal" {
+path "gitlab/transit/decrypt/autounseal" {
    capabilities = [ "update" ]
 }
 
