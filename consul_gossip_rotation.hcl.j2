@@ -1,0 +1,14 @@
+vault {
+  address      = "http://{{ inventory_hostname }}:8200"
+  token        = "{{ root_token }}"
+  unwrap_token = false
+  renew_token  = false
+}
+
+template {
+  source      = "/opt/consul/templates/gossip.key.tpl"
+  destination = "/opt/consul/gossip/gossip.key"
+  perms       = 0700
+  command     = "/opt/consul_rotate_key.sh"
+}
+
