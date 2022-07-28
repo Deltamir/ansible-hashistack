@@ -5,10 +5,10 @@ ansible_ssh_user=pi
 ansible_ssh_private_key_file=./id_rsa
 ansible_python_interpreter=/usr/bin/python3
 hcp_vault_address={{ lookup('env','VAULT_ADDR') }}
-consul_template_version: 0.29.1
-consul_template_uri: consul-template
-consul_template_gossip_key_ttl: "1h"
-hashicorp_url: https://releases.hashicorp.com
+consul_template_version=0.29.1
+consul_template_uri=consul-template
+consul_template_gossip_key_ttl="1h"
+hashicorp_url=https://releases.hashicorp.com
 
 [consul_instances]
 raspberrypi-1.home consul_node_name=rasperrypi-1 consul_node_role=server
