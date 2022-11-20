@@ -20,3 +20,7 @@ run:
     - ansible-playbook playbook.yml -i inventory
   tags:
     - paquerettes
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
