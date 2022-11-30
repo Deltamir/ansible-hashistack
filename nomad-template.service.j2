@@ -1,0 +1,11 @@
+[Unit]
+Description=nomad-template
+Requires=network-online.target
+After=network-online.target consul.service vault.service
+
+[Service]
+Restart=on-failure
+ExecStart=/usr/bin/consul-template -config=/opt/nomad/templates/nomad_gossip_rotation.hcl
+
+[Install]
+WantedBy=multi-user.target

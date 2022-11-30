@@ -21,18 +21,6 @@
           - hvac
       become: true
 
-    - name: Authenticate with JWT against HCP
-      community.hashi_vault.vault_login:
-        auth_method: jwt
-        jwt: "{{ lookup('env', 'CI_JOB_JWT') }}"
-        role_id: gitlab-jwt
-        mount_point: gitlab-jwt
-      register: hcp_vault_token
-
-    - name: Set fact for JWT
-      set_fact:
-        hcp_vault_token: "{{ hcp_vault_token.login.auth.client_token }}"
-
 - hosts: localhost
   environment:
     VAULT_TOKEN: "{{ hcp_vault_token }}"
@@ -61,6 +49,7 @@
         secret: "consul_gossip_key"
         data:
           key: "{{ encryption_key.stdout }}"
+          ttl: "1h"
         verify: no
         version: 1
         mount_point: "gitlab/kv"
@@ -95,6 +84,7 @@
         secret: "nomad_gossip_key"
         data:
           key: "{{ encryption_key.stdout }}"
+          ttl: "1h"
         verify: no
         version: 1
         mount_point: "gitlab/kv"
@@ -268,6 +258,7 @@
       vars:
         packages:
           - jq
+      become: true
 
     - name: get consul-template checksums
       uri:
@@ -335,7 +326,7 @@
         mode: '0644'
       become: yes
 
-    - name: Copy consul rotate_key script to temp
+    - name: Copy consul rotate_key script
       template:
         src: consul_rotate_key.sh.j2
         dest: /opt/consul_rotate_key.sh
@@ -343,9 +334,49 @@
         mode: '0744'
       become: yes
 
-    - name: Copy nomad rotate_key script to temp
+    - name: Copy nomad rotate_key script
       template:
         src: nomad_rotate_key.sh.j2
         dest: /opt/nomad_rotate_key.sh
         mode: '0744'
       become: yes
+
+    - name: Copy consul-template service file
+      template:
+        src: consul-template.service.j2
+        dest: /etc/systemd/system/consul-template.service
+        owner: consul
+        mode: '0744'
+      become: yes
+
+    - name: Copy nomad-template service file
+      template:
+        src: nomad-template.service.j2
+        dest: /etc/systemd/system/nomad-template.service
+        mode: '0744'
+      become: yes
+
+    - name: reload systemd
+      systemd:
+        daemon_reload: yes
+      become: yes
+
+    - name: Ensure nomad-template is in running state
+      service:
+        name: nomad-template
+        state: started
+      become: yes
+      register: service_details_nomad
+      until: service_details_nomad.status.ActiveState == "active"
+      retries: 20
+      delay: 3
+
+    - name: Ensure consul-template is in running state
+      service:
+        name: consul-template
+        state: started
+      become: yes
+      register: service_details_consul
+      until: service_details_consul.status.ActiveState == "active"
+      retries: 20
+      delay: 3
