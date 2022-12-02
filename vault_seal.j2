@@ -1,8 +1,0 @@
-seal "transit" {
-  address = "{{ hcp_vault_address }}"
-  disable_renewal = "false"
-  key_name = "autounseal"
-  mount_path = "gitlab/transit/"
-  token = "{{ autounseal_token }}"
-  namespace = "admin"
-}

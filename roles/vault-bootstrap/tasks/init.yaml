@@ -1,0 +1,362 @@
+---
+- name: enable kv-v1 secret engine
+  hashivault_secret_engine:
+    backend: kv
+    name: hashistack/kv
+    url: "{{ global_vault_address }}"
+    state: enabled
+    authtype: token
+    token: "{{ global_vault_token }}"
+    verify: no
+  run_once: yes
+
+- name: retrieve Consul Gossip key if exist and ignore error if not
+  community.hashi_vault.vault_kv1_get:
+    engine_mount_point: hashistack/kv
+    path: consul_gossip_key
+    url: "{{ global_vault_address }}"
+    auth_method: token
+    token: "{{ global_vault_token }}"
+  ignore_errors: yes
+  register: consul_gossip_result
+  run_once: yes
+
+- name: Generate a consul encyption key
+  local_action:
+    module: command
+    cmd: openssl rand -base64 32
+  register: encryption_key
+  when: consul_gossip_result['failed'] == true
+  run_once: yes
+
+- name: write consul gossip encryption key
+  hashivault_secret:
+    secret: "consul_gossip_key"
+    data:
+      key: "{{ encryption_key.stdout }}"
+      ttl: "1h"
+    verify: no
+    version: 1
+    mount_point: "hashistack/kv"
+    url: "{{ global_vault_address }}"
+    authtype: token
+    token: "{{ global_vault_token }}"
+  when: consul_gossip_result['failed'] == true
+  run_once: yes
+
+- name: Register Consul Gossip key if necessary (from stdout)
+  set_fact:
+    consul_gossip_key:  "{{ encryption_key.stdout }}"
+  when: consul_gossip_result['failed'] == true
+  run_once: yes
+
+- name: Register Consul Gossip key if necessary (from vault)
+  set_fact:
+    consul_gossip_key:  "{{ consul_gossip_result.data.key }}"
+  when: consul_gossip_result['failed'] == false
+  run_once: yes
+
+- name: retrieve Nomad Gossip key if exist and ignore error if not
+  community.hashi_vault.vault_kv1_get:
+    engine_mount_point: hashistack/kv
+    path: nomad_gossip_key
+    url: "{{ global_vault_address }}"
+    auth_method: token
+    token: "{{ global_vault_token }}"
+  ignore_errors: yes
+  register: nomad_gossip_result
+  run_once: yes
+
+- name: Generate a nomad encyption key
+  local_action:
+    module: command
+    cmd: openssl rand -base64 32
+  register: encryption_key
+  when: nomad_gossip_result['failed'] == true
+  run_once: yes
+
+- name: write nomad gossip encryption key
+  hashivault_secret:
+    secret: "nomad_gossip_key"
+    data:
+      key: "{{ encryption_key.stdout }}"
+      ttl: "1h"
+    verify: no
+    version: 1
+    mount_point: "hashistack/kv"
+    url: "{{ global_vault_address }}"
+    authtype: token
+    token: "{{ global_vault_token }}"
+  when: nomad_gossip_result['failed'] == true
+  run_once: yes
+
+- name: Register Nomad Gossip key if necessary (from stdout)
+  set_fact:
+    nomad_gossip_key:  "{{ encryption_key.stdout }}"
+  when: nomad_gossip_result['failed'] == true
+  run_once: yes
+
+- name: Register Nomad Gossip key if necessary (from vault)
+  set_fact:
+    nomad_gossip_key:  "{{ nomad_gossip_result.data.key }}"
+  when: nomad_gossip_result['failed'] == false
+  run_once: yes
+
+- name: enable transit secret engine
+  hashivault_secret_engine:
+    backend: transit
+    name: hashistack/transit
+    url: "{{ global_vault_address }}"
+    state: enabled
+    authtype: token
+    token: "{{ global_vault_token }}"
+    verify: no
+  run_once: yes
+
+- name: create autounseal secret
+  community.hashi_vault.vault_write:
+    path: hashistack/transit/keys/autounseal
+    url: "{{ global_vault_address }}"
+    auth_method: token
+    token: "{{ global_vault_token }}"
+  run_once: yes
+
+
+- name: Create autounseal policy
+  hashivault_policy:
+    name: autounseal
+    rules_file : "{{ role_path }}/files/autounseal.hcl"
+    url: "{{ global_vault_address }}"
+    state: present
+    authtype: token
+    token: "{{ global_vault_token }}"
+    verify: no
+  run_once: yes
+
+- name: Create a autounseal token
+  community.hashi_vault.vault_token_create:
+    policies: ["autounseal", "default"]
+    orphan: true
+    url: "{{ global_vault_address }}"
+    auth_method: token
+    token: "{{ global_vault_token }}"
+  register: autounseal_token
+  run_once: yes
+
+- name: Create consul_gossip policy
+  hashivault_policy:
+    name: consul_gossip
+    rules_file : "{{ role_path }}/files/consul_gossip-policy.hcl"
+    url: "{{ global_vault_address }}"
+    state: present
+    authtype: token
+    token: "{{ global_vault_token }}"
+    verify: no
+  run_once: yes
+
+- name: Create a consul_gossip_token
+  community.hashi_vault.vault_token_create:
+    policies: ["consul_gossip", "default"]
+    orphan: true
+    url: "{{ global_vault_address }}"
+    auth_method: token
+    token: "{{ global_vault_token }}"
+  register: consul_gossip_token
+  run_once: yes
+
+- name: Create nomad_gossip policy
+  hashivault_policy:
+    name: nomad_gossip
+    rules_file : "{{ role_path }}/files/nomad_gossip-policy.hcl"
+    url: "{{ global_vault_address }}"
+    state: present
+    authtype: token
+    token: "{{ global_vault_token }}"
+    verify: no
+  run_once: yes
+
+- name: Create a nomad_gossip_token
+  community.hashi_vault.vault_token_create:
+    policies: ["nomad_gossip", "default"]
+    orphan: true
+    url: "{{ global_vault_address }}"
+    auth_method: token
+    token: "{{ global_vault_token }}"
+  register: nomad_gossip_token
+  run_once: yes
+
+- name: enable CA pki secret engine
+  hashivault_secret_engine:
+    name: hashistack/pki
+    backend: pki
+    url: "{{ global_vault_address }}"
+    state: enabled
+    authtype: token
+    token: "{{ global_vault_token }}"
+    verify: no
+  run_once: yes
+
+- name: generate root CA
+  hashivault_pki_ca:
+    url: "{{ global_vault_address }}"
+    mount_point: hashistack/pki
+    common_name: "global"
+    state: present
+    authtype: token
+    token: "{{ global_vault_token }}"
+    verify: no
+    kind: root
+  run_once: yes
+
+- name: configure CA and CRL URLs
+  hashivault_pki_url:
+    url: "{{ global_vault_address }}"
+    mount_point: hashistack/pki
+    authtype: token
+    token: "{{ global_vault_token }}"
+    verify: no
+    issuing_certificates:
+      - "{{ global_vault_address }}/v1/pki/ca"
+    crl_distribution_points:
+      - "{{ global_vault_address }}/v1/pki/crl"
+  run_once: yes
+
+- name: enable consul intermediate pki secret engine
+  hashivault_secret_engine:
+    name: hashistack/pki_int_consul
+    backend: pki
+    url: "{{ global_vault_address }}"
+    state: enabled
+    authtype: token
+    token: "{{ global_vault_token }}"
+    verify: no
+  run_once: yes
+
+- name: generate consul intermediate CA CSR
+  hashivault_pki_ca:
+    url: "{{ global_vault_address }}"
+    common_name: "home.consul Intermediate Authority"
+    state: present
+    authtype: token
+    token: "{{ global_vault_token }}"
+    verify: no
+    kind: intermediate
+    config:
+      max_ttl_lease: 43800h
+    mount_point: hashistack/pki_int_consul
+  run_once: yes
+  register: csr
+
+- name: sign consul CSR
+  hashivault_pki_cert_sign:
+    common_name: "home.consul Intermediate Authority"
+    url: "{{ global_vault_address }}"
+    mount_point: hashistack/pki
+    authtype: token
+    token: "{{ global_vault_token }}"
+    verify: no
+    csr: "{{ csr['data']['csr'] }}"
+    type: intermediate
+    extra_params:
+      format: pem_bundle
+      ttl: 43800h
+  run_once: yes
+  register: certificate
+  when: csr.changed == true
+
+- name: write consul signed certificate
+  hashivault_pki_set_signed:
+    url: "{{ global_vault_address }}"
+    authtype: token
+    token: "{{ global_vault_token }}"
+    verify: no
+    certificate: "{{ certificate['data']['certificate'] }}"
+    mount_point: hashistack/pki_int_consul
+  run_once: yes
+  when: csr.changed == true
+
+- name: create consul role
+  hashivault_pki_role:
+    url: "{{ global_vault_address }}"
+    authtype: token
+    token: "{{ global_vault_token }}"
+    verify: no
+    name: consul-home
+    state: present
+    mount_point: hashistack/pki_int_consul
+    config:
+      allow_subdomains: yes
+      allowed_domains: [ "home.consul" ]
+      generate_lease: yes
+      max_ttl: "{{ consul_template_cert_ttl }}"
+  run_once: yes
+
+- name: enable nomad intermediate pki secret engine
+  hashivault_secret_engine:
+    name: hashistack/pki_int_nomad
+    backend: pki
+    url: "{{ global_vault_address }}"
+    state: enabled
+    authtype: token
+    token: "{{ global_vault_token }}"
+    verify: no
+  run_once: yes
+
+- name: generate nomad intermediate CA CSR
+  hashivault_pki_ca:
+    url: "{{ global_vault_address }}"
+    common_name: "global.nomad Intermediate Authority"
+    state: present
+    authtype: token
+    token: "{{ global_vault_token }}"
+    verify: no
+    kind: intermediate
+    config:
+      max_ttl_lease: 43800h
+    mount_point: hashistack/pki_int_nomad
+  run_once: yes
+  register: csr
+
+- name: sign nomad CSR
+  hashivault_pki_cert_sign:
+    common_name: "home.nomad Intermediate Authority"
+    url: "{{ global_vault_address }}"
+    mount_point: hashistack/pki
+    authtype: token
+    token: "{{ global_vault_token }}"
+    verify: no
+    csr: "{{ csr['data']['csr'] }}"
+    type: intermediate
+    extra_params:
+      format: pem_bundle
+      ttl: 43800h
+  run_once: yes
+  register: certificate
+  when: csr.changed == true
+
+- name: write nomad signed certificate
+  hashivault_pki_set_signed:
+    url: "{{ global_vault_address }}"
+    authtype: token
+    token: "{{ global_vault_token }}"
+    verify: no
+    certificate: "{{ certificate['data']['certificate'] }}"
+    mount_point: hashistack/pki_int_nomad
+  run_once: yes
+  when: csr.changed == true
+
+- name: create consul role
+  hashivault_pki_role:
+    url: "{{ global_vault_address }}"
+    authtype: token
+    token: "{{ global_vault_token }}"
+    verify: no
+    name: nomad-home
+    state: present
+    mount_point: hashistack/pki_int_nomad
+    config:
+      allow_subdomains: yes
+      allowed_domains: [ "global.nomad" ]
+      generate_lease: yes
+      max_ttl: "{{ consul_template_cert_ttl }}"
+  run_once: yes

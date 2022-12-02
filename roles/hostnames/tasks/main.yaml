@@ -1,0 +1,11 @@
+---
+
+- name: Set a hostname
+  hostname:
+    name: "{{ hostvars[item].name }}"
+  when: "{{ inventory_hostname == item }}"
+  with_items: "{{ groups['all'] }}"
+  become: yes
+  notify:
+    - reboot server
+

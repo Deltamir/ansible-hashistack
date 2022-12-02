@@ -165,7 +165,7 @@
 
     - name: Copy vault seal config script 
       template:
-        src: vault_seal.j2
+        src: roles/ansible-vault-autounseal/templates/vault_seal.j2
         dest: /etc/vault.d/vault_seal.hcl
       become: true
 

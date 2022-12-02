@@ -1,0 +1,12 @@
+---
+
+- name: Bootstrap the global Vault
+  import_tasks: global-vault-bootstrap.yml
+
+- name: Assemble consul cluster
+  import_role:
+    name: ansible-consul
+
+- name: Assemble vault cluster
+  import_role:
+    name: ansible-vault

@@ -1,0 +1,6 @@
+---
+
+#- name: import conf update task
+#  import_tasks: configuration.yaml
+- name: import init vault task
+  import_tasks: init.yaml

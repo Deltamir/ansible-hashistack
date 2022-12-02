@@ -1,0 +1,11 @@
+---
+
+- name: reload nomad
+  systemd:
+    name: nomad
+    state: reloaded
+    enabled: yes
+  become: yes
+
+- name: reload consul
+  command: consul reload

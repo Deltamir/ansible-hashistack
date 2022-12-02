@@ -1,0 +1,24 @@
+consul_template_version: 0.29.1
+consul_template_uri: consul-template
+consul_template_gossip_key_ttl: "1h"
+consul_template_cert_ttl: "24h"
+hashicorp_url: https://releases.hashicorp.com
+
+consul_client_address: 0.0.0.0
+consul_connect_enabled: true
+consul_encrypt_enable: true
+consul_raft_protocol: 3
+consul_bootstrap_expect: true
+consul_bootstrap_expect_value: "{{ groups['consul_instances'] | length }}"
+consul_dnsmasq_enable: true
+
+vault_backend: consul
+vault_address: 0.0.0.0
+vault_use_config_path: true
+vault_consul: 127.0.0.1:8500
+vault_install_remotely: true
+vault_transit: true
+vault_transit_mount_path: hashistack/transit
+vault_transit_address: "{{ global_vault_address }}"
+vault_transit_key_name: autounseal
+vault_transit_tls_skip_verify: true
