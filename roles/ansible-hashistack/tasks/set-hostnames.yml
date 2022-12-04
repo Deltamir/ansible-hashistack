@@ -2,7 +2,7 @@
 
 - name: Set a hostname
   hostname:
-    name: "{{ hostvars[item].name }}"
+    name: "{{ hostvars[item].node_name }}"
   when: "{{ inventory_hostname == item }}"
   with_items: "{{ groups['all'] }}"
   become: yes

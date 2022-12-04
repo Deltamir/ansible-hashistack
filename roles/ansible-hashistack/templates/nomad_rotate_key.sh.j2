@@ -11,25 +11,25 @@ export NOMAD_HTTP_ADDR="http://nomad.service.consul:4646"
 NEW_KEY=`cat /opt/nomad/templates/gossip.key | sed -e '/^$/d'`
 
 # Install the key
-nomad operator keyring -install ${NEW_KEY}
+nomad operator gossip keyring install ${NEW_KEY}
 
 # Set as primary
-nomad operator keyring -use ${NEW_KEY}
+nomad operator gossip keyring use ${NEW_KEY}
 
 # Retrieve all keys used by Consul
 
-KEYS=`nomad operator keyring -list | tail -n +3 | sort | uniq`
+KEYS=`nomad operator gossip keyring list | tail -n +3 | sort | uniq`
 
 for i in `echo $KEYS`; do
   if [ $i != ${NEW_KEY} ]; then
-    nomad operator keyring -remove $i
+    nomad operator gossip keyring remove $i
   fi
 done
 
 
 echo "==> Writing next gossip encryption key to vault..."
 
-curl  --header "X-Vault-Token: {{ nomad_gossip_token }}" --header "X-Vault-Namespace: admin" --request POST --data "{\"key\": \"$(nomad operator keygen)\", \"ttl\": \"{{ consul_template_gossip_key_ttl }}\"}" -k  {{ hcp_vault_address }}/v1/gitlab/kv/nomad_gossip_key
+curl  --header "X-Vault-Token: {{ nomad_gossip_token }}" --request POST --data "{\"key\": \"$(nomad operator gossip keyring generate)\", \"ttl\": \"{{ consul_template_gossip_key_ttl }}\"}" -k  {{ global_vault_address }}/v1/hashistack/kv/nomad_gossip_key
 
 echo "==> Done at $(date). Waiting for next ttl."
 

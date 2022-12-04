@@ -1,5 +1,8 @@
 ---
 
+- name: Set hostnames
+  import_tasks: set-hostnames.yml
+
 - name: Bootstrap the global Vault
   import_tasks: global-vault-bootstrap.yml
 
@@ -10,3 +13,16 @@
 - name: Assemble vault cluster
   import_role:
     name: ansible-vault
+
+- name: Initialize the global Vault
+  import_tasks: vault-init.yml
+
+- name: Create and retrieve nomad-server policy token
+  import_tasks: create-nomad-token.yml
+
+- name: Assemble nomad cluster
+  import_role:
+    name: ansible-nomad
+
+- name: Create and retrieve nomad-server policy token
+  import_tasks: configure-consul-template.yml

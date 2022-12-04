@@ -1,6 +1,6 @@
 vault {
-  address      = "{{ hcp_vault_address }}"
-  token        = "{{ nomad_gossip_token }}"
+  address      = "{{ global_vault_address }}"
+  token        = "{{ nomad_gossip_token }}"
   unwrap_token = false
   renew_token  = true
 }

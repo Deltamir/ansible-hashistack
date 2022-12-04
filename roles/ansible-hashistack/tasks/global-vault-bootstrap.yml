@@ -37,7 +37,7 @@
     secret: "consul_gossip_key"
     data:
       key: "{{ encryption_key.stdout }}"
-      ttl: "1h"
+      ttl: "{{ consul_template_gossip_key_ttl }}"
     verify: no
     version: 1
     mount_point: "hashistack/kv"
@@ -88,7 +88,7 @@
     secret: "nomad_gossip_key"
     data:
       key: "{{ encryption_key.stdout }}"
-      ttl: "1h"
+      ttl: "{{ consul_template_gossip_key_ttl }}"
     verify: no
     version: 1
     mount_point: "hashistack/kv"
@@ -101,14 +101,14 @@
 
 - name: Register Nomad Gossip key if necessary (from stdout)
   set_fact:
-    nomad_gossip_key:  "{{ encryption_key.stdout }}"
+    nomad_encrypt:  "{{ encryption_key.stdout }}"
   when: nomad_gossip_result['failed'] == true
   run_once: yes
   delegate_to: localhost
 
 - name: Register Nomad Gossip key if necessary (from vault)
   set_fact:
-    nomad_gossip_key:  "{{ nomad_gossip_result.data.key }}"
+    nomad_encrypt:  "{{ nomad_gossip_result.data.key }}"
   when: nomad_gossip_result['failed'] == false
   run_once: yes
   delegate_to: localhost
@@ -182,7 +182,13 @@
     url: "{{ global_vault_address }}"
     auth_method: token
     token: "{{ global_vault_token }}"
-  register: consul_gossip_token
+  register: consul_gossip_token_wrapped
+  run_once: yes
+  delegate_to: localhost
+
+- name: Register consul_gossip_token token
+  set_fact:
+    consul_gossip_token:  "{{ consul_gossip_token_wrapped.login.auth.client_token }}"
   run_once: yes
   delegate_to: localhost
 
@@ -205,7 +211,13 @@
     url: "{{ global_vault_address }}"
     auth_method: token
     token: "{{ global_vault_token }}"
-  register: nomad_gossip_token
+  register: nomad_gossip_token_wrapped
+  run_once: yes
+  delegate_to: localhost
+
+- name: Register nomad_gossip_token token
+  set_fact:
+    nomad_gossip_token:  "{{ nomad_gossip_token_wrapped.login.auth.client_token }}"
   run_once: yes
   delegate_to: localhost
 

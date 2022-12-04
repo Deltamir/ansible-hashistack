@@ -1,4 +1,0 @@
-[all:vars]
-global_vault_address={{ lookup('env','VAULT_ADDR') }}
-global_vault_token="hvs.Joic5nYOKZM3bpoBk5MdiXT6"
-consul_template_cert_ttl="24h"

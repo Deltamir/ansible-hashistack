@@ -1,9 +1,0 @@
----
-
-- name: Assemble Hashistack cluster
-  hosts: consul_instances
-  any_errors_fatal: true
-  become: true
-  become_user: root
-  roles:
-    - {role: ansible-hashistack}

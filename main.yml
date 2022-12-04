@@ -1,55 +1,31 @@
 ---
+- hosts: localhost
+  tasks:
+    - name: Ensure dependencies are installed on localhost
+      apt:
+        name: '{{ packages }}'
+      vars:
+        packages:
+          - python3
+          - python3-pip
+          - python3-setuptools
+          - python3-virtualenv
+      become: true
 
-#- name: Ensure localhost got the dependencies to run the playbook
-#  hosts: localhost
-#  tasks:
-#    - name: Ensure python and dependencies are installed
-#      apt:
-#        name: '{{ packages }}'
-#      vars:
-#        packages:
-#          - python3
-#          - python3-pip
-#          - python3-setuptools
-#          - python3-virtualenv
-#      become: true
-#
-#    - name: Ensure python libraries are installed
-#      pip:
-#        name: '{{ packages }}'
-#        executable: pip3
-#      vars:
-#        packages:
-#          - boto3
-#          - hvac
-#      become: true
+    - name: Ensure python libraries are installed on localhost
+      pip:
+        name: '{{ packages }}'
+        executable: pip3
+      vars:
+        packages:
+          - boto3
+          - hvac
+      become: true
 
-- name: Bootstrap the global vault
-  hosts: localhost
-  roles:
-    - vault-bootstrap
-
-- name: Assemble Consul cluster
-  hosts: consul_instances
-  vars:
-    consul_raw_key: "{{ hostvars['localhost'].consul_gossip_key }}"
+- name: Assemble Hashistack cluster
+  hosts: instances
   any_errors_fatal: true
   become: true
   become_user: root
   roles:
-    - {role: ansible-consul}
-
-- name: Install Vault cluster
-  hosts: vault_instances
-  any_errors_fatal: true
-  become: true
-  become_user: root
-  vars:
-    vault_transit: true
-    vault_transit_mount_path: hashistack/transit
-    vault_transit_token: "{{ hostvars['localhost'].autounseal_token.login.auth.client_token }}"
-    vault_transit_address: "{{ global_vault_address }}"
-    vault_transit_key_name: autounseal
-    vault_transit_tls_skip_verify: true
-  roles:
-    - {role: ansible-vault}
+    - {role: ansible-hashistack}

@@ -1,7 +1,0 @@
-consul_client_address: 0.0.0.0
-consul_connect_enabled: true
-consul_encrypt_enable: true
-consul_raft_protocol: 3
-consul_bootstrap_expect: true
-consul_bootstrap_expect_value: "{{ groups['consul_instances'] | length }}"
-consul_dnsmasq_enable: true
