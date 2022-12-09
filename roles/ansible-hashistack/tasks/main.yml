@@ -1,10 +1,16 @@
 ---
 
 - name: Set hostnames
-  import_tasks: set-hostnames.yml
+  import_tasks: set-hostnames-and-ntp.yml
 
 - name: Bootstrap the global Vault
   import_tasks: global-vault-bootstrap.yml
+
+- name: Bootstrap the global Vault
+  import_tasks: register-ca.yml
+
+- name: Push cert to nodes
+  import_tasks: push-cert.yml
 
 - name: Assemble consul cluster
   import_role:

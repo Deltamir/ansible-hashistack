@@ -47,10 +47,10 @@
     state: directory
   become: true
 
-- name: Copy consul-template consul gossip rotation conf file
+- name: Copy consul-template consul rotation conf file
   template:
-    src: consul_gossip_rotation.hcl.j2
-    dest: /opt/consul/templates/consul_gossip_rotation.hcl
+    src: consul_rotation.hcl.j2
+    dest: /opt/consul/templates/consul_rotation.hcl
     owner: consul
     mode: '0644'
   become: yes
@@ -73,6 +73,26 @@
   become: yes
   notify: "restart consul-template service"
 
+- name: Copy consul consul_agent_key tpl file to temp
+  template:
+    src: consul_server.key.tpl.j2
+    dest: /opt/consul/templates/consul_server.key.tpl
+    owner: consul
+    group: consul
+    mode: '0644'
+  become: yes
+  notify: "restart consul-template service"
+
+- name: Copy consul consul_agent_crt tpl file to temp
+  template:
+    src: consul_server.crt.tpl.j2
+    dest: /opt/consul/templates/consul_server.crt.tpl
+    owner: consul
+    group: consul
+    mode: '0644'
+  become: yes
+  notify: "restart consul-template service"
+
 - name: Copy nomad gossip_key tpl file to temp
   copy:
     src: nomad_gossip.key.tpl
@@ -85,6 +105,15 @@
   template:
     src: consul_rotate_key.sh.j2
     dest: /opt/consul_rotate_key.sh
+    owner: consul
+    mode: '0744'
+  become: yes
+  notify: "restart consul-template service"
+
+- name: Copy consul reolad script
+  template:
+    src: consul_reload.sh.j2
+    dest: /opt/consul_reload.sh
     owner: consul
     mode: '0744'
   become: yes

@@ -1,26 +1,26 @@
 ---
-- hosts: localhost
-  tasks:
-    - name: Ensure dependencies are installed on localhost
-      apt:
-        name: '{{ packages }}'
-      vars:
-        packages:
-          - python3
-          - python3-pip
-          - python3-setuptools
-          - python3-virtualenv
-      become: true
-
-    - name: Ensure python libraries are installed on localhost
-      pip:
-        name: '{{ packages }}'
-        executable: pip3
-      vars:
-        packages:
-          - boto3
-          - hvac
-      become: true
+#- hosts: localhost
+#  tasks:
+#    - name: Ensure dependencies are installed on localhost
+#      apt:
+#        name: '{{ packages }}'
+#      vars:
+#        packages:
+#          - python3
+#          - python3-pip
+#          - python3-setuptools
+#          - python3-virtualenv
+#      become: true
+#
+#    - name: Ensure python libraries are installed on localhost
+#      pip:
+#        name: '{{ packages }}'
+#        executable: pip3
+#      vars:
+#        packages:
+#          - boto3
+#          - hvac
+#      become: true
 
 - name: Assemble Hashistack cluster
   hosts: instances

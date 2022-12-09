@@ -1,0 +1,27 @@
+vault {
+  address      = "{{ global_vault_address }}"
+  token        = "{{ consul_token }}"
+  unwrap_token = false
+  renew_token  = true
+}
+
+template {
+  source      = "/opt/consul/templates/gossip.key.tpl"
+  destination = "/opt/consul/templates/gossip.key"
+  perms       = 0700
+  command     = "/opt/consul_rotate_key.sh"
+}
+
+template {
+  source      = "/opt/consul/templates/consul_server.crt.tpl"
+  destination = "/etc/consul/ssl/consul_server.crt"
+  perms       = 0644
+  command     = "/opt/consul_reload.sh"
+}
+
+template {
+  source      = "/opt/consul/templates/consul_server.key.tpl"
+  destination = "/etc/consul/ssl/consul_server.key"
+  perms       = 0600
+  command     = "/opt/consul_reload.sh"
+}

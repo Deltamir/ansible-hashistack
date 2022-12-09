@@ -1,5 +1,9 @@
 ---
 
+- name: Set timezone to Europe/Paris
+  timezone:
+    name: Europe/Paris
+
 - name: Set a hostname
   hostname:
     name: "{{ hostvars[item].node_name }}"
@@ -8,4 +12,5 @@
   become: yes
   notify:
     - reboot server
+
 

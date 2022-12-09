@@ -1,28 +1,40 @@
 ---
+
+- uri:
+    validate_certs: yes
+    url: https://192.168.1.40:8200/v1/sys/health
+    status_code: 200, 429, 472, 473, 501, 503
+  run_once: yes
+  delegate_to: localhost
+
 - name: Create nomad-server policy on local vault
   hashivault_policy:
     token: "{{ local_vault_token.data.key }}"
     name: nomad-server
     rules_file : "{{ role_path }}/files/nomad-server-policy.hcl"
-    url: http://vault.service.consul:8200
+    url: https://vault.service.consul:8200
     state: present
     authtype: token
-    verify: no
+    verify: yes
   run_once: yes
   delegate_to: localhost
+  environment:
+    REQUESTS_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
 
 - name: create nomad-cluster token role on local vault
   community.hashi_vault.vault_write:
     token: "{{ local_vault_token.data.key }}"
-    url: http://vault.service.consul:8200
+    url: https://vault.service.consul:8200
     path: auth/token/roles/nomad-cluster
     data: "{{ lookup('file','nomad-cluster-role.json') | from_json }}"
   run_once: yes
   delegate_to: localhost
+  environment:
+    REQUESTS_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
 
 - name: Create a nomad token from local vault
   community.hashi_vault.vault_token_create:
-    url: http://vault.service.consul:8200
+    url: https://vault.service.consul:8200
     policies: ["nomad-server"]
     orphan: true
     period: "72h"
@@ -31,6 +43,8 @@
   register: "nomad_token"
   run_once: yes
   delegate_to: localhost
+  environment:
+    REQUESTS_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
 
 - name: Register nomad vault token
   set_fact:

@@ -3,13 +3,13 @@ ansible_ssh_user=pi
 ansible_ssh_private_key_file=/ansible/secrets/id_rsa
 ansible_python_interpreter=/usr/bin/python3
 global_vault_address={{ lookup('env','VAULT_ADDR') }}
-global_vault_token="hvs.qd7bi64fp49wm1pqGW2Qa8Gl"
+global_vault_token="hvs.x1gNseE5bbUd8QpxraQpoFas"
 
 [instances]
 192.168.1.40 node_name=raspberrypi-1 consul_node_role=server nomad_node_role=both
-192.168.1.48 node_name=raspberrypi-2 consul_node_role=server nomad_node_role=both
 
 [instances:vars]
+datacenter=home
 consul_version=1.14.2
 vault_version=1.11.6
 nomad_version=1.4.3
