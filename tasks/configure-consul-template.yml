@@ -1,7 +1,7 @@
 ---
 
 - name: Ensure jq and dependencies are installed
-  apt:
+  ansible.builtin.apt:
     name: '{{ packages }}'
   vars:
     packages:
@@ -9,213 +9,213 @@
   become: true
 
 - name: get consul-template checksums
-  uri:
+  ansible.builtin.uri:
     url: "{{ hashicorp_url }}/{{ consul_template_uri }}/{{ consul_template_version }}/consul-template_{{ consul_template_version }}_SHA256SUMS"
     return_content: true
   become: true
   register: checksums
 
 - name: download consul-template binary
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ hashicorp_url }}/{{ consul_template_uri }}/{{ consul_template_version }}/consul-template_{{ consul_template_version }}_linux_arm.zip"
     dest: "/opt/consul-template.zip"
     checksum: "sha256:{{ item.split(' ').0 }}"
     mode: 0777
   when: item is search("linux_arm.zip")
   with_items: "{{ checksums.content.split('\n') }}"
-  become: yes
+  become: true
 
 - name: unzip consul-template library
-  unarchive:
+  ansible.builtin.unarchive:
     src: "/opt/consul-template.zip"
     dest: /usr/bin
     remote_src: yes
-  become: yes
+  become: true
   notify:
     - "restart consul-template service"
     - "restart nomad-template service"
 
 - name: Ensures template data dir exists for consul
-  file:
+  ansible.builtin.file:
     path: /opt/consul/templates
     state: directory
   become: true
 
 - name: Ensures template data dir exists for nomad
-  file:
+  ansible.builtin.file:
     path: /opt/nomad/templates
     state: directory
   become: true
 
 - name: Ensures template data dir exists for vault
-  file:
+  ansible.builtin.file:
     path: /opt/vault/templates
     state: directory
   become: true
 
 - name: Copy consul-template consul rotation conf file
-  template:
+  ansible.builtin.template:
     src: consul_rotation.hcl.j2
     dest: /opt/consul/templates/consul_rotation.hcl
     owner: consul
     mode: '0644'
-  become: yes
+  become: true
   notify: "restart consul-template service"
 
 - name: Copy consul-template nomad rotation conf file
-  template:
+  ansible.builtin.template:
     src: nomad_rotation.hcl.j2
     dest: /opt/nomad/templates/nomad_rotation.hcl
     mode: '0644'
-  become: yes
+  become: true
   notify: "restart nomad-template service"
 
 - name: Copy consul-template vault rotation conf file
-  template:
+  ansible.builtin.template:
     src: vault_rotation.hcl.j2
     dest: /opt/vault/templates/vault_rotation.hcl
     owner: vault
     mode: '0644'
-  become: yes
+  become: true
   notify: "restart consul-template service"
 
 - name: Copy consul gossip_key tpl file to temp
-  copy:
+  ansible.builtin.copy:
     src: consul_gossip.key.tpl
     dest: /opt/consul/templates/gossip.key.tpl
     owner: consul
     mode: '0644'
-  become: yes
+  become: true
   notify: "restart consul-template service"
 
 - name: Copy consul consul_server crt tpl file to temp
-  template:
+  ansible.builtin.template:
     src: consul_server.crt.tpl.j2
     dest: /opt/consul/templates/consul_server.crt.tpl
     owner: consul
     group: consul
     mode: '0644'
-  become: yes
+  become: true
   notify: "restart consul-template service"
 
 - name: Copy nomad gossip_key tpl file to temp
-  copy:
+  ansible.builtin.copy:
     src: nomad_gossip.key.tpl
     dest: /opt/nomad/templates/gossip.key.tpl
     mode: '0644'
-  become: yes
+  become: true
   notify: "restart nomad-template service"
 
 - name: Copy nomad nomad_server crt tpl file to temp
-  template:
+  ansible.builtin.template:
     src: nomad_server.crt.tpl.j2
     dest: /opt/nomad/templates/nomad_server.crt.tpl
     mode: '0644'
-  become: yes
+  become: true
   notify: "restart nomad-template service"
 
 - name: Copy consul vault_server crt tpl file to temp
-  template:
+  ansible.builtin.template:
     src: vault_server.crt.tpl.j2
     dest: /opt/vault/templates/vault_server.crt.tpl
     owner: vault
     mode: '0644'
-  become: yes
+  become: true
   notify: "restart consul-template service"
 
 - name: Copy consul rotate_key script
-  template:
+  ansible.builtin.template:
     src: consul_rotate_key.sh.j2
     dest: /opt/consul_rotate_key.sh
     owner: consul
     mode: '0744'
-  become: yes
+  become: true
   notify: "restart consul-template service"
 
 - name: Copy consul reload script
-  template:
+  ansible.builtin.template:
     src: consul_reload.sh.j2
     dest: /opt/consul_reload.sh
     owner: consul
     mode: '0744'
-  become: yes
+  become: true
   notify: "restart consul-template service"
 
 - name: Copy nomad rotate_key script
-  template:
+  ansible.builtin.template:
     src: nomad_rotate_key.sh.j2
     dest: /opt/nomad_rotate_key.sh
     mode: '0744'
-  become: yes
+  become: true
   notify: "restart nomad-template service"
 
 - name: Copy nomad reload script
-  template:
+  ansible.builtin.template:
     src: nomad_reload.sh.j2
     dest: /opt/nomad_reload.sh
     mode: '0744'
-  become: yes
+  become: true
   notify: "restart nomad-template service"
 
 - name: Copy vault reload script
-  template:
+  ansible.builtin.template:
     src: vault_reload.sh.j2
     dest: /opt/vault_reload.sh
     owner: consul
     mode: '0744'
-  become: yes
+  become: true
   notify: "restart consul-template service"
 
 - name: Copy consul-template service file
-  template:
+  ansible.builtin.template:
     src: consul-template.service.j2
     dest: /etc/systemd/system/consul-template.service
     owner: consul
     mode: '0744'
-  become: yes
+  become: true
   notify: "reload systemd"
 
 - name: Copy nomad-template service file
-  template:
+  ansible.builtin.template:
     src: nomad-template.service.j2
     dest: /etc/systemd/system/nomad-template.service
     mode: '0744'
-  become: yes
+  become: true
   notify: "reload systemd"
 
 - name: Copy vault-template service file
-  template:
+  ansible.builtin.template:
     src: vault-template.service.j2
     dest: /etc/systemd/system/vault-template.service
     mode: '0744'
-  become: yes
+  become: true
   notify: "reload systemd"
 
 - name: Ensure nomad-template is in running state
-  service:
+  ansible.builtin.service:
     name: nomad-template
     state: started
-  become: yes
+  become: true
   register: service_details_nomad
   until: service_details_nomad.status.ActiveState == "active"
   retries: 20
   delay: 3
 
 - name: Ensure consul-template is in running state
-  service:
+  ansible.builtin.service:
     name: consul-template
     state: started
-  become: yes
+  become: true
   register: service_details_consul
   until: service_details_consul.status.ActiveState == "active"
   retries: 20
   delay: 3
 
 - name: Ensure vault-template is in running state
-  service:
+  ansible.builtin.service:
     name: vault-template
     state: started
-  become: yes
+  become: true
   register: service_details_vault
   until: service_details_vault.status.ActiveState == "active"
   retries: 20

@@ -6,25 +6,25 @@
     state: directory
 
 - name: Write root ca file to dir
-  copy:
+  ansible.builtin.copy:
     content: "{{ root_ca }}"
     dest: /usr/local/share/ca-certificates/local/home_root_ca.crt
     force: true
 
 - name: Write consul ca file to dir
-  copy:
+  ansible.builtin.copy:
     content: "{{ consul_ca }}"
     dest: /usr/local/share/ca-certificates/local/home_consul_ca.crt
     force: true
 
 - name: Write nomad ca file to dir
-  copy:
+  ansible.builtin.copy:
     content: "{{ nomad_ca }}"
     dest: /usr/local/share/ca-certificates/local/home_nomad_ca.crt
     force: true
 
 - name: Write vault ca file to dir
-  copy:
+  ansible.builtin.copy:
     content: "{{ vault_ca }}"
     dest: /usr/local/share/ca-certificates/local/home_vault_ca.crt
     force: true
@@ -33,45 +33,45 @@
   ansible.builtin.file:
     path: /usr/local/share/ca-certificates/local
     state: directory
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: Write root ca file to local dir
-  copy:
+  ansible.builtin.copy:
     content: "{{ root_ca }}"
     dest: /usr/local/share/ca-certificates/local/home_root_ca.crt
     force: true
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: Write consul ca file to local dir
-  copy:
+  ansible.builtin.copy:
     content: "{{ consul_ca }}"
     dest: /usr/local/share/ca-certificates/local/home_consul_ca.crt
     force: true
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: Write nomad ca file to local dir
-  copy:
+  ansible.builtin.copy:
     content: "{{ nomad_ca }}"
     dest: /usr/local/share/ca-certificates/local/home_nomad_ca.crt
     force: true
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: Write vault ca file to local dir
-  copy:
+  ansible.builtin.copy:
     content: "{{ vault_ca }}"
     dest: /usr/local/share/ca-certificates/local/home_vault_ca.crt
     force: true
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: dpkg-reconfigure ca-certificate
-  command: update-ca-certificates
-  become: yes
+  ansible.builtin.command: update-ca-certificates
+  become: true
 
 - name: dpkg-reconfigure ca-certificate local
-  local_action: command update-ca-certificates
-  become: yes
+  ansible.builtin.local_action: command update-ca-certificates
+  become: true

@@ -1,15 +1,15 @@
 ---
 
 - name: Set timezone to Europe/Paris
-  timezone:
+  ansible.builtin.timezone:
     name: Europe/Paris
 
 - name: Set a hostname
-  hostname:
+  ansible.builtin.hostname:
     name: "{{ hostvars[item].node_name }}"
   when: "{{ inventory_hostname == item }}"
   with_items: "{{ groups['all'] }}"
-  become: yes
+  become: true
   notify:
     - reboot server
 

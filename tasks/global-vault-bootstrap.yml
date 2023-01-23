@@ -7,8 +7,8 @@
     state: enabled
     authtype: token
     token: "{{ global_vault_token }}"
-    verify: no
-  run_once: yes
+    verify: false
+  run_once: true
   delegate_to: localhost
 
 - name: retrieve Consul Gossip key if exist and ignore error if not
@@ -20,16 +20,16 @@
     token: "{{ global_vault_token }}"
   ignore_errors: yes
   register: consul_gossip_result
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: Generate a consul encyption key
-  local_action:
+  ansible.builtin.local_action:
     module: command
     cmd: openssl rand -base64 32
   register: encryption_key
   when: consul_gossip_result['failed'] == true
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: write consul gossip encryption key
@@ -38,28 +38,28 @@
     data:
       key: "{{ encryption_key.stdout }}"
       ttl: "{{ consul_template_gossip_key_ttl }}"
-    verify: no
+    verify: false
     version: 1
     mount_point: "hashistack/kv"
     url: "{{ global_vault_address }}"
     authtype: token
     token: "{{ global_vault_token }}"
   when: consul_gossip_result['failed'] == true
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: Register Consul Gossip key if necessary (from stdout)
-  set_fact:
+  ansible.builtin.set_fact:
     consul_raw_key:  "{{ encryption_key.stdout }}"
   when: consul_gossip_result['failed'] == true
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: Register Consul Gossip key if necessary (from vault)
-  set_fact:
+  ansible.builtin.set_fact:
     consul_raw_key:  "{{ consul_gossip_result.data.key }}"
   when: consul_gossip_result['failed'] == false
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: retrieve Nomad Gossip key if exist and ignore error if not
@@ -71,16 +71,16 @@
     token: "{{ global_vault_token }}"
   ignore_errors: yes
   register: nomad_gossip_result
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: Generate a nomad encyption key
-  local_action:
+  ansible.builtin.local_action:
     module: command
     cmd: openssl rand -base64 32
   register: encryption_key
   when: nomad_gossip_result['failed'] == true
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: write nomad gossip encryption key
@@ -89,28 +89,28 @@
     data:
       key: "{{ encryption_key.stdout }}"
       ttl: "{{ consul_template_gossip_key_ttl }}"
-    verify: no
+    verify: false
     version: 1
     mount_point: "hashistack/kv"
     url: "{{ global_vault_address }}"
     authtype: token
     token: "{{ global_vault_token }}"
   when: nomad_gossip_result['failed'] == true
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: Register Nomad Gossip key if necessary (from stdout)
-  set_fact:
+  ansible.builtin.set_fact:
     nomad_encrypt:  "{{ encryption_key.stdout }}"
   when: nomad_gossip_result['failed'] == true
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: Register Nomad Gossip key if necessary (from vault)
-  set_fact:
+  ansible.builtin.set_fact:
     nomad_encrypt:  "{{ nomad_gossip_result.data.key }}"
   when: nomad_gossip_result['failed'] == false
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: enable transit secret engine
@@ -121,8 +121,8 @@
     state: enabled
     authtype: token
     token: "{{ global_vault_token }}"
-    verify: no
-  run_once: yes
+    verify: false
+  run_once: true
   delegate_to: localhost
 
 - name: create autounseal secret
@@ -131,7 +131,7 @@
     url: "{{ global_vault_address }}"
     auth_method: token
     token: "{{ global_vault_token }}"
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: Create autounseal policy
@@ -142,8 +142,8 @@
     state: present
     authtype: token
     token: "{{ global_vault_token }}"
-    verify: no
-  run_once: yes
+    verify: false
+  run_once: true
   delegate_to: localhost
 
 - name: Create a autounseal token
@@ -154,13 +154,13 @@
     auth_method: token
     token: "{{ global_vault_token }}"
   register: autounseal_token
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: Register autounseal token
-  set_fact:
+  ansible.builtin.set_fact:
     vault_transit_token:  "{{ autounseal_token.login.auth.client_token }}"
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: get CA cert if exist and ignore error if not
@@ -169,10 +169,10 @@
     url: "{{ global_vault_address }}"
     authtype: token
     token: "{{ global_vault_token }}"
-    verify: no
+    verify: false
   register: root_ca_result
   ignore_errors: yes
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: enable CA pki secret engine
@@ -183,8 +183,8 @@
     state: enabled
     authtype: token
     token: "{{ global_vault_token }}"
-    verify: no
-  run_once: yes
+    verify: false
+  run_once: true
   when: root_ca_result['data'] == {}
   delegate_to: localhost
 
@@ -196,25 +196,25 @@
     state: present
     authtype: token
     token: "{{ global_vault_token }}"
-    verify: no
+    verify: false
     kind: root
   register: root_ca_gen
   when: root_ca_result['data'] == {}
   delegate_to: localhost
-  run_once: yes
+  run_once: true
 
 - name: Register root CA cert if necessary (from vault)
-  set_fact:
+  ansible.builtin.set_fact:
     root_ca:  "{{ root_ca_result.data.certificate }}"
   when: root_ca_result['data'] != {}
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: Register root CA cert if necessary (from generation)
-  set_fact:
+  ansible.builtin.set_fact:
     root_ca: "{{ root_ca_gen.data.certificate }}"
   when: root_ca_result['data'] == {}
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: configure CA and CRL URLs
@@ -223,12 +223,12 @@
     mount_point: hashistack/pki
     authtype: token
     token: "{{ global_vault_token }}"
-    verify: no
+    verify: false
     issuing_certificates:
       - "{{ global_vault_address }}/v1/pki/ca"
     crl_distribution_points:
       - "{{ global_vault_address }}/v1/pki/crl"
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: enable consul intermediate pki secret engine
@@ -239,8 +239,8 @@
     state: enabled
     authtype: token
     token: "{{ global_vault_token }}"
-    verify: no
-  run_once: yes
+    verify: false
+  run_once: true
   delegate_to: localhost
 
 - name: generate consul intermediate CA CSR
@@ -250,12 +250,12 @@
     state: present
     authtype: token
     token: "{{ global_vault_token }}"
-    verify: no
+    verify: false
     kind: intermediate
     config:
       max_ttl_lease: 43800h
     mount_point: hashistack/pki_int_consul
-  run_once: yes
+  run_once: true
   register: csr
   delegate_to: localhost
 
@@ -266,13 +266,13 @@
     mount_point: hashistack/pki
     authtype: token
     token: "{{ global_vault_token }}"
-    verify: no
+    verify: false
     csr: "{{ csr['data']['csr'] }}"
     type: intermediate
     extra_params:
       format: pem_bundle
       ttl: 43800h
-  run_once: yes
+  run_once: true
   register: certificate
   when: csr.changed == true
   delegate_to: localhost
@@ -282,18 +282,18 @@
     url: "{{ global_vault_address }}"
     authtype: token
     token: "{{ global_vault_token }}"
-    verify: no
+    verify: false
     certificate: "{{  certificate['data']['certificate']}}"
     mount_point: hashistack/pki_int_consul
-  run_once: yes
+  run_once: true
   when: csr.changed == true
   delegate_to: localhost
 
 - name: Register consul CA cert if necessary (from generation)
-  set_fact:
+  ansible.builtin.set_fact:
     consul_ca: "{{  certificate['data']['certificate']}}"
   when: csr.changed == true
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: get consul CA cert if exist and ignore error if not
@@ -302,18 +302,18 @@
     url: "{{ global_vault_address }}"
     authtype: token
     token: "{{ global_vault_token }}"
-    verify: no
+    verify: false
   register: consul_ca_result
   ignore_errors: yes
   when: csr.changed == false
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: Register consul CA cert if necessary (from vault)
-  set_fact:
+  ansible.builtin.set_fact:
     consul_ca: "{{  consul_ca_result['data']['certificate']}}"
   when: csr.changed == false
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: create consul role
@@ -321,7 +321,7 @@
     url: "{{ global_vault_address }}"
     authtype: token
     token: "{{ global_vault_token }}"
-    verify: no
+    verify: false
     name: consul-home
     state: present
     mount_point: hashistack/pki_int_consul
@@ -330,7 +330,7 @@
       allowed_domains: [ "home.consul", "service.consul" ]
       generate_lease: yes
       max_ttl: "{{ consul_template_cert_ttl }}"
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: enable nomad intermediate pki secret engine
@@ -341,8 +341,8 @@
     state: enabled
     authtype: token
     token: "{{ global_vault_token }}"
-    verify: no
-  run_once: yes
+    verify: false
+  run_once: true
   delegate_to: localhost
 
 - name: generate nomad intermediate CA CSR
@@ -352,12 +352,12 @@
     state: present
     authtype: token
     token: "{{ global_vault_token }}"
-    verify: no
+    verify: false
     kind: intermediate
     config:
       max_ttl_lease: 43800h
     mount_point: hashistack/pki_int_nomad
-  run_once: yes
+  run_once: true
   register: csr
   delegate_to: localhost
 
@@ -368,13 +368,13 @@
     mount_point: hashistack/pki
     authtype: token
     token: "{{ global_vault_token }}"
-    verify: no
+    verify: false
     csr: "{{ csr['data']['csr'] }}"
     type: intermediate
     extra_params:
       format: pem_bundle
       ttl: 43800h
-  run_once: yes
+  run_once: true
   register: certificate
   when: csr.changed == true
   delegate_to: localhost
@@ -384,18 +384,18 @@
     url: "{{ global_vault_address }}"
     authtype: token
     token: "{{ global_vault_token }}"
-    verify: no
+    verify: false
     certificate: "{{ certificate['data']['certificate'] }}"
     mount_point: hashistack/pki_int_nomad
-  run_once: yes
+  run_once: true
   when: csr.changed == true
   delegate_to: localhost
 
 - name: Register nomad CA cert if necessary (from generation)
-  set_fact:
+  ansible.builtin.set_fact:
     nomad_ca: "{{  certificate['data']['certificate']}}"
   when: csr.changed == true
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: get nomad CA cert if exist and ignore error if not
@@ -404,18 +404,18 @@
     url: "{{ global_vault_address }}"
     authtype: token
     token: "{{ global_vault_token }}"
-    verify: no
+    verify: false
   register: nomad_ca_result
   ignore_errors: yes
   when: csr.changed == false
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: Register root CA cert if necessary (from generation)
-  set_fact:
+  ansible.builtin.set_fact:
     nomad_ca: "{{  nomad_ca_result['data']['certificate']}}"
   when: csr.changed == false
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: create nomad role
@@ -423,7 +423,7 @@
     url: "{{ global_vault_address }}"
     authtype: token
     token: "{{ global_vault_token }}"
-    verify: no
+    verify: false
     name: nomad-home
     state: present
     mount_point: hashistack/pki_int_nomad
@@ -432,7 +432,7 @@
       allowed_domains: [ "global.nomad", "home.consul", "service.consul" ]
       generate_lease: yes
       max_ttl: "{{ consul_template_cert_ttl }}"
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: enable vault intermediate pki secret engine
@@ -443,8 +443,8 @@
     state: enabled
     authtype: token
     token: "{{ global_vault_token }}"
-    verify: no
-  run_once: yes
+    verify: false
+  run_once: true
   delegate_to: localhost
 
 - name: generate vault intermediate CA CSR
@@ -454,12 +454,12 @@
     state: present
     authtype: token
     token: "{{ global_vault_token }}"
-    verify: no
+    verify: false
     kind: intermediate
     config:
       max_ttl_lease: 43800h
     mount_point: hashistack/pki_int_vault
-  run_once: yes
+  run_once: true
   register: csr
   delegate_to: localhost
 
@@ -470,13 +470,13 @@
     mount_point: hashistack/pki
     authtype: token
     token: "{{ global_vault_token }}"
-    verify: no
+    verify: false
     csr: "{{ csr['data']['csr'] }}"
     type: intermediate
     extra_params:
       format: pem_bundle
       ttl: 43800h
-  run_once: yes
+  run_once: true
   register: certificate
   when: csr.changed == true
   delegate_to: localhost
@@ -486,18 +486,18 @@
     url: "{{ global_vault_address }}"
     authtype: token
     token: "{{ global_vault_token }}"
-    verify: no
+    verify: false
     certificate: "{{ certificate['data']['certificate'] }}"
     mount_point: hashistack/pki_int_vault
-  run_once: yes
+  run_once: true
   when: csr.changed == true
   delegate_to: localhost
 
 - name: Register vault CA cert if necessary (from generation)
-  set_fact:
+  ansible.builtin.set_fact:
     vault_ca: "{{  certificate['data']['certificate']}}"
   when: csr.changed == true
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: get vault CA cert if exist and ignore error if not
@@ -506,18 +506,18 @@
     url: "{{ global_vault_address }}"
     authtype: token
     token: "{{ global_vault_token }}"
-    verify: no
+    verify: false
   register: vault_ca_result
   ignore_errors: yes
   when: csr.changed == false
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: Register vault CA cert if necessary (from generation)
-  set_fact:
+  ansible.builtin.set_fact:
     vault_ca: "{{  vault_ca_result['data']['certificate']}}"
   when: csr.changed == false
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: create vault role
@@ -525,7 +525,7 @@
     url: "{{ global_vault_address }}"
     authtype: token
     token: "{{ global_vault_token }}"
-    verify: no
+    verify: false
     name: vault-home
     state: present
     mount_point: hashistack/pki_int_vault
@@ -534,7 +534,7 @@
       allowed_domains: [ "service.home.consul", "service.consul" ]
       generate_lease: yes
       max_ttl: "{{ consul_template_cert_ttl }}"
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: Create consul policy
@@ -545,8 +545,8 @@
     state: present
     authtype: token
     token: "{{ global_vault_token }}"
-    verify: no
-  run_once: yes
+    verify: false
+  run_once: true
   delegate_to: localhost
 
 - name: Create a consul_token
@@ -560,7 +560,7 @@
   delegate_to: localhost
 
 - name: Register consul_token token
-  set_fact:
+  ansible.builtin.set_fact:
     consul_token:  "{{ consul_token_wrapped.login.auth.client_token }}"
   delegate_to: localhost
 
@@ -572,8 +572,8 @@
     state: present
     authtype: token
     token: "{{ global_vault_token }}"
-    verify: no
-  run_once: yes
+    verify: false
+  run_once: true
   delegate_to: localhost
 
 - name: Create a nomad_token
@@ -584,13 +584,13 @@
     auth_method: token
     token: "{{ global_vault_token }}"
   register: nomad_token_wrapped
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: Register nomad_token token
-  set_fact:
+  ansible.builtin.set_fact:
     nomad_rotation_token: "{{ nomad_token_wrapped.login.auth.client_token }}"
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: Create vault policy
@@ -601,8 +601,8 @@
     state: present
     authtype: token
     token: "{{ global_vault_token }}"
-    verify: no
-  run_once: yes
+    verify: false
+  run_once: true
   delegate_to: localhost
 
 - name: Create a vault_token
@@ -613,11 +613,11 @@
     auth_method: token
     token: "{{ global_vault_token }}"
   register: vault_token_wrapped
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: Register vault_token token
-  set_fact:
+  ansible.builtin.set_fact:
     vault_rotation_token: "{{ vault_token_wrapped.login.auth.client_token }}"
-  run_once: yes
+  run_once: true
   delegate_to: localhost

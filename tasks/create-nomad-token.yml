@@ -1,10 +1,10 @@
 ---
 
-- uri:
+- ansible.builtin.uri:
     validate_certs: yes
     url: https://192.168.1.40:8200/v1/sys/health
     status_code: 200, 429, 472, 473, 501, 503
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: Create nomad-server policy on local vault
@@ -15,8 +15,8 @@
     url: https://vault.service.consul:8200
     state: present
     authtype: token
-    verify: yes
-  run_once: yes
+    verify: true
+  run_once: true
   delegate_to: localhost
   environment:
     REQUESTS_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
@@ -27,7 +27,7 @@
     url: https://vault.service.consul:8200
     path: auth/token/roles/nomad-cluster
     data: "{{ lookup('file','nomad-cluster-role.json') | from_json }}"
-  run_once: yes
+  run_once: true
   delegate_to: localhost
   environment:
     REQUESTS_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
@@ -41,13 +41,13 @@
     token: "{{ local_vault_token.data.key }}"
     auth_method: token
   register: "nomad_token"
-  run_once: yes
+  run_once: true
   delegate_to: localhost
   environment:
     REQUESTS_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
 
 - name: Register nomad vault token
-  set_fact:
+  ansible.builtin.set_fact:
     nomad_vault_token:  "{{ nomad_token.login.auth.client_token }}"
-  run_once: yes
+  run_once: true
   delegate_to: localhost

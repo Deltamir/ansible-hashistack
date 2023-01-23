@@ -22,19 +22,19 @@
     token: "{{ global_vault_token }}"
     config:
       safety_buffer: "60s"
-      tidy_revoked_certs: yes
-  run_once: yes
+      tidy_revoked_certs: true
+  run_once: true
   delegate_to: localhost
 
 - name: Write consul ca file to temp dir
-  copy:
+  ansible.builtin.copy:
     content: "{{ consul_cert.data.issuing_ca }}"
     dest: /tmp/consul_ca.crt
     mode: '0644'
     force: true
 
 - name: Write consul certificate file to temp dir
-  copy:
+  ansible.builtin.copy:
     content: "{{ consul_cert.data.certificate }}"
     dest: /tmp/consul_server.crt
     mode: '0644'
@@ -43,7 +43,7 @@
   become: true
 
 - name: Write consul private key file to temp dir
-  copy:
+  ansible.builtin.copy:
     content: "{{ consul_cert.data.private_key }}"
     dest: /tmp/consul_server.key
     mode: '0600'
@@ -72,18 +72,18 @@
     config:
       safety_buffer: "60s"
       tidy_revoked_certs: yes
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: Write vault ca file to temp dir
-  copy:
+  ansible.builtin.copy:
     content: "{{ vault_cert.data.issuing_ca }}"
     dest: /tmp/vault_ca.crt
     mode: '0644'
     force: true
 
 - name: Write vault certificate file to temp dir
-  copy:
+  ansible.builtin.copy:
     content: "{{ vault_cert.data.certificate }}"
     dest: /tmp/vault_server.crt
     mode: '0644'
@@ -92,7 +92,7 @@
   become: true
 
 - name: Write vault private key file to temp dir
-  copy:
+  ansible.builtin.copy:
     content: "{{ vault_cert.data.private_key }}"
     dest: /tmp/vault_server.key
     mode: '0600'
@@ -122,18 +122,18 @@
     config:
       safety_buffer: "60s"
       tidy_revoked_certs: yes
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: Write nomad ca file to temp dir
-  copy:
+  ansible.builtin.copy:
     content: "{{ nomad_cert.data.issuing_ca }}"
     dest: /tmp/nomad_ca.crt
     mode: '0644'
     force: true
 
 - name: Write nomad certificate file to temp dir
-  copy:
+  ansible.builtin.copy:
     content: "{{ nomad_cert.data.certificate }}"
     dest: /tmp/nomad_server.crt
     mode: '0644'
@@ -142,7 +142,7 @@
   become: true
 
 - name: Write nomad private key file to temp dir
-  copy:
+  ansible.builtin.copy:
     content: "{{ nomad_cert.data.private_key }}"
     dest: /tmp/nomad_server.key
     mode: '0600'

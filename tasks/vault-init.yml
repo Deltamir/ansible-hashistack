@@ -7,9 +7,9 @@
     url: "https://{{ groups['instances'][0] }}:8200"
     authtype: token
     token: "{{ global_vault_token }}"
-    verify: no
+    verify: false
   register: vault_init
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: Write root token to global vault
@@ -17,14 +17,14 @@
     secret: "vault_root_token"
     data:
       key: "{{ vault_init.root_token }}"
-    verify: no
+    verify: false
     version: 1
     mount_point: "hashistack/kv"
     url: "{{ global_vault_address }}"
     authtype: token
     token: "{{ global_vault_token }}"
   when: vault_init['changed'] == true
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: retrieve root token from global vault
@@ -36,12 +36,12 @@
     token: "{{ global_vault_token }}"
   ignore_errors: yes
   register: local_vault_token
-  run_once: yes
+  run_once: true
   delegate_to: localhost
 
 - name: Sleep for 30s if vault was not initialized
   ansible.builtin.wait_for:
     timeout: 30
   when: vault_init['changed'] == true
-  run_once: yes
+  run_once: true
   delegate_to: localhost
