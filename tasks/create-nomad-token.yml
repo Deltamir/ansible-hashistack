@@ -18,7 +18,7 @@
     token: "{{ local_vault_token.data.key }}"
     url: https://vault.service.consul:8200
     path: auth/token/roles/nomad-cluster
-    data: "{{ lookup('file','nomad-cluster-role.json') | from_json }}"
+    data: "{{ lookup('file', 'nomad-cluster-role.json') | from_json }}"
   run_once: true
   delegate_to: localhost
   environment:

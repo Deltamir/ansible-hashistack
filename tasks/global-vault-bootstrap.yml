@@ -58,7 +58,7 @@
 - name: Register Consul Gossip key if necessary (from vault)
   ansible.builtin.set_fact:
     consul_raw_key: "{{ consul_gossip_result.data.key }}"
-  when: consul_gossip_result['failed'] == false
+  when: not consul_gossip_result['failed']
   run_once: true
   delegate_to: localhost
 
@@ -109,7 +109,7 @@
 - name: Register Nomad Gossip key if necessary (from vault)
   ansible.builtin.set_fact:
     nomad_encrypt: "{{ nomad_gossip_result.data.key }}"
-  when: nomad_gossip_result['failed'] == false
+  when: not nomad_gossip_result['failed']
   run_once: true
   delegate_to: localhost
 
@@ -137,7 +137,7 @@
 - name: Create autounseal policy
   hashivault_policy:
     name: autounseal
-    rules_file : "{{ role_path }}/files/autounseal.hcl"
+    rules_file: "{{ role_path }}/files/autounseal.hcl"
     url: "{{ global_vault_address }}"
     state: present
     authtype: token
@@ -159,7 +159,7 @@
 
 - name: Register autounseal token
   ansible.builtin.set_fact:
-    vault_transit_token:  "{{ autounseal_token.login.auth.client_token }}"
+    vault_transit_token: "{{ autounseal_token.login.auth.client_token }}"
   run_once: true
   delegate_to: localhost
 
@@ -205,7 +205,7 @@
 
 - name: Register root CA cert if necessary (from vault)
   ansible.builtin.set_fact:
-    root_ca:  "{{ root_ca_result.data.certificate }}"
+    root_ca: "{{ root_ca_result.data.certificate }}"
   when: root_ca_result['data'] != {}
   run_once: true
   delegate_to: localhost
@@ -274,7 +274,7 @@
       ttl: 43800h
   run_once: true
   register: certificate
-  when: csr.changed == true
+  when: csr.changed
   delegate_to: localhost
 
 - name: Write consul signed certificate
@@ -286,13 +286,13 @@
     certificate: "{{  certificate['data']['certificate']}}"
     mount_point: hashistack/pki_int_consul
   run_once: true
-  when: csr.changed == true
+  when: csr.changed
   delegate_to: localhost
 
 - name: Register consul CA cert if necessary (from generation)
   ansible.builtin.set_fact:
     consul_ca: "{{  certificate['data']['certificate']}}"
-  when: csr.changed == true
+  when: csr.changed
   run_once: true
   delegate_to: localhost
 
@@ -305,14 +305,14 @@
     verify: false
   register: consul_ca_result
   ignore_errors: true
-  when: csr.changed == false
+  when: not csr.changed
   run_once: true
   delegate_to: localhost
 
 - name: Register consul CA cert if necessary (from vault)
   ansible.builtin.set_fact:
     consul_ca: "{{  consul_ca_result['data']['certificate']}}"
-  when: csr.changed == false
+  when: not csr.changed
   run_once: true
   delegate_to: localhost
 
@@ -326,9 +326,9 @@
     state: present
     mount_point: hashistack/pki_int_consul
     config:
-      allow_subdomains: yes
+      allow_subdomains: true
       allowed_domains: [ "home.consul", "service.consul" ]
-      generate_lease: yes
+      generate_lease: true
       max_ttl: "{{ consul_template_cert_ttl }}"
   run_once: true
   delegate_to: localhost
@@ -376,7 +376,7 @@
       ttl: 43800h
   run_once: true
   register: certificate
-  when: csr.changed == true
+  when: csr.changed
   delegate_to: localhost
 
 - name: Write nomad signed certificate
@@ -388,13 +388,13 @@
     certificate: "{{ certificate['data']['certificate'] }}"
     mount_point: hashistack/pki_int_nomad
   run_once: true
-  when: csr.changed == true
+  when: csr.changed
   delegate_to: localhost
 
 - name: Register nomad CA cert if necessary (from generation)
   ansible.builtin.set_fact:
-    nomad_ca: "{{  certificate['data']['certificate']}}"
-  when: csr.changed == true
+    nomad_ca: "{{ certificate['data']['certificate'] }}"
+  when: csr.changed
   run_once: true
   delegate_to: localhost
 
@@ -407,14 +407,14 @@
     verify: false
   register: nomad_ca_result
   ignore_errors: true
-  when: csr.changed == false
+  when: not csr.changed
   run_once: true
   delegate_to: localhost
 
 - name: Register root CA cert if necessary (from generation)
   ansible.builtin.set_fact:
-    nomad_ca: "{{  nomad_ca_result['data']['certificate']}}"
-  when: csr.changed == false
+    nomad_ca: "{{ nomad_ca_result['data']['certificate'] }}"
+  when: not csr.changed
   run_once: true
   delegate_to: localhost
 
@@ -428,9 +428,9 @@
     state: present
     mount_point: hashistack/pki_int_nomad
     config:
-      allow_subdomains: yes
+      allow_subdomains: true
       allowed_domains: [ "global.nomad", "home.consul", "service.consul" ]
-      generate_lease: yes
+      generate_lease: true
       max_ttl: "{{ consul_template_cert_ttl }}"
   run_once: true
   delegate_to: localhost
@@ -478,7 +478,7 @@
       ttl: 43800h
   run_once: true
   register: certificate
-  when: csr.changed == true
+  when: csr.changed
   delegate_to: localhost
 
 - name: Write vault signed certificate
@@ -490,13 +490,13 @@
     certificate: "{{ certificate['data']['certificate'] }}"
     mount_point: hashistack/pki_int_vault
   run_once: true
-  when: csr.changed == true
+  when: csr.changed
   delegate_to: localhost
 
 - name: Register vault CA cert if necessary (from generation)
   ansible.builtin.set_fact:
-    vault_ca: "{{  certificate['data']['certificate']}}"
-  when: csr.changed == true
+    vault_ca: "{{ certificate['data']['certificate'] }}"
+  when: csr.changed
   run_once: true
   delegate_to: localhost
 
@@ -509,14 +509,14 @@
     verify: false
   register: vault_ca_result
   ignore_errors: true
-  when: csr.changed == false
+  when: not csr.changed
   run_once: true
   delegate_to: localhost
 
 - name: Register vault CA cert if necessary (from generation)
   ansible.builtin.set_fact:
-    vault_ca: "{{  vault_ca_result['data']['certificate']}}"
-  when: csr.changed == false
+    vault_ca: "{{ vault_ca_result['data']['certificate'] }}"
+  when: not csr.changed
   run_once: true
   delegate_to: localhost
 
@@ -530,9 +530,9 @@
     state: present
     mount_point: hashistack/pki_int_vault
     config:
-      allow_subdomains: yes
+      allow_subdomains: true
       allowed_domains: [ "service.home.consul", "service.consul" ]
-      generate_lease: yes
+      generate_lease: true
       max_ttl: "{{ consul_template_cert_ttl }}"
   run_once: true
   delegate_to: localhost
@@ -540,7 +540,7 @@
 - name: Create consul policy
   hashivault_policy:
     name: consul
-    rules_file : "{{ role_path }}/files/consul-policy.hcl"
+    rules_file: "{{ role_path }}/files/consul-policy.hcl"
     url: "{{ global_vault_address }}"
     state: present
     authtype: token
@@ -561,13 +561,13 @@
 
 - name: Register consul_token token
   ansible.builtin.set_fact:
-    consul_token:  "{{ consul_token_wrapped.login.auth.client_token }}"
+    consul_token: "{{ consul_token_wrapped.login.auth.client_token }}"
   delegate_to: localhost
 
 - name: Create nomad policy
   hashivault_policy:
     name: nomad
-    rules_file : "{{ role_path }}/files/nomad-policy.hcl"
+    rules_file: "{{ role_path }}/files/nomad-policy.hcl"
     url: "{{ global_vault_address }}"
     state: present
     authtype: token
@@ -596,7 +596,7 @@
 - name: Create vault policy
   hashivault_policy:
     name: vault
-    rules_file : "{{ role_path }}/files/vault-policy.hcl"
+    rules_file: "{{ role_path }}/files/vault-policy.hcl"
     url: "{{ global_vault_address }}"
     state: present
     authtype: token
