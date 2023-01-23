@@ -1,25 +1,25 @@
 ---
 
-- name: reload systemd
-  systemd:
+- name: Reload systemd
+  ansible.builtin.systemd:
     daemon_reload: yes
-  become: yes
+  become: true
   listen: "reload systemd"
 
-- name: restart consul-template service
-  systemd:
+- name: Restart consul-template service
+  ansible.builtin.systemd:
     name: consul-template
     state: restarted
-  become: yes
+  become: true
   listen: "restart consul-template service"
 
-- name: restart nomad-template service
-  systemd:
+- name: Restart nomad-template service
+  ansible.builtin.systemd:
     name: nomad-template
     state: restarted
-  become: yes
+  become: true
   listen: "restart nomad-template service"
 
-- name: reboot server
-  reboot:
-  become: yes
+- name: Reboot server
+  ansible.builtin.reboot:
+  become: true
