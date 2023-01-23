@@ -3,8 +3,8 @@ collections:
   # Install a collection from Ansible Galaxy.
   - name: community.hashi_vault
   - name: "git+https://github.com/ansible-community/ansible-vault.git"
-    version: ${ANSIBLE_VAULT_VERSION}
+    version: 2022.12.01
   - name: "git+https://github.com/ansible-community/ansible-nomad.git"
-    version: ${ANSIBLE_NOMAD_VERSION}
+    version: v3.0.1
   - name: "git+https://github.com/ansible-community/ansible-consul.git"
-    version: ${ANSIBLE_CONSUL_VERSION}
+    version: v1.9.6
