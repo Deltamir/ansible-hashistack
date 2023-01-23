@@ -39,18 +39,24 @@
   ansible.builtin.file:
     path: /opt/consul/templates
     state: directory
+    user: consul
+    group: consul
   become: true
 
 - name: Ensures template data dir exists for nomad
   ansible.builtin.file:
     path: /opt/nomad/templates
     state: directory
+    user: root
+    group: bin
   become: true
 
 - name: Ensures template data dir exists for vault
   ansible.builtin.file:
     path: /opt/vault/templates
     state: directory
+    user: root
+    group: bin
   become: true
 
 - name: Copy consul-template consul rotation conf file

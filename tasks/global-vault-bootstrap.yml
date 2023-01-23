@@ -283,7 +283,7 @@
     authtype: token
     token: "{{ global_vault_token }}"
     verify: false
-    certificate: "{{  certificate['data']['certificate']}}"
+    certificate: "{{ certificate['data']['certificate'] }}"
     mount_point: hashistack/pki_int_consul
   run_once: true
   when: csr.changed
@@ -291,7 +291,7 @@
 
 - name: Register consul CA cert if necessary (from generation)
   ansible.builtin.set_fact:
-    consul_ca: "{{  certificate['data']['certificate']}}"
+    consul_ca: "{{ certificate['data']['certificate'] }}"
   when: csr.changed
   run_once: true
   delegate_to: localhost
@@ -311,7 +311,7 @@
 
 - name: Register consul CA cert if necessary (from vault)
   ansible.builtin.set_fact:
-    consul_ca: "{{  consul_ca_result['data']['certificate']}}"
+    consul_ca: "{{ consul_ca_result['data']['certificate'] }}"
   when: not csr.changed
   run_once: true
   delegate_to: localhost
@@ -327,7 +327,7 @@
     mount_point: hashistack/pki_int_consul
     config:
       allow_subdomains: true
-      allowed_domains: [ "home.consul", "service.consul" ]
+      allowed_domains: ["home.consul", "service.consul"]
       generate_lease: true
       max_ttl: "{{ consul_template_cert_ttl }}"
   run_once: true
@@ -429,7 +429,7 @@
     mount_point: hashistack/pki_int_nomad
     config:
       allow_subdomains: true
-      allowed_domains: [ "global.nomad", "home.consul", "service.consul" ]
+      allowed_domains: ["global.nomad", "home.consul", "service.consul"]
       generate_lease: true
       max_ttl: "{{ consul_template_cert_ttl }}"
   run_once: true
@@ -531,7 +531,7 @@
     mount_point: hashistack/pki_int_vault
     config:
       allow_subdomains: true
-      allowed_domains: [ "service.home.consul", "service.consul" ]
+      allowed_domains: ["service.home.consul", "service.consul"]
       generate_lease: true
       max_ttl: "{{ consul_template_cert_ttl }}"
   run_once: true
