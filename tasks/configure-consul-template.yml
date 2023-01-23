@@ -29,7 +29,7 @@
   ansible.builtin.unarchive:
     src: "/opt/consul-template.zip"
     dest: /usr/bin
-    remote_src: yes
+    remote_src: true
   become: true
   notify:
     - "restart consul-template service"

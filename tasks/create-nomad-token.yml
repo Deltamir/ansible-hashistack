@@ -3,7 +3,7 @@
   hashivault_policy:
     token: "{{ local_vault_token.data.key }}"
     name: nomad-server
-    rules_file : "{{ role_path }}/files/nomad-server-policy.hcl"
+    rules_file: "{{ role_path }}/files/nomad-server-policy.hcl"
     url: https://vault.service.consul:8200
     state: present
     authtype: token
@@ -40,6 +40,6 @@
 
 - name: Register nomad vault token
   ansible.builtin.set_fact:
-    nomad_vault_token:  "{{ nomad_token.login.auth.client_token }}"
+    nomad_vault_token: "{{ nomad_token.login.auth.client_token }}"
   run_once: true
   delegate_to: localhost

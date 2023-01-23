@@ -18,7 +18,7 @@
     url: "{{ global_vault_address }}"
     auth_method: token
     token: "{{ global_vault_token }}"
-  ignore_errors: yes
+  ignore_errors: true
   register: consul_gossip_result
   run_once: true
   delegate_to: localhost
@@ -28,7 +28,7 @@
     module: command
     cmd: openssl rand -base64 32
   register: encryption_key
-  when: consul_gossip_result['failed'] == true
+  when: consul_gossip_result['failed']
   run_once: true
   delegate_to: localhost
 
@@ -44,20 +44,20 @@
     url: "{{ global_vault_address }}"
     authtype: token
     token: "{{ global_vault_token }}"
-  when: consul_gossip_result['failed'] == true
+  when: consul_gossip_result['failed']
   run_once: true
   delegate_to: localhost
 
 - name: Register Consul Gossip key if necessary (from stdout)
   ansible.builtin.set_fact:
-    consul_raw_key:  "{{ encryption_key.stdout }}"
-  when: consul_gossip_result['failed'] == true
+    consul_raw_key: "{{ encryption_key.stdout }}"
+  when: consul_gossip_result['failed']
   run_once: true
   delegate_to: localhost
 
 - name: Register Consul Gossip key if necessary (from vault)
   ansible.builtin.set_fact:
-    consul_raw_key:  "{{ consul_gossip_result.data.key }}"
+    consul_raw_key: "{{ consul_gossip_result.data.key }}"
   when: consul_gossip_result['failed'] == false
   run_once: true
   delegate_to: localhost
@@ -69,7 +69,7 @@
     url: "{{ global_vault_address }}"
     auth_method: token
     token: "{{ global_vault_token }}"
-  ignore_errors: yes
+  ignore_errors: true
   register: nomad_gossip_result
   run_once: true
   delegate_to: localhost
@@ -79,7 +79,7 @@
     module: command
     cmd: openssl rand -base64 32
   register: encryption_key
-  when: nomad_gossip_result['failed'] == true
+  when: nomad_gossip_result['failed']
   run_once: true
   delegate_to: localhost
 
@@ -95,20 +95,20 @@
     url: "{{ global_vault_address }}"
     authtype: token
     token: "{{ global_vault_token }}"
-  when: nomad_gossip_result['failed'] == true
+  when: nomad_gossip_result['failed']
   run_once: true
   delegate_to: localhost
 
 - name: Register Nomad Gossip key if necessary (from stdout)
   ansible.builtin.set_fact:
-    nomad_encrypt:  "{{ encryption_key.stdout }}"
-  when: nomad_gossip_result['failed'] == true
+    nomad_encrypt: "{{ encryption_key.stdout }}"
+  when: nomad_gossip_result['failed']
   run_once: true
   delegate_to: localhost
 
 - name: Register Nomad Gossip key if necessary (from vault)
   ansible.builtin.set_fact:
-    nomad_encrypt:  "{{ nomad_gossip_result.data.key }}"
+    nomad_encrypt: "{{ nomad_gossip_result.data.key }}"
   when: nomad_gossip_result['failed'] == false
   run_once: true
   delegate_to: localhost
@@ -171,7 +171,7 @@
     token: "{{ global_vault_token }}"
     verify: false
   register: root_ca_result
-  ignore_errors: yes
+  ignore_errors: true
   run_once: true
   delegate_to: localhost
 
@@ -304,7 +304,7 @@
     token: "{{ global_vault_token }}"
     verify: false
   register: consul_ca_result
-  ignore_errors: yes
+  ignore_errors: true
   when: csr.changed == false
   run_once: true
   delegate_to: localhost
@@ -406,7 +406,7 @@
     token: "{{ global_vault_token }}"
     verify: false
   register: nomad_ca_result
-  ignore_errors: yes
+  ignore_errors: true
   when: csr.changed == false
   run_once: true
   delegate_to: localhost
@@ -508,7 +508,7 @@
     token: "{{ global_vault_token }}"
     verify: false
   register: vault_ca_result
-  ignore_errors: yes
+  ignore_errors: true
   when: csr.changed == false
   run_once: true
   delegate_to: localhost

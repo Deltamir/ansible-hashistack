@@ -34,7 +34,7 @@
     url: "{{ global_vault_address }}"
     auth_method: token
     token: "{{ global_vault_token }}"
-  ignore_errors: yes
+  ignore_errors: true
   register: local_vault_token
   run_once: true
   delegate_to: localhost
