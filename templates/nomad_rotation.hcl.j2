@@ -1,6 +1,6 @@
 vault {
   address      = "{{ global_vault_address }}"
-  token        = "{{ nomad_gossip_token }}"
+  token        = "{{ nomad_rotation_token }}"
   unwrap_token = false
   renew_token  = true
 }
@@ -12,3 +12,9 @@ template {
   command     = "/opt/nomad_rotate_key.sh"
 }
 
+template {
+  source      = "/opt/nomad/templates/nomad_server.crt.tpl"
+  destination = "/etc/nomad/ssl/nomad_server.crt"
+  perms       = 0644
+  command     = "/opt/nomad_reload.sh"
+}

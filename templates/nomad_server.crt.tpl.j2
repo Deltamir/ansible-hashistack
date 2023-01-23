@@ -1,0 +1,7 @@
+{% raw %}{{- with pkiCert "hashistack/pki_int_nomad/issue/nomad-home"  "common_name=server.global.nomad" "ttl={% endraw %}{{ consul_template_cert_ttl }}{% raw %}" "ip_sans={% endraw %}{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}{% raw %}" "alt_names=nomad.service.consul,nomad.service.home.consul" -}}
+{{ .Cert }}
+{{ if .Key }}
+{{ .Key  | writeToFile "/etc/nomad/ssl/nomad_server.key" "root" "bin" "0400" }}
+{{ end }}
+{{ end }}
+{% endraw %}

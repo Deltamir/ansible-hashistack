@@ -1,0 +1,11 @@
+[Unit]
+Description=vault-template
+Requires=network-online.target
+After=network-online.target consul.service vault.service
+
+[Service]
+Restart=on-failure
+ExecStart=/usr/bin/consul-template -config=/opt/vault/templates/vault_rotation.hcl
+
+[Install]
+WantedBy=multi-user.target

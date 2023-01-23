@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+echo "==========BEGIN CERTIFICATE KEY ROTATION=========="
+
+date
+echo "Reloading nomad daemon"
+sudo systemctl reload vault
+echo "Tidying certificate store"
+curl -s --header "X-Vault-Token: {{ vault_rotation_token }}" --data '{"tidy_cert_store": true, "tidy_revoked_certs": true, "safety_buffer": "{{ consul_template_cert_ttl }}"}' --request POST {{ global_vault_address }}/v1/hashistack/pki_int_vault/tidy > /dev/null
+curl -s --header "X-Vault-Token: {{ vault_rotation_token }}" --data '{"tidy_cert_store": true, "tidy_revoked_certs": true, "safety_buffer": "{{ consul_template_cert_ttl }}"}' --request POST {{ global_vault_address }}/v1/hashistack/pki/tidy > /dev/null
+
+echo "==========END CERTIFICATE KEY ROTATION=========="

@@ -289,7 +289,7 @@
   when: csr.changed == true
   delegate_to: localhost
 
-- name: Register vault CA cert if necessary (from generation)
+- name: Register consul CA cert if necessary (from generation)
   set_fact:
     consul_ca: "{{  certificate['data']['certificate']}}"
   when: csr.changed == true
@@ -493,7 +493,7 @@
   when: csr.changed == true
   delegate_to: localhost
 
-- name: Register nomad CA cert if necessary (from generation)
+- name: Register vault CA cert if necessary (from generation)
   set_fact:
     vault_ca: "{{  certificate['data']['certificate']}}"
   when: csr.changed == true
@@ -564,10 +564,10 @@
     consul_token:  "{{ consul_token_wrapped.login.auth.client_token }}"
   delegate_to: localhost
 
-- name: Create nomad_gossip policy
+- name: Create nomad policy
   hashivault_policy:
-    name: nomad_gossip
-    rules_file : "{{ role_path }}/files/nomad_gossip-policy.hcl"
+    name: nomad
+    rules_file : "{{ role_path }}/files/nomad-policy.hcl"
     url: "{{ global_vault_address }}"
     state: present
     authtype: token
@@ -576,19 +576,48 @@
   run_once: yes
   delegate_to: localhost
 
-- name: Create a nomad_gossip_token
+- name: Create a nomad_token
   community.hashi_vault.vault_token_create:
-    policies: ["nomad_gossip", "default"]
+    policies: ["nomad", "default"]
     orphan: true
     url: "{{ global_vault_address }}"
     auth_method: token
     token: "{{ global_vault_token }}"
-  register: nomad_gossip_token_wrapped
+  register: nomad_token_wrapped
   run_once: yes
   delegate_to: localhost
 
-- name: Register nomad_gossip_token token
+- name: Register nomad_token token
   set_fact:
-    nomad_gossip_token:  "{{ nomad_gossip_token_wrapped.login.auth.client_token }}"
+    nomad_rotation_token: "{{ nomad_token_wrapped.login.auth.client_token }}"
+  run_once: yes
+  delegate_to: localhost
+
+- name: Create vault policy
+  hashivault_policy:
+    name: vault
+    rules_file : "{{ role_path }}/files/vault-policy.hcl"
+    url: "{{ global_vault_address }}"
+    state: present
+    authtype: token
+    token: "{{ global_vault_token }}"
+    verify: no
+  run_once: yes
+  delegate_to: localhost
+
+- name: Create a vault_token
+  community.hashi_vault.vault_token_create:
+    policies: ["vault", "default"]
+    orphan: true
+    url: "{{ global_vault_address }}"
+    auth_method: token
+    token: "{{ global_vault_token }}"
+  register: vault_token_wrapped
+  run_once: yes
+  delegate_to: localhost
+
+- name: Register vault_token token
+  set_fact:
+    vault_rotation_token: "{{ vault_token_wrapped.login.auth.client_token }}"
   run_once: yes
   delegate_to: localhost

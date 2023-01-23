@@ -1,0 +1,13 @@
+vault {
+  address      = "{{ global_vault_address }}"
+  token        = "{{ vault_rotation_token }}"
+  unwrap_token = false
+  renew_token  = true
+}
+
+template {
+  source      = "/opt/vault/templates/vault_server.crt.tpl"
+  destination = "/etc/vault/tls/vault_server.crt"
+  perms       = 0644
+  command     = "/opt/vault_reload.sh"
+}

@@ -47,6 +47,12 @@
     state: directory
   become: true
 
+- name: Ensures template data dir exists for vault
+  file:
+    path: /opt/vault/templates
+    state: directory
+  become: true
+
 - name: Copy consul-template consul rotation conf file
   template:
     src: consul_rotation.hcl.j2
@@ -56,13 +62,22 @@
   become: yes
   notify: "restart consul-template service"
 
-- name: Copy consul-template nomad gossip rotation conf file
+- name: Copy consul-template nomad rotation conf file
   template:
-    src: nomad_gossip_rotation.hcl.j2
-    dest: /opt/nomad/templates/nomad_gossip_rotation.hcl
+    src: nomad_rotation.hcl.j2
+    dest: /opt/nomad/templates/nomad_rotation.hcl
     mode: '0644'
   become: yes
   notify: "restart nomad-template service"
+
+- name: Copy consul-template vault rotation conf file
+  template:
+    src: vault_rotation.hcl.j2
+    dest: /opt/vault/templates/vault_rotation.hcl
+    owner: vault
+    mode: '0644'
+  become: yes
+  notify: "restart consul-template service"
 
 - name: Copy consul gossip_key tpl file to temp
   copy:
@@ -73,17 +88,7 @@
   become: yes
   notify: "restart consul-template service"
 
-- name: Copy consul consul_agent_key tpl file to temp
-  template:
-    src: consul_server.key.tpl.j2
-    dest: /opt/consul/templates/consul_server.key.tpl
-    owner: consul
-    group: consul
-    mode: '0644'
-  become: yes
-  notify: "restart consul-template service"
-
-- name: Copy consul consul_agent_crt tpl file to temp
+- name: Copy consul consul_server crt tpl file to temp
   template:
     src: consul_server.crt.tpl.j2
     dest: /opt/consul/templates/consul_server.crt.tpl
@@ -101,6 +106,23 @@
   become: yes
   notify: "restart nomad-template service"
 
+- name: Copy nomad nomad_server crt tpl file to temp
+  template:
+    src: nomad_server.crt.tpl.j2
+    dest: /opt/nomad/templates/nomad_server.crt.tpl
+    mode: '0644'
+  become: yes
+  notify: "restart nomad-template service"
+
+- name: Copy consul vault_server crt tpl file to temp
+  template:
+    src: vault_server.crt.tpl.j2
+    dest: /opt/vault/templates/vault_server.crt.tpl
+    owner: vault
+    mode: '0644'
+  become: yes
+  notify: "restart consul-template service"
+
 - name: Copy consul rotate_key script
   template:
     src: consul_rotate_key.sh.j2
@@ -110,7 +132,7 @@
   become: yes
   notify: "restart consul-template service"
 
-- name: Copy consul reolad script
+- name: Copy consul reload script
   template:
     src: consul_reload.sh.j2
     dest: /opt/consul_reload.sh
@@ -127,6 +149,23 @@
   become: yes
   notify: "restart nomad-template service"
 
+- name: Copy nomad reload script
+  template:
+    src: nomad_reload.sh.j2
+    dest: /opt/nomad_reload.sh
+    mode: '0744'
+  become: yes
+  notify: "restart nomad-template service"
+
+- name: Copy vault reload script
+  template:
+    src: vault_reload.sh.j2
+    dest: /opt/vault_reload.sh
+    owner: consul
+    mode: '0744'
+  become: yes
+  notify: "restart consul-template service"
+
 - name: Copy consul-template service file
   template:
     src: consul-template.service.j2
@@ -140,6 +179,14 @@
   template:
     src: nomad-template.service.j2
     dest: /etc/systemd/system/nomad-template.service
+    mode: '0744'
+  become: yes
+  notify: "reload systemd"
+
+- name: Copy vault-template service file
+  template:
+    src: vault-template.service.j2
+    dest: /etc/systemd/system/vault-template.service
     mode: '0744'
   become: yes
   notify: "reload systemd"
@@ -161,5 +208,15 @@
   become: yes
   register: service_details_consul
   until: service_details_consul.status.ActiveState == "active"
+  retries: 20
+  delay: 3
+
+- name: Ensure vault-template is in running state
+  service:
+    name: vault-template
+    state: started
+  become: yes
+  register: service_details_vault
+  until: service_details_vault.status.ActiveState == "active"
   retries: 20
   delay: 3

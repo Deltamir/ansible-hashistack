@@ -5,7 +5,7 @@ After=network-online.target consul.service vault.service
 
 [Service]
 Restart=on-failure
-ExecStart=/usr/bin/consul-template -config=/opt/nomad/templates/nomad_gossip_rotation.hcl
+ExecStart=/usr/bin/consul-template -config=/opt/nomad/templates/nomad_rotation.hcl
 
 [Install]
 WantedBy=multi-user.target

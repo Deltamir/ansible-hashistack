@@ -18,10 +18,3 @@ template {
   perms       = 0644
   command     = "/opt/consul_reload.sh"
 }
-
-template {
-  source      = "/opt/consul/templates/consul_server.key.tpl"
-  destination = "/etc/consul/ssl/consul_server.key"
-  perms       = 0600
-  command     = "/opt/consul_reload.sh"
-}
