@@ -20,7 +20,7 @@
     url: "{{ hashicorp_url }}/{{ consul_template_uri }}/{{ consul_template_version }}/consul-template_{{ consul_template_version }}_linux_arm.zip"
     dest: "/opt/consul-template.zip"
     checksum: "sha256:{{ item.split(' ').0 }}"
-    mode: 0777
+    mode: '0777'
   when: item is search("linux_arm.zip")
   with_items: "{{ checksums.content.split('\n') }}"
   become: true
@@ -39,24 +39,21 @@
   ansible.builtin.file:
     path: /opt/consul/templates
     state: directory
-    user: consul
-    group: consul
+    mode: '0751'
   become: true
 
 - name: Ensures template data dir exists for nomad
   ansible.builtin.file:
     path: /opt/nomad/templates
     state: directory
-    user: root
-    group: bin
+    mode: '0751'
   become: true
 
 - name: Ensures template data dir exists for vault
   ansible.builtin.file:
     path: /opt/vault/templates
     state: directory
-    user: root
-    group: bin
+    mode: '0751'
   become: true
 
 - name: Copy consul-template consul rotation conf file
