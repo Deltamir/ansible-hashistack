@@ -2,6 +2,8 @@
 collections:
   # Install a collection from Ansible Galaxy.
   - name: community.hashi_vault
+
+roles:
   - name: "git+https://github.com/ansible-community/ansible-vault.git,2022.12.01"
   - name: "git+https://github.com/ansible-community/ansible-consul.git,v3.0.1"
   - name: "git+https://github.com/ansible-community/ansible-nomad.git,v1.9.6"
