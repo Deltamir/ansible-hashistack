@@ -7,10 +7,8 @@
 - name: Set a hostname
   ansible.builtin.hostname:
     name: "{{ hostvars[item].node_name }}"
-  when: "{{ inventory_hostname == item }}"
+  when: inventory_hostname == item
   with_items: "{{ groups['all'] }}"
   become: true
   notify:
     - reboot server
-
-

@@ -71,7 +71,7 @@
     token: "{{ global_vault_token }}"
     config:
       safety_buffer: "60s"
-      tidy_revoked_certs: yes
+      tidy_revoked_certs: true
   run_once: true
   delegate_to: localhost
 
@@ -121,7 +121,7 @@
     token: "{{ global_vault_token }}"
     config:
       safety_buffer: "60s"
-      tidy_revoked_certs: yes
+      tidy_revoked_certs: true
   run_once: true
   delegate_to: localhost
 

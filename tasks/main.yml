@@ -1,34 +1,34 @@
 ---
 
 - name: Set hostnames
-  import_tasks: set-hostnames-and-ntp.yml
+  ansible.builtin.import_tasks: set-hostnames-and-ntp.yml
 
 - name: Bootstrap the global Vault
-  import_tasks: global-vault-bootstrap.yml
+  ansible.builtin.import_tasks: global-vault-bootstrap.yml
 
 - name: Bootstrap the global Vault
-  import_tasks: register-ca.yml
+  ansible.builtin.import_tasks: register-ca.yml
 
 - name: Push cert to nodes
-  import_tasks: push-cert.yml
+  ansible.builtin.import_tasks: push-cert.yml
 
 - name: Assemble consul cluster
-  import_role:
+  ansible.builtin.import_role:
     name: ansible-consul
 
 - name: Assemble vault cluster
-  import_role:
+  ansible.builtin.import_role:
     name: ansible-vault
 
 - name: Initialize the global Vault
-  import_tasks: vault-init.yml
+  ansible.builtin.import_tasks: vault-init.yml
 
 - name: Create and retrieve nomad-server policy token
-  import_tasks: create-nomad-token.yml
+  ansible.builtin.import_tasks: create-nomad-token.yml
 
 - name: Assemble nomad cluster
-  import_role:
+  ansible.builtin.import_role:
     name: ansible-nomad
 
 - name: Create and retrieve nomad-server policy token
-  import_tasks: configure-consul-template.yml
+  ansible.builtin.import_tasks: configure-consul-template.yml
