@@ -1,0 +1,13 @@
+---
+roles:
+  # Install a role from Ansible Galaxy.
+  - name: "git+https://github.com/ansible-community/ansible-vault.git"
+    version: ${ANSIBLE_VAULT_VERSION}
+  - name: "git+https://github.com/ansible-community/ansible-nomad.git"
+    version: ${ANSIBLE_NOMAD_VERSION}
+  - name: "git+https://github.com/ansible-community/ansible-consul.git"
+    version: ${ANSIBLE_CONSUL_VERSION}
+
+collections:
+  # Install a collection from Ansible Galaxy.
+  - name: community.hashi_vault

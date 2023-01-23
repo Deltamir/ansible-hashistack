@@ -1,0 +1,25 @@
+---
+variables:
+  # Docker Image with Ansible
+  ANSIBLE_IMAGE: "cytopia/ansible:latest-tools"
+  ANSIBLE_BASE_APP_NAME: "$CI_PROJECT_NAME"
+  ANSIBLE_PROJECT_DIR: "."
+  ANSIBLE_LINT_IMAGE: "haxorof/ansible-lint:latest"
+  ANSIBLE_FORCE_COLOR: "true"
+  ANSIBLE_REQUIREMENTS_FILE: "requirements.yml"
+  ANSIBLE_VAULT_VERSION: 2022.12.01
+  ANSIBLE_CONSUL_VERSION: v3.0.1
+  ANSIBLE_NOMAD_VERSION: v1.9.6
+
+stages:
+  - build
+
+ansible-lint:
+  stage: build
+  image:
+    name: "$ANSIBLE_LINT_IMAGE"
+    entrypoint: [""]
+  script:
+    - ansible-lint handlers/*.yml
+    - ansible-lint tasks/*.yml
+    - ansible-lint vars/*.yml
