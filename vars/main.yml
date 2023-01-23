@@ -1,0 +1,73 @@
+---
+
+consul_template_uri: consul-template
+consul_template_gossip_key_ttl: "1h"
+consul_template_cert_ttl: "24h"
+hashicorp_url: https://releases.hashicorp.com
+
+consul_client_address: 0.0.0.0
+consul_connect_enabled: true
+consul_encrypt_enable: true
+consul_raft_protocol: 3
+consul_bootstrap_expect: true
+consul_bootstrap_expect_value: "{{ groups['instances'] | length }}"
+consul_dnsmasq_enable: true
+consul_group_name: instances
+consul_node_name: "{{ node_name }}"
+consul_tls_enable: true
+consul_tls_copy_keys: true
+consul_tls_files_remote_src: true
+consul_tls_ca_crt: /tmp/consul_ca.crt
+consul_tls_server_crt: /tmp/consul_server.crt
+consul_tls_server_key: /tmp/consul_server.key
+consul_tls_verify_incoming: true
+consul_tls_verify_outgoing: true
+consul_tls_verify_incoming_rpc: true
+consul_tls_verify_server_hostname: true
+consul_ports_https: 8500
+consul_ports_http: -1
+consul_datacenter: "{{ datacenter }}"
+
+vault_backend: consul
+vault_address: 0.0.0.0
+vault_use_config_path: true
+vault_consul: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:8500"
+vault_consul_scheme: https
+vault_install_remotely: true
+vault_transit: true
+vault_transit_mount_path: hashistack/transit
+vault_transit_address: "{{ global_vault_address }}"
+vault_transit_key_name: autounseal
+vault_transit_tls_skip_verify: true
+vault_cluster_name: "{{ datacenter }}"
+vault_datacenter: "{{ datacenter }}"
+vault_tls_disable: false
+vault_tls_copy_keys: yes
+vault_tls_files_remote_src: yes
+vault_tls_src_files: /tmp
+vault_tls_ca_file: vault_ca.crt
+vault_tls_cert_file: vault_server.crt
+vault_tls_key_file: vault_server.key
+validate_certs_during_api_reachable_check: false
+
+nomad_use_consul: true
+nomad_vault_enabled: true
+nomad_vault_address: https://vault.service.consul:8200
+nomad_raft_protocol: 3
+nomad_bootstrap_expect: "{{ groups['instances'] | length }}"
+nomad_vault_create_from_role: "nomad-cluster"
+nomad_consul_servers_service_name: nomad
+nomad_bind_address: 0.0.0.0
+nomad_consul_address: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:8500"
+nomad_consul_ssl: true
+nomad_group_name: instances
+nomad_node_name: "{{ node_name }}"
+nomad_datacenter: "{{ datacenter }}"
+nomad_tls_enable: true
+nomad_tls_copy_keys: true
+nomad_tls_files_remote_src: true
+nomad_ca_file: /tmp/nomad_ca.crt
+nomad_cert_file: /tmp/nomad_server.crt
+nomad_key_file: /tmp/nomad_server.key
+nomad_verify_server_hostname: false
+nomad_verify_https_client: false
