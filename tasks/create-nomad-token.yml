@@ -1,12 +1,4 @@
 ---
-
-- ansible.builtin.uri:
-    validate_certs: yes
-    url: https://192.168.1.40:8200/v1/sys/health
-    status_code: 200, 429, 472, 473, 501, 503
-  run_once: true
-  delegate_to: localhost
-
 - name: Create nomad-server policy on local vault
   hashivault_policy:
     token: "{{ local_vault_token.data.key }}"
@@ -21,7 +13,7 @@
   environment:
     REQUESTS_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
 
-- name: create nomad-cluster token role on local vault
+- name: Create nomad-cluster token role on local vault
   community.hashi_vault.vault_write:
     token: "{{ local_vault_token.data.key }}"
     url: https://vault.service.consul:8200

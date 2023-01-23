@@ -1,5 +1,5 @@
 ---
-- name: enable kv-v1 secret engine
+- name: Enable kv-v1 secret engine
   hashivault_secret_engine:
     backend: kv
     name: hashistack/kv
@@ -11,7 +11,7 @@
   run_once: true
   delegate_to: localhost
 
-- name: retrieve Consul Gossip key if exist and ignore error if not
+- name: Retrieve Consul Gossip key if exist and ignore error if not
   community.hashi_vault.vault_kv1_get:
     engine_mount_point: hashistack/kv
     path: consul_gossip_key
@@ -32,7 +32,7 @@
   run_once: true
   delegate_to: localhost
 
-- name: write consul gossip encryption key
+- name: Write consul gossip encryption key
   hashivault_secret:
     secret: "consul_gossip_key"
     data:
@@ -62,7 +62,7 @@
   run_once: true
   delegate_to: localhost
 
-- name: retrieve Nomad Gossip key if exist and ignore error if not
+- name: Retrieve Nomad Gossip key if exist and ignore error if not
   community.hashi_vault.vault_kv1_get:
     engine_mount_point: hashistack/kv
     path: nomad_gossip_key
@@ -83,7 +83,7 @@
   run_once: true
   delegate_to: localhost
 
-- name: write nomad gossip encryption key
+- name: Write nomad gossip encryption key
   hashivault_secret:
     secret: "nomad_gossip_key"
     data:
@@ -113,7 +113,7 @@
   run_once: true
   delegate_to: localhost
 
-- name: enable transit secret engine
+- name: Enable transit secret engine
   hashivault_secret_engine:
     backend: transit
     name: hashistack/transit
@@ -125,7 +125,7 @@
   run_once: true
   delegate_to: localhost
 
-- name: create autounseal secret
+- name: Create autounseal secret
   community.hashi_vault.vault_write:
     path: hashistack/transit/keys/autounseal
     url: "{{ global_vault_address }}"
@@ -163,7 +163,7 @@
   run_once: true
   delegate_to: localhost
 
-- name: get CA cert if exist and ignore error if not
+- name: Get CA cert if exist and ignore error if not
   hashivault_pki_cert_get:
     mount_point: hashistack/pki
     url: "{{ global_vault_address }}"
@@ -175,7 +175,7 @@
   run_once: true
   delegate_to: localhost
 
-- name: enable CA pki secret engine
+- name: Enable CA pki secret engine
   hashivault_secret_engine:
     name: hashistack/pki
     backend: pki
@@ -188,7 +188,7 @@
   when: root_ca_result['data'] == {}
   delegate_to: localhost
 
-- name: generate root CA
+- name: Generate root CA
   hashivault_pki_ca:
     url: "{{ global_vault_address }}"
     mount_point: hashistack/pki
@@ -217,7 +217,7 @@
   run_once: true
   delegate_to: localhost
 
-- name: configure CA and CRL URLs
+- name: Configure CA and CRL URLs
   hashivault_pki_url:
     url: "{{ global_vault_address }}"
     mount_point: hashistack/pki
@@ -231,7 +231,7 @@
   run_once: true
   delegate_to: localhost
 
-- name: enable consul intermediate pki secret engine
+- name: Enable consul intermediate pki secret engine
   hashivault_secret_engine:
     name: hashistack/pki_int_consul
     backend: pki
@@ -243,7 +243,7 @@
   run_once: true
   delegate_to: localhost
 
-- name: generate consul intermediate CA CSR
+- name: Generate consul intermediate CA CSR
   hashivault_pki_ca:
     url: "{{ global_vault_address }}"
     common_name: "home.consul Intermediate Authority"
@@ -259,7 +259,7 @@
   register: csr
   delegate_to: localhost
 
-- name: sign consul CSR
+- name: Sign consul CSR
   hashivault_pki_cert_sign:
     common_name: "home.consul Intermediate Authority"
     url: "{{ global_vault_address }}"
@@ -277,7 +277,7 @@
   when: csr.changed == true
   delegate_to: localhost
 
-- name: write consul signed certificate
+- name: Write consul signed certificate
   hashivault_pki_set_signed:
     url: "{{ global_vault_address }}"
     authtype: token
@@ -296,7 +296,7 @@
   run_once: true
   delegate_to: localhost
 
-- name: get consul CA cert if exist and ignore error if not
+- name: Get consul CA cert if exist and ignore error if not
   hashivault_pki_cert_get:
     mount_point: hashistack/pki_int_consul
     url: "{{ global_vault_address }}"
@@ -316,7 +316,7 @@
   run_once: true
   delegate_to: localhost
 
-- name: create consul role
+- name: Create consul role
   hashivault_pki_role:
     url: "{{ global_vault_address }}"
     authtype: token
@@ -333,7 +333,7 @@
   run_once: true
   delegate_to: localhost
 
-- name: enable nomad intermediate pki secret engine
+- name: Enable nomad intermediate pki secret engine
   hashivault_secret_engine:
     name: hashistack/pki_int_nomad
     backend: pki
@@ -345,7 +345,7 @@
   run_once: true
   delegate_to: localhost
 
-- name: generate nomad intermediate CA CSR
+- name: Generate nomad intermediate CA CSR
   hashivault_pki_ca:
     url: "{{ global_vault_address }}"
     common_name: "global.nomad Intermediate Authority"
@@ -361,7 +361,7 @@
   register: csr
   delegate_to: localhost
 
-- name: sign nomad CSR
+- name: Sign nomad CSR
   hashivault_pki_cert_sign:
     common_name: "global.nomad Intermediate Authority"
     url: "{{ global_vault_address }}"
@@ -379,7 +379,7 @@
   when: csr.changed == true
   delegate_to: localhost
 
-- name: write nomad signed certificate
+- name: Write nomad signed certificate
   hashivault_pki_set_signed:
     url: "{{ global_vault_address }}"
     authtype: token
@@ -398,7 +398,7 @@
   run_once: true
   delegate_to: localhost
 
-- name: get nomad CA cert if exist and ignore error if not
+- name: Get nomad CA cert if exist and ignore error if not
   hashivault_pki_cert_get:
     mount_point: hashistack/pki_int_nomad
     url: "{{ global_vault_address }}"
@@ -418,7 +418,7 @@
   run_once: true
   delegate_to: localhost
 
-- name: create nomad role
+- name: Create nomad role
   hashivault_pki_role:
     url: "{{ global_vault_address }}"
     authtype: token
@@ -435,7 +435,7 @@
   run_once: true
   delegate_to: localhost
 
-- name: enable vault intermediate pki secret engine
+- name: Enable vault intermediate pki secret engine
   hashivault_secret_engine:
     name: hashistack/pki_int_vault
     backend: pki
@@ -447,7 +447,7 @@
   run_once: true
   delegate_to: localhost
 
-- name: generate vault intermediate CA CSR
+- name: Generate vault intermediate CA CSR
   hashivault_pki_ca:
     url: "{{ global_vault_address }}"
     common_name: "vault.service.home.consul Intermediate Authority"
@@ -463,7 +463,7 @@
   register: csr
   delegate_to: localhost
 
-- name: sign vault CSR
+- name: Sign vault CSR
   hashivault_pki_cert_sign:
     common_name: "vault.service.home.consul Intermediate Authority"
     url: "{{ global_vault_address }}"
@@ -481,7 +481,7 @@
   when: csr.changed == true
   delegate_to: localhost
 
-- name: write vault signed certificate
+- name: Write vault signed certificate
   hashivault_pki_set_signed:
     url: "{{ global_vault_address }}"
     authtype: token
@@ -500,7 +500,7 @@
   run_once: true
   delegate_to: localhost
 
-- name: get vault CA cert if exist and ignore error if not
+- name: Get vault CA cert if exist and ignore error if not
   hashivault_pki_cert_get:
     mount_point: hashistack/pki_int_vault
     url: "{{ global_vault_address }}"
@@ -520,7 +520,7 @@
   run_once: true
   delegate_to: localhost
 
-- name: create vault role
+- name: Create vault role
   hashivault_pki_role:
     url: "{{ global_vault_address }}"
     authtype: token

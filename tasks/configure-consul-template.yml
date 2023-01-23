@@ -8,14 +8,14 @@
       - jq
   become: true
 
-- name: get consul-template checksums
+- name: Get consul-template checksums
   ansible.builtin.uri:
     url: "{{ hashicorp_url }}/{{ consul_template_uri }}/{{ consul_template_version }}/consul-template_{{ consul_template_version }}_SHA256SUMS"
     return_content: true
   become: true
   register: checksums
 
-- name: download consul-template binary
+- name: Download consul-template binary
   ansible.builtin.get_url:
     url: "{{ hashicorp_url }}/{{ consul_template_uri }}/{{ consul_template_version }}/consul-template_{{ consul_template_version }}_linux_arm.zip"
     dest: "/opt/consul-template.zip"
@@ -25,7 +25,7 @@
   with_items: "{{ checksums.content.split('\n') }}"
   become: true
 
-- name: unzip consul-template library
+- name: Unzip consul-template library
   ansible.builtin.unarchive:
     src: "/opt/consul-template.zip"
     dest: /usr/bin
