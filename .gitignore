@@ -1,3 +1,4 @@
 /secrets/
 inventory
 main.yml
+/.idea/ansible-hashistack.iml
