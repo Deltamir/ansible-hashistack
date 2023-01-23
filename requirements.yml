@@ -1,0 +1,17 @@
+collections:
+  # Install a collection from Ansible Galaxy.
+  - name: community.hashi_vault
+
+roles:
+  - src: https://github.com/ansible-community/ansible-vault.git
+    name: ansible-community.ansible-vault
+    scm: git
+    version: 2022.12.01
+  - src: https://github.com/ansible-community/ansible-consul.git
+    name: ansible-community.ansible-vault
+    scm: git
+    version: v3.0.1
+  - src: https://github.com/ansible-community/ansible-nomad.git
+    name: ansible-community.ansible-vault
+    scm: git
+    version: v1.9.6
