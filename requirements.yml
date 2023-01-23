@@ -1,7 +1,0 @@
----
-collections:
-  # Install a collection from Ansible Galaxy.
-  - name: community.hashi_vault
-  - name: ansible-community/ansible-vault
-
-
