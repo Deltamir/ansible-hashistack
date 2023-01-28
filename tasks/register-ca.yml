@@ -73,5 +73,5 @@
   become: true
 
 - name: Run dpkg-reconfigure ca-certificate local
-  ansible.builtin.local_action: command update-ca-certificates
+  local_action: ansible.builtin.command update-ca-certificates
   become: true

@@ -24,8 +24,8 @@
   delegate_to: localhost
 
 - name: Generate a consul encyption key
-  ansible.builtin.local_action:
-    module: command
+  local_action:
+    module: ansible.builtin.command
     cmd: openssl rand -base64 32
   register: encryption_key
   when: consul_gossip_result['failed']
@@ -75,8 +75,8 @@
   delegate_to: localhost
 
 - name: Generate a nomad encyption key
-  ansible.builtin.local_action:
-    module: command
+  local_action:
+    module: ansible.builtin.command
     cmd: openssl rand -base64 32
   register: encryption_key
   when: nomad_gossip_result['failed']
