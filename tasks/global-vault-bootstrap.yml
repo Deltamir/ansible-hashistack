@@ -274,7 +274,7 @@
       ttl: 43800h
   run_once: true
   register: certificate
-  when: csr.changed
+  when: csr.changed # noqa: no-handler
   delegate_to: localhost
 
 - name: Write consul signed certificate
@@ -286,7 +286,7 @@
     certificate: "{{ certificate['data']['certificate'] }}"
     mount_point: hashistack/pki_int_consul
   run_once: true
-  when: csr.changed
+  when: csr.changed # noqa: no-handler
   delegate_to: localhost
 
 - name: Register consul CA cert if necessary (from generation)
@@ -305,7 +305,7 @@
     verify: false
   register: consul_ca_result
   ignore_errors: true
-  when: not csr.changed
+  when: not csr.changed # noqa: no-handler
   run_once: true
   delegate_to: localhost
 
@@ -376,7 +376,7 @@
       ttl: 43800h
   run_once: true
   register: certificate
-  when: csr.changed
+  when: csr.changed # noqa: no-handler
   delegate_to: localhost
 
 - name: Write nomad signed certificate
@@ -388,7 +388,7 @@
     certificate: "{{ certificate['data']['certificate'] }}"
     mount_point: hashistack/pki_int_nomad
   run_once: true
-  when: csr.changed
+  when: csr.changed # noqa: no-handler
   delegate_to: localhost
 
 - name: Register nomad CA cert if necessary (from generation)
@@ -478,7 +478,7 @@
       ttl: 43800h
   run_once: true
   register: certificate
-  when: csr.changed
+  when: csr.changed # noqa: no-handler
   delegate_to: localhost
 
 - name: Write vault signed certificate
@@ -490,7 +490,7 @@
     certificate: "{{ certificate['data']['certificate'] }}"
     mount_point: hashistack/pki_int_vault
   run_once: true
-  when: csr.changed
+  when: csr.changed # noqa: no-handler
   delegate_to: localhost
 
 - name: Register vault CA cert if necessary (from generation)

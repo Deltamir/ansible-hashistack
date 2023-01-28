@@ -23,7 +23,7 @@
     url: "{{ global_vault_address }}"
     authtype: token
     token: "{{ global_vault_token }}"
-  when: vault_init['changed']
+  when: vault_init['changed'] # noqa: no-handler
   run_once: true
   delegate_to: localhost
 
@@ -42,6 +42,6 @@
 - name: Sleep for 30s if vault was not initialized
   ansible.builtin.wait_for:
     timeout: 30
-  when: vault_init['changed']
+  when: vault_init['changed'] # noqa: no-handler
   run_once: true
   delegate_to: localhost
