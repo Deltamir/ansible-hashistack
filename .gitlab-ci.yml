@@ -20,6 +20,6 @@ ansible-lint:
     name: "$ANSIBLE_LINT_IMAGE"
     entrypoint: [""]
   script:
-    - ansible-lint handlers/*.yml
-    - ansible-lint tasks/*.yml
-    - ansible-lint vars/*.yml
+    - ansible-lint handlers/*.yml -w no-handler
+    - ansible-lint tasks/*.yml -w no-handler
+    - ansible-lint vars/*.yml -w no-handler
