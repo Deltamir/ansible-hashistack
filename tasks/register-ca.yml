@@ -3,35 +3,41 @@
 - name: Create ca_certificate dir
   ansible.builtin.file:
     path: /usr/local/share/ca-certificates/local
+    mode: '0755'
     state: directory
 
 - name: Write root ca file to dir
   ansible.builtin.copy:
     content: "{{ root_ca }}"
     dest: /usr/local/share/ca-certificates/local/home_root_ca.crt
+    mode: '0644'
     force: true
 
 - name: Write consul ca file to dir
   ansible.builtin.copy:
     content: "{{ consul_ca }}"
     dest: /usr/local/share/ca-certificates/local/home_consul_ca.crt
+    mode: '0644'
     force: true
 
 - name: Write nomad ca file to dir
   ansible.builtin.copy:
     content: "{{ nomad_ca }}"
     dest: /usr/local/share/ca-certificates/local/home_nomad_ca.crt
+    mode: '0644'
     force: true
 
 - name: Write vault ca file to dir
   ansible.builtin.copy:
     content: "{{ vault_ca }}"
     dest: /usr/local/share/ca-certificates/local/home_vault_ca.crt
+    mode: '0644'
     force: true
 
 - name: Create ca_certificate local dir
   ansible.builtin.file:
     path: /usr/local/share/ca-certificates/local
+    mode: '0755'
     state: directory
   run_once: true
   delegate_to: localhost
@@ -48,6 +54,7 @@
   ansible.builtin.copy:
     content: "{{ consul_ca }}"
     dest: /usr/local/share/ca-certificates/local/home_consul_ca.crt
+    mode: '0644'
     force: true
   run_once: true
   delegate_to: localhost
@@ -56,6 +63,7 @@
   ansible.builtin.copy:
     content: "{{ nomad_ca }}"
     dest: /usr/local/share/ca-certificates/local/home_nomad_ca.crt
+    mode: '0644'
     force: true
   run_once: true
   delegate_to: localhost
@@ -64,6 +72,7 @@
   ansible.builtin.copy:
     content: "{{ vault_ca }}"
     dest: /usr/local/share/ca-certificates/local/home_vault_ca.crt
+    mode: '0644'
     force: true
   run_once: true
   delegate_to: localhost
@@ -73,5 +82,6 @@
   become: true
 
 - name: Run dpkg-reconfigure ca-certificate local
-  local_action: ansible.builtin.command update-ca-certificates
+  ansible.builtin.command: update-ca-certificates
   become: true
+  delegate_to: localhost
