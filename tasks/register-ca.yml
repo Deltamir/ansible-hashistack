@@ -46,6 +46,7 @@
   ansible.builtin.copy:
     content: "{{ root_ca }}"
     dest: /usr/local/share/ca-certificates/local/home_root_ca.crt
+    mode: '0644'
     force: true
   run_once: true
   delegate_to: localhost
