@@ -1,0 +1,3 @@
+[[ignore]]
+
+findings = ["d306966eca7488d6e3230181016bbe1ec9697751:inventory:generic-api-key:6", "687eaf2dcfdfdebe468159898a8f849989b76c23:inventory:generic-api-key:6", "612109a6ad7f5f0f574c232327b9cb47bf6c8974:inventory:generic-api-key:6", "612109a6ad7f5f0f574c232327b9cb47bf6c8974:inventory-test:generic-api-key:3", "297dd0e6fc33548fd450e675eca152757e51b7b2:inventory:generic-api-key:8"]
