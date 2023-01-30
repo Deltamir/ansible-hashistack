@@ -2,7 +2,7 @@
 variables:
   # Docker Image with Ansible
   ANSIBLE_IMAGE: cytopia/ansible:latest-tools
-  ANSIBLE_LINT_IMAGE: ansible-lint:latest
+  ANSIBLE_LINT_IMAGE: haxorof/ansible-lint:latest
   ANSIBLE_FORCE_COLOR: "true"
   ANSIBLE_REQUIREMENTS_FILE: "requirements.yml"
   GITLEAKS_IMAGE: zricethezav/gitleaks:latest
@@ -38,6 +38,8 @@ ansible-lint:
     - ansible-lint handlers/*.yml -w no-handler -w no-changed-when
     - ansible-lint tasks/*.yml -w no-handler -w no-changed-when
     - ansible-lint vars/*.yml -w no-handler -w no-changed-when
+  tags:
+    - vps
 
 gitleaks:
   stage: test
@@ -55,6 +57,8 @@ gitleaks:
     when: always
     paths:
       - gitleaks/
+  tags:
+    - vps
 
 hadolint:
   stage: test
@@ -72,7 +76,9 @@ galaxy-import:
     - ansible-galaxy role import $GITHUB_USER $GITHUB_REPO --token $ANSIBLE_GALAXY
   rules:
     - if: $CI_COMMIT_TAG
-    - if: ($CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH)
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  tags:
+    - vps
 
 kaniko:
   stage: build
