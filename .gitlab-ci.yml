@@ -1,13 +1,11 @@
 ---
 variables:
   # Docker Image with Ansible
-  ANSIBLE_IMAGE: "cytopia/ansible:latest-tools"
-  ANSIBLE_BASE_APP_NAME: "$CI_PROJECT_NAME"
-  ANSIBLE_PROJECT_DIR: "."
-  ANSIBLE_LINT_IMAGE: "haxorof/ansible-lint:latest"
+  ANSIBLE_IMAGE: cytopia/ansible:latest-tools
+  ANSIBLE_LINT_IMAGE: ansible-lint:latest
   ANSIBLE_FORCE_COLOR: "true"
   ANSIBLE_REQUIREMENTS_FILE: "requirements.yml"
-  GITLEAKS_IMAGE: "registry.hub.docker.com/zricethezav/gitleaks:latest"
+  GITLEAKS_IMAGE: zricethezav/gitleaks:latest
   GITLEAKS_ARGS: "--verbose"
   HADOLINT_CI_IMAGE: hadolint/hadolint:v2.12.0-debian
   KANIKO_CI_IMAGE: gcr.io/kaniko-project/executor:v1.9.1-debug
@@ -72,6 +70,9 @@ galaxy-import:
   image: cytopia/ansible
   script:
     - ansible-galaxy role import $GITHUB_USER $GITHUB_REPO --token $ANSIBLE_GALAXY
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: ($CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH)
 
 kaniko:
   stage: build
