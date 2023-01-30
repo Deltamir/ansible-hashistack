@@ -1,5 +1,5 @@
 galaxy_info:
-  role_name: ansible-hashistack
+  role_name: ansible_hashistack
   author: deltamir
   namespace: deltamir
   description: A deploy job for a Consul backed Nomad cluster and a Consul backed Vault cluster with automating secret rotation and cross ACL management
