@@ -23,9 +23,10 @@ variables:
 
 stages:
   - test
+  - publish
   - build
   - acceptance
-  - publish
+  - package-publish
 
 before_script:
   - export FULL_IMAGE_NAME="${REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME%/*}"
@@ -65,6 +66,12 @@ hadolint:
     - hadolint Dockerfile
   tags:
     - vps
+
+galaxy-import:
+  stage: publish
+  image: cytopia/ansible
+  script:
+    - ansible-galaxy role import $GITHUB_USER $GITHUB_REPO --token $ANSIBLE_GALAXY
 
 kaniko:
   stage: build
@@ -125,7 +132,7 @@ trivy:
     - vps
 
 docker-push:
-  stage: publish
+  stage: package-publish
   image: $DOCKER_CI_IMAGE
   variables:
     DOCKER_HOST: tcp://docker:2375
@@ -142,9 +149,3 @@ docker-push:
   rules:
     - if: $CI_COMMIT_TAG
     - if: ($CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH || $CI_COMMIT_BRANCH == "develop")
-
-galaxy-import:
-  stage: publish
-  image: cytopia/ansible
-  script:
-    - ansible-galaxy role import $GITHUB_USER $GITHUB_REPO --token $ANSIBLE_GALAXY
