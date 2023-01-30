@@ -14,7 +14,7 @@ variables:
   DIND_CI_IMAGE: docker:20.10.14-dind
   DEBIAN_BUILD_IMAGE: arm32v7/debian:11.5
   ANSIBLE_VERSION: 2.10.7+merged+base+2.10.8+dfsg-1
-  REGISTRY_IMAGE: deltamir/hashistack-ansible
+  REGISTRY_IMAGE: "deltamir/${CI_PROJECT_NAME}"
   ANSIBLE_VAULT_VERSION: 2022.12.01
   ANSIBLE_CONSUL_VERSION: v3.0.1
   ANSIBLE_NOMAD_VERSION: v1.9.6
