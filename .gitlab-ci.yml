@@ -9,13 +9,26 @@ variables:
   ANSIBLE_REQUIREMENTS_FILE: "requirements.yml"
   GITLEAKS_IMAGE: "registry.hub.docker.com/zricethezav/gitleaks:latest"
   GITLEAKS_ARGS: "--verbose"
+  HADOLINT_CI_IMAGE: hadolint/hadolint:v2.12.0-debian
+  KANIKO_CI_IMAGE: gcr.io/kaniko-project/executor:v1.9.1-debug
+  TRIVY_CI_IMAGE: aquasec/trivy:0.35.0
+  DOCKER_CI_IMAGE: docker:20.10.14
+  DIND_CI_IMAGE: docker:20.10.14-dind
+  DEBIAN_BUILD_IMAGE: arm32v7/debian:11.5
+  ANSIBLE_VERSION: 2.10.7+merged+base+2.10.8+dfsg-1
+  REGISTRY_IMAGE: deltamir/hashistack-ansible
   ANSIBLE_VAULT_VERSION: 2022.12.01
   ANSIBLE_CONSUL_VERSION: v3.0.1
   ANSIBLE_NOMAD_VERSION: v1.9.6
 
-
 stages:
   - test
+  - build
+  - acceptance
+  - publish
+
+before_script:
+  - export FULL_IMAGE_NAME="${REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME%/*}"
 
 ansible-lint:
   stage: test
@@ -44,3 +57,88 @@ gitleaks:
     paths:
       - gitleaks/
 
+hadolint:
+  stage: test
+  image: $HADOLINT_CI_IMAGE
+  script:
+    - echo $FULL_IMAGE_NAME
+    - hadolint Dockerfile
+  tags:
+    - vps
+
+kaniko:
+  stage: build
+  image:
+    name: $KANIKO_CI_IMAGE
+    entrypoint: [""]
+  script:
+    - >-
+      /kaniko/executor
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
+      --compressed-caching=false
+      --force
+      --destination "${FULL_IMAGE_NAME}"
+      --build-arg "ANSIBLE_VERSION=${ANSIBLE_VERSION}"
+      --build-arg "ANSIBLE_VAULT_VERSION=${ANSIBLE_VAULT_VERSION}"
+      --build-arg "ANSIBLE_CONSUL_VERSION=${ANSIBLE_CONSUL_VERSION}"
+      --build-arg "ANSIBLE_NOMAD_VERSION=${ANSIBLE_NOMAD_VERSION}"
+      --build-arg "DEBIAN_BUILD_IMAGE=${DEBIAN_BUILD_IMAGE}"
+      --no-push
+      --tarPath packer_arm.tar
+  artifacts:
+    paths:
+      - packer_arm.tar
+    when: on_success
+    expire_in: 10 min
+  tags:
+    - vps
+
+trivy:
+  stage: acceptance
+  image:
+    name: $TRIVY_CI_IMAGE
+    entrypoint: [""]
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: "/certs"
+    GIT_STRATEGY: none
+    TRIVY_NO_PROGRESS: "true"
+    TRIVY_CACHE_DIR: ".trivycache/"
+  services:
+    - $DIND_CI_IMAGE
+  script:
+    - trivy --version
+    - time trivy image --clear-cache
+    - time trivy image --download-db-only
+    - time trivy image --exit-code 0 --format template --template "@/contrib/junit.tpl"
+      --output "$CI_PROJECT_DIR/gl-container-scanning-report.xml" --input packer_arm.tar
+    - time trivy image --exit-code 0 --input packer_arm.tar
+  cache:
+    paths:
+      - .trivycache/
+  artifacts:
+    when: always
+    reports:
+      junit: gl-container-scanning-report.xml
+  tags:
+    - vps
+
+docker-push:
+  stage: publish
+  image: $DOCKER_CI_IMAGE
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+  services:
+    - $DIND_CI_IMAGE
+  script:
+    - docker login -u $REGISTRY_USER -p $REGISTRY_PASSWORD
+    - docker image load -i packer_arm.tar
+    - docker push $FULL_IMAGE_NAME
+    - docker logout
+  tags:
+    - vps
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: ($CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH || $CI_COMMIT_BRANCH == "develop")
