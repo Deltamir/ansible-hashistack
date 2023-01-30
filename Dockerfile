@@ -21,4 +21,4 @@ RUN apt-get update -qqy \
 
 # hadolint ignore=DL3013
 RUN pip install --no-cache-dir boto3 ansible-modules-hashivault hvac \
- && ansible-galaxy install ansible-galaxy install deltamir.ansible_hashistack
+ && ansible-galaxy install deltamir.ansible_hashistack
