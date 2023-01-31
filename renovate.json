@@ -64,6 +64,13 @@
       "depNameTemplate": "debian_11/ansible",
       "datasourceTemplate": "repology",
       "versioningTemplate": "loose"
+    },
+    {
+      "fileMatch": ["^requirements.yml"],
+      "matchStrings": ["ansible-vault\\n\\s{4}scm:\\sgit\\n\\s{4}version:\\s(?<currentValue>.+?)\\n"],
+      "depNameTemplate": "ansible-community/ansible-vault",
+      "versioningTemplate": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)$",
+      "datasourceTemplate": "github-tags"
     }
   ]
 }
