@@ -9,10 +9,10 @@ roles:
     scm: git
     version: 2022.12.01
   - src: https://github.com/ansible-community/ansible-consul.git
-    name: ansible-community.ansible-vault
+    name: ansible-community.ansible-consul
     scm: git
     version: v3.0.1
   - src: https://github.com/ansible-community/ansible-nomad.git
-    name: ansible-community.ansible-vault
+    name: ansible-community.ansible-nomad
     scm: git
     version: v1.9.6
