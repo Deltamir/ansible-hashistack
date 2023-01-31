@@ -54,22 +54,9 @@
     },
     {
       "fileMatch": ["^.gitlab-ci.yml"],
-      "matchStrings": ["ANSIBLE_VAULT_VERSION:\\s(?<currentValue>.+?)\\n"],
-      "depNameTemplate": "ansible-community/ansible-vault",
-      "versioningTemplate": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)$",
-      "datasourceTemplate": "github-tags"
-    },
-    {
-      "fileMatch": ["^.gitlab-ci.yml"],
-      "matchStrings": ["ANSIBLE_CONSUL_VERSION:\\s(?<currentValue>.+?)\\n"],
-      "depNameTemplate": "ansible-community/ansible-consul",
-      "datasourceTemplate": "github-tags"
-    },
-    {
-      "fileMatch": ["^.gitlab-ci.yml"],
-      "matchStrings": ["ANSIBLE_NOMAD_VERSION:\\s(?<currentValue>.+?)\\n"],
-      "depNameTemplate": "ansible-community/ansible-nomad",
-      "datasourceTemplate": "github-tags"
+      "matchStrings": ["docker:(?<currentValue>.+?)\\n"],
+      "depNameTemplate": "docker",
+      "datasourceTemplate": "docker"
     },
     {
       "fileMatch": ["^.gitlab-ci.yml"],
