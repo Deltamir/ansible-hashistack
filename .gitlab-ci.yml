@@ -1,12 +1,9 @@
 ---
 variables:
   # Docker Image with Ansible
-  ANSIBLE_IMAGE: cytopia/ansible:latest-tools
-  ANSIBLE_LINT_IMAGE: haxorof/ansible-lint:latest
-  ANSIBLE_FORCE_COLOR: "true"
-  ANSIBLE_REQUIREMENTS_FILE: "requirements.yml"
-  GITLEAKS_IMAGE: zricethezav/gitleaks:latest
-  GITLEAKS_ARGS: "--verbose"
+  ANSIBLE_IMAGE: cytopia/ansible:2.13-tools
+  ANSIBLE_LINT_IMAGE: haxorof/ansible-lint:v6
+  GITLEAKS_IMAGE: zricethezav/gitleaks:v8.15.3
   HADOLINT_CI_IMAGE: hadolint/hadolint:v2.12.0-debian
   KANIKO_CI_IMAGE: gcr.io/kaniko-project/executor:v1.9.1-debug
   TRIVY_CI_IMAGE: aquasec/trivy:0.35.0
@@ -14,10 +11,13 @@ variables:
   DIND_CI_IMAGE: docker:20.10.14-dind
   DEBIAN_BUILD_IMAGE: arm32v7/debian:11.5
   ANSIBLE_VERSION: 2.10.7+merged+base+2.10.8+dfsg-1
-  REGISTRY_IMAGE: "deltamir/${CI_PROJECT_NAME}"
   ANSIBLE_VAULT_VERSION: 2022.12.01
   ANSIBLE_CONSUL_VERSION: v3.0.1
   ANSIBLE_NOMAD_VERSION: v1.9.6
+  ANSIBLE_FORCE_COLOR: "true"
+  ANSIBLE_REQUIREMENTS_FILE: "requirements.yml"
+  GITLEAKS_ARGS: "--verbose"
+  REGISTRY_IMAGE: "deltamir/${CI_PROJECT_NAME}"
 
 stages:
   - test
