@@ -28,7 +28,7 @@ before_script:
 ansible-lint:
   stage: test
   image:
-    name: "$ANSIBLE_LINT_IMAGE"
+    name: $ANSIBLE_LINT_IMAGE
     entrypoint: [""]
   script:
     - ansible-lint handlers/*.yml -w no-handler -w no-changed-when
@@ -67,7 +67,7 @@ hadolint:
 
 galaxy-import:
   stage: publish
-  image: cytopia/ansible
+  image: $ANSIBLE_IMAGE
   script:
     - ansible-galaxy role import $GITHUB_USER $GITHUB_REPO --token $ANSIBLE_GALAXY
   rules:
