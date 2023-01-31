@@ -54,7 +54,7 @@
     },
     {
       "fileMatch": ["^.gitlab-ci.yml"],
-      "matchStrings": ["\\sdocker:(?<currentValue>.+?)\\n"],
+      "matchStrings": ["IMAGE: docker:(?<currentValue>.+?)\\n"],
       "depNameTemplate": "docker",
       "datasourceTemplate": "docker"
     },
