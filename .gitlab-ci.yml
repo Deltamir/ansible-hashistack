@@ -6,7 +6,7 @@ variables:
   GITLEAKS_IMAGE: zricethezav/gitleaks:v8.15.3
   HADOLINT_CI_IMAGE: hadolint/hadolint:v2.12.0-debian
   KANIKO_CI_IMAGE: gcr.io/kaniko-project/executor:v1.9.1-debug
-  TRIVY_CI_IMAGE: aquasec/trivy:0.35.0
+  TRIVY_CI_IMAGE: aquasec/trivy:0.36.1
   DOCKER_CI_IMAGE: docker:20.10.14
   DIND_CI_IMAGE: docker:20.10.14-dind
   DEBIAN_BUILD_IMAGE: arm32v7/debian:11.5
