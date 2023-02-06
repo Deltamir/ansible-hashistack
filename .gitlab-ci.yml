@@ -167,7 +167,7 @@ docker-pushrm:
     PUSHRM_SHORT: $JOB_DESCRIPTION
     PUSHRM_TARGET: ${REGISTRY_IMAGE}
     PUSHRM_DEBUG: 1
-    PUSHRM_FILE: $CI_PROJECT_DIR/DOCKERHUB.md
+    PUSHRM_FILE: $CI_PROJECT_DIR/README-dockerhub.md
   script: "/bin/true"
   rules:
     - if: $CI_COMMIT_TAG
