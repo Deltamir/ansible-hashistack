@@ -21,6 +21,7 @@ stages:
   - build
   - acceptance
   - package-publish
+  - release
 
 before_script:
   - export FULL_IMAGE_NAME="${REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME%/*}"
@@ -152,3 +153,24 @@ docker-push:
   rules:
     - if: $CI_COMMIT_TAG
     - if: ($CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH || $CI_COMMIT_BRANCH == "develop")
+
+release_job:
+  stage: release
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  rules:
+    - if: $CI_COMMIT_TAG
+  script:
+    - echo "Running the release job."
+  release:
+    tag_name: $CI_COMMIT_TAG
+    ref: $CI_COMMIT_TAG
+    name: 'Release $CI_COMMIT_TAG'
+    description: $CI_COMMIT_MESSAGE
+    assets:
+      links:
+        - name: 'Ansible Galaxy'
+          url: 'https://galaxy.ansible.com/deltamir/ansible_hashistack'
+          link_type: 'package'
+        - name: 'Docker Hub'
+          url: 'hhttps://hub.docker.com/r/deltamir/ansible-hashistack'
+          link_type: 'image'
