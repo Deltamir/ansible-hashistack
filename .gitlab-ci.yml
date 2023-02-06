@@ -182,7 +182,7 @@ release_gitlab:
     tag_name: $CI_COMMIT_TAG
     ref: $CI_COMMIT_TAG
     name: 'Release $CI_COMMIT_TAG'
-    description: CI_COMMIT_TAG_MESSAGE
+    description: $CI_COMMIT_TAG_MESSAGE
     assets:
       links:
         - name: 'Ansible Galaxy'
