@@ -154,6 +154,20 @@ docker-push:
     - if: $CI_COMMIT_TAG
     - if: ($CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH || $CI_COMMIT_BRANCH == "develop")
 
+docker-pushrm:
+  stage: package-publish
+  image:
+    name: chko/docker-pushrm
+    entrypoint: ["/bin/sh", "-c", "/docker-pushrm"]
+  variables:
+    DOCKER_USER: $REGISTRY_USER
+    DOCKER_PASS: $REGISTRY_PASSWORD
+    PUSHRM_SHORT: My short description
+    PUSHRM_TARGET: ${REGISTRY_IMAGE}
+    PUSHRM_DEBUG: 1
+    PUSHRM_FILE: $CI_PROJECT_DIR/README.md
+  script: "/bin/true"
+
 release_gitlab:
   stage: release
   image: registry.gitlab.com/gitlab-org/release-cli:latest
@@ -169,10 +183,10 @@ release_gitlab:
     assets:
       links:
         - name: 'Ansible Galaxy'
-          url: 'https://galaxy.ansible.com/deltamir/ansible_hashistack'
+          url: 'https://galaxy.ansible.com/${REGISTRY_IMAGE}'
           link_type: 'package'
         - name: 'Docker Hub'
-          url: 'https://hub.docker.com/r/deltamir/ansible-hashistack'
+          url: 'https://hub.docker.com/r/${REGISTRY_IMAGE}'
           link_type: 'image'
 
 release_github:
@@ -187,5 +201,5 @@ release_github:
       -H "Accept: application/vnd.github+json" \
       -H "Authorization: Bearer ${GITHUB_COM_TOKEN}"\
       -H "X-GitHub-Api-Version: 2022-11-28" \
-      https://api.github.com/repos/Deltamir/ansible-hashistack/releases \
+      "https://api.github.com/repos/Deltamir/${CI_PROJECT_NAME}/releases" \
       -d '{"tag_name":"${CI_COMMIT_TAG}","target_commitish":"master","name":"${CI_COMMIT_TAG}","body":"${CI_COMMIT_TAG_MESSAGE}","draft":false,"prerelease":false,"generate_release_notes":false}'
