@@ -154,7 +154,7 @@ docker-push:
     - if: $CI_COMMIT_TAG
     - if: ($CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH || $CI_COMMIT_BRANCH == "develop")
 
-release_job:
+release_gitlab:
   stage: release
   image: registry.gitlab.com/gitlab-org/release-cli:latest
   rules:
@@ -165,12 +165,27 @@ release_job:
     tag_name: $CI_COMMIT_TAG
     ref: $CI_COMMIT_TAG
     name: 'Release $CI_COMMIT_TAG'
-    description: $CI_COMMIT_MESSAGE
+    description: CI_COMMIT_TAG_MESSAGE
     assets:
       links:
         - name: 'Ansible Galaxy'
           url: 'https://galaxy.ansible.com/deltamir/ansible_hashistack'
           link_type: 'package'
         - name: 'Docker Hub'
-          url: 'hhttps://hub.docker.com/r/deltamir/ansible-hashistack'
+          url: 'https://hub.docker.com/r/deltamir/ansible-hashistack'
           link_type: 'image'
+
+release_github:
+  stage: release
+  image: curlimages/curl:latest
+  rules:
+    - if: $CI_COMMIT_TAG
+  script:
+    - |
+      curl \ 
+      -X POST \
+      -H "Accept: application/vnd.github+json" \
+      -H "Authorization: Bearer ${GITHUB_COM_TOKEN}"\
+      -H "X-GitHub-Api-Version: 2022-11-28" \
+      https://api.github.com/repos/Deltamir/ansible-hashistack/releases \
+      -d '{"tag_name":"${CI_COMMIT_TAG}","target_commitish":"master","name":"${CI_COMMIT_TAG}","body":"${CI_COMMIT_TAG_MESSAGE}","draft":false,"prerelease":false,"generate_release_notes":false}'
