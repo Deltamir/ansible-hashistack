@@ -14,6 +14,8 @@ variables:
   ANSIBLE_REQUIREMENTS_FILE: "requirements.yml"
   GITLEAKS_ARGS: "--verbose"
   REGISTRY_IMAGE: "deltamir/${CI_PROJECT_NAME}"
+  JOB_DESCRIPTION: "A deploy job for a Consul backed Nomad cluster and a Consul backed Vault cluster with automating secret rotation and cross ACL management"
+
 
 stages:
   - test
@@ -162,10 +164,10 @@ docker-pushrm:
   variables:
     DOCKER_USER: $REGISTRY_USER
     DOCKER_PASS: $REGISTRY_PASSWORD
-    PUSHRM_SHORT: My short description
+    PUSHRM_SHORT: $JOB_DESCRIPTION
     PUSHRM_TARGET: ${REGISTRY_IMAGE}
     PUSHRM_DEBUG: 1
-    PUSHRM_FILE: $CI_PROJECT_DIR/README.md
+    PUSHRM_FILE: $CI_PROJECT_DIR/DOCKERHUB.md
   script: "/bin/true"
   rules:
     - if: $CI_COMMIT_TAG
