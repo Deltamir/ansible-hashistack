@@ -14,7 +14,7 @@ variables:
   ANSIBLE_REQUIREMENTS_FILE: "requirements.yml"
   GITLEAKS_ARGS: "--verbose"
   REGISTRY_IMAGE: "deltamir/${CI_PROJECT_NAME}"
-  JOB_DESCRIPTION: "A deploy job for a Consul backed Nomad cluster and a Consul backed Vault cluster with automating secret rotation and cross ACL management"
+  JOB_DESCRIPTION: "A Consul backed Nomad and Consul backed Vault cluster with auto-secret rotation and ACL management"
 
 
 stages:
