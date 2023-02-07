@@ -169,7 +169,8 @@ docker-push-staging:
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY
     - docker image load -i packer_arm.tar
-    - docker push $FULL_IMAGE_NAME
+    - echo "Pushing to ${CI_REGISTRY}/${FULL_IMAGE_NAME}"
+    - docker push "${CI_REGISTRY}/${FULL_IMAGE_NAME}"
     - docker logout
   tags:
     - vps
