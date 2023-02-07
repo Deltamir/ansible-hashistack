@@ -174,8 +174,8 @@ docker-push-staging:
   tags:
     - vps
   rules:
-    - if: $CI_COMMIT_BRANCH == staging
-    - if: $CI_COMMIT_BRANCH == feature-*
+    - if: $CI_COMMIT_BRANCH == "staging"
+    - if: $CI_COMMIT_BRANCH == "feature-*"
 
 
 docker-pushrm:
