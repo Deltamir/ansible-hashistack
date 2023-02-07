@@ -1,5 +1,6 @@
 ARG ANSIBLE_VERSION
 ARG DEBIAN_BUILD_IMAGE
+ARG CI_COMMIT_SHA
 
 # hadolint ignore=DL3006
 FROM $DEBIAN_BUILD_IMAGE
@@ -20,5 +21,5 @@ RUN apt-get update -qqy \
  && rm -rf /var/lib/apt/lists/*
 
 # hadolint ignore=DL3013
-RUN pip install --no-cache-dir boto3 ansible-modules-hashivault hvac \
- && ansible-galaxy install deltamir.ansible_hashistack
+RUN pip install --no-cache-dir ansible-modules-hashivault hvac \
+ && ansible-galaxy install "git+https://gitlab.com/Deltamir/ansible-hashistack.git,${CI_COMMIT_SHA}"

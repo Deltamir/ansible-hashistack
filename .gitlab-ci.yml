@@ -16,8 +16,8 @@ variables:
   ANSIBLE_FORCE_COLOR: "true"
   ANSIBLE_REQUIREMENTS_FILE: "requirements.yml"
   GITLEAKS_ARGS: "--verbose"
-  REGISTRY_IMAGE: "deltamir/${CI_PROJECT_NAME}"
-  ANSIBLE_ROLE: "deltamir/ansible_hashistack"
+  REGISTRY_IMAGE: "${REGISTRY_USER}/${CI_PROJECT_NAME}"
+  ANSIBLE_ROLE: "${REGISTRY_USER}/ansible_hashistack"
   JOB_DESCRIPTION: "A Consul backed Nomad and Consul backed Vault cluster with auto-secret rotation and ACL management"
 
 
@@ -30,7 +30,7 @@ stages:
   - release
 
 before_script:
-  - export FULL_IMAGE_NAME="${REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME%/*}"
+  - export FULL_IMAGE_NAME="${REGISTRY_IMAGE}:${CI_COMMIT_REF_SLUG%/*}"
 
 ansible-lint:
   stage: test
@@ -97,9 +97,7 @@ kaniko:
       --force
       --destination "${FULL_IMAGE_NAME}"
       --build-arg "ANSIBLE_VERSION=${ANSIBLE_VERSION}"
-      --build-arg "ANSIBLE_VAULT_VERSION=${ANSIBLE_VAULT_VERSION}"
-      --build-arg "ANSIBLE_CONSUL_VERSION=${ANSIBLE_CONSUL_VERSION}"
-      --build-arg "ANSIBLE_NOMAD_VERSION=${ANSIBLE_NOMAD_VERSION}"
+      --build-arg "CI_COMMIT_SHA=${CI_COMMIT_SHA}"
       --build-arg "DEBIAN_BUILD_IMAGE=${DEBIAN_BUILD_IMAGE}"
       --no-push
       --tarPath packer_arm.tar
@@ -158,7 +156,27 @@ docker-push:
     - vps
   rules:
     - if: $CI_COMMIT_TAG
-    - if: ($CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH || $CI_COMMIT_BRANCH == "develop")
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+docker-push-staging:
+  stage: package-publish
+  image: $DOCKER_CI_IMAGE
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+  services:
+    - $DIND_CI_IMAGE
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker image load -i packer_arm.tar
+    - docker push $FULL_IMAGE_NAME
+    - docker logout
+  tags:
+    - vps
+  rules:
+    - if: $CI_COMMIT_BRANCH == staging
+    - if: $CI_COMMIT_BRANCH == feature-*
+
 
 docker-pushrm:
   stage: package-publish
@@ -173,9 +191,11 @@ docker-pushrm:
     PUSHRM_DEBUG: 1
     PUSHRM_FILE: $CI_PROJECT_DIR/README-dockerhub.md
   script: "/bin/true"
+  tags:
+    - vps
   rules:
     - if: $CI_COMMIT_TAG
-    - if: ($CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH || $CI_COMMIT_BRANCH == "develop")
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
 release_gitlab:
   stage: release
@@ -184,6 +204,8 @@ release_gitlab:
     - if: $CI_COMMIT_TAG
   script:
     - echo "Running the release job."
+  tags:
+    - vps
   release:
     tag_name: $CI_COMMIT_TAG
     ref: $CI_COMMIT_TAG
@@ -192,10 +214,10 @@ release_gitlab:
     assets:
       links:
         - name: 'Ansible Galaxy'
-          url: 'https://galaxy.ansible.com/${REGISTRY_IMAGE}'
+          url: 'https://galaxy.ansible.com/${ANSIBLE_ROLE}'
           link_type: 'package'
         - name: 'Docker Hub'
-          url: 'https://hub.docker.com/r/${ANSIBLE_ROLE}'
+          url: 'https://hub.docker.com/r/${REGISTRY_IMAGE}'
           link_type: 'image'
 
 release_github:
@@ -203,6 +225,8 @@ release_github:
   image: $CURL_CI_IMAGE
   rules:
     - if: $CI_COMMIT_TAG
+  tags:
+    - vps
   script:
     - echo "curling https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/releases"
     - echo "using data '{"tag_name":"${CI_COMMIT_TAG}","target_commitish":"main","name":"Release ${CI_COMMIT_TAG}","body":"${CI_COMMIT_TAG_MESSAGE}","draft":false,"prerelease":false,"generate_release_notes":false}'"
