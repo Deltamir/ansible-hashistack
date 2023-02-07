@@ -9,6 +9,9 @@ variables:
   GITLEAKS_IMAGE: zricethezav/gitleaks:v8.15.3
   DOCKER_CI_IMAGE: docker:20.10.23
   DIND_CI_IMAGE: docker:20.10.23-dind
+  PUSHRM_CI_IMAGE: chko/docker-pushrm:1.9.0
+  GITLAB_CI_IMAGE: registry.gitlab.com/gitlab-org/release-cli:v0.15.0
+  CURL_CI_IMAGE: curlimages/curl:7.87.0
   ANSIBLE_VERSION: 2.10.7+merged+base+2.10.8+dfsg-1
   ANSIBLE_FORCE_COLOR: "true"
   ANSIBLE_REQUIREMENTS_FILE: "requirements.yml"
@@ -160,7 +163,7 @@ docker-push:
 docker-pushrm:
   stage: package-publish
   image:
-    name: chko/docker-pushrm
+    name: $PUSHRM_CI_IMAGE
     entrypoint: ["/bin/sh", "-c", "/docker-pushrm"]
   variables:
     DOCKER_USER: $REGISTRY_USER
@@ -176,7 +179,7 @@ docker-pushrm:
 
 release_gitlab:
   stage: release
-  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  image: $GITLAB_CI_IMAGE
   rules:
     - if: $CI_COMMIT_TAG
   script:
@@ -197,7 +200,7 @@ release_gitlab:
 
 release_github:
   stage: release
-  image: curlimages/curl:latest
+  image: $CURL_CI_IMAGE
   rules:
     - if: $CI_COMMIT_TAG
   script:

@@ -60,6 +60,24 @@
     },
     {
       "fileMatch": ["^.gitlab-ci.yml"],
+      "matchStrings": ["chko\\/docker-pushrm:(?<currentValue>.+?)\\n"],
+      "depNameTemplate": "chko/docker-pushrm",
+      "datasourceTemplate": "docker"
+    },
+    {
+      "fileMatch": ["^.gitlab-ci.yml"],
+      "matchStrings": ["curlimages\\/curl:(?<currentValue>.+?)\\n"],
+      "depNameTemplate": "curlimages/curl",
+      "datasourceTemplate": "docker"
+    },
+    {
+      "fileMatch": ["^.gitlab-ci.yml"],
+      "matchStrings": ["registry.gitlab.com\\/gitlab-org\\/release-cli:(?<currentValue>.+?)\\n"],
+      "depNameTemplate": "registry.gitlab.com/gitlab-org/release-cli",
+      "datasourceTemplate": "docker"
+    },
+    {
+      "fileMatch": ["^.gitlab-ci.yml"],
       "matchStrings": ["ANSIBLE_VERSION:\\s(?<currentValue>.+?)\\n"],
       "depNameTemplate": "debian_11/ansible",
       "datasourceTemplate": "repology",

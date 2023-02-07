@@ -2,7 +2,7 @@ galaxy_info:
   role_name: ansible_hashistack
   author: deltamir
   namespace: deltamir
-  description: "'{{ lookup('ansible.builtin.env', 'JOB_DESCRIPTION') }}'"
+  description: "{{ lookup('ansible.builtin.env', 'JOB_DESCRIPTION') }}"
 
   license: 'BSD 2-Clause "Simplified" License'
 
