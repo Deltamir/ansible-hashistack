@@ -208,5 +208,5 @@ release_github:
         -H "Accept: application/vnd.github+json" \
         -H "Authorization: Bearer ${GITHUB_COM_TOKEN}"\
         -H "X-GitHub-Api-Version: 2022-11-28" \
-        -d '{"tag_name":"${CI_COMMIT_TAG}","target_commitish":"main","name":"Release ${CI_COMMIT_TAG}","body":"${CI_COMMIT_TAG_MESSAGE}","draft":false,"prerelease":false,"generate_release_notes":false}' \
+        -d "{\"tag_name\":\"${CI_COMMIT_TAG}\",\"target_commitish\":\"main\",\"name\":\"Release ${CI_COMMIT_TAG}\",\"body\":\"${CI_COMMIT_TAG_MESSAGE}\",\"draft\":false,\"prerelease\":false,\"generate_release_notes\":false}" \
         "https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/releases"
