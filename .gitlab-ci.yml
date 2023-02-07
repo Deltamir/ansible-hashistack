@@ -73,7 +73,9 @@ hadolint:
 
 galaxy-read-description:
   stage: publish
-  image: mikefarah/yq
+  image:
+    name: mikefarah/yq
+    entrypoint: [ "" ]
   script:
     - JOB_DESCRIPTION=$(yq -i .galaxy_info.description < meta/main.yml)
     - echo $JOB_DESCRIPTION
