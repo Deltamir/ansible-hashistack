@@ -18,7 +18,6 @@ variables:
   GITLEAKS_ARGS: "--verbose"
   REGISTRY_IMAGE: "${REGISTRY_USER}/${CI_PROJECT_NAME}"
   ANSIBLE_ROLE: "${REGISTRY_USER}/ansible_hashistack"
-  JOB_DESCRIPTION: "A Consul backed Nomad and Consul backed Vault cluster with auto-secret rotation and ACL management"
 
 
 stages:
@@ -72,11 +71,24 @@ hadolint:
   tags:
     - vps
 
+galaxy-read-description:
+  stage: publish
+  image: mikefarah/yq
+  script:
+    - JOB_DESCRIPTION=$(yq -i .galaxy_info.description < meta/main.yml)
+    - echo $JOB_DESCRIPTION
+    - echo $JOB_DESCRIPTION >> build.env
+  artifacts:
+    reports:
+      dotenv: build.env
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
 galaxy-import:
   stage: publish
   image: $ANSIBLE_IMAGE
   script:
-    - ( echo "cat <<EOF" ; cat meta/main.yml ; echo EOF ) | sh | tee meta/main.yml
     - ansible-galaxy role import $GITHUB_USER $GITHUB_REPO --token $ANSIBLE_GALAXY
   rules:
     - if: $CI_COMMIT_TAG
@@ -189,7 +201,7 @@ docker-pushrm:
     DOCKER_USER: $REGISTRY_USER
     DOCKER_PASS: $REGISTRY_PASSWORD
     PUSHRM_SHORT: $JOB_DESCRIPTION
-    PUSHRM_TARGET: ${REGISTRY_IMAGE}
+    PUSHRM_TARGET: $REGISTRY_IMAGE
     PUSHRM_DEBUG: 1
     PUSHRM_FILE: $CI_PROJECT_DIR/README-dockerhub.md
   script: "/bin/true"
