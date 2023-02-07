@@ -77,7 +77,7 @@ galaxy-read-description:
     name: mikefarah/yq
     entrypoint: [ "" ]
   script:
-    - JOB_DESCRIPTION=$(yq -i .galaxy_info.description < meta/main.yml)
+    - JOB_DESCRIPTION=$(yq .galaxy_info.description < meta/main.yml)
     - echo $JOB_DESCRIPTION
     - echo $JOB_DESCRIPTION >> build.env
   artifacts:
