@@ -79,7 +79,7 @@ galaxy-read-description:
   script:
     - JOB_DESCRIPTION=$(yq .galaxy_info.description < meta/main.yml)
     - echo $JOB_DESCRIPTION
-    - echo $JOB_DESCRIPTION >> build.env
+    - echo "JOB_DESCRIPTION=$JOB_DESCRIPTION" >> build.env
   artifacts:
     reports:
       dotenv: build.env
