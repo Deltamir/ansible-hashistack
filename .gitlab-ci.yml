@@ -192,10 +192,10 @@ release_gitlab:
     assets:
       links:
         - name: 'Ansible Galaxy'
-          url: 'https://galaxy.ansible.com/${REGISTRY_IMAGE}'
+          url: 'https://galaxy.ansible.com/${ANSIBLE_ROLE}'
           link_type: 'package'
         - name: 'Docker Hub'
-          url: 'https://hub.docker.com/r/${ANSIBLE_ROLE}'
+          url: 'https://hub.docker.com/r/${REGISTRY_IMAGE}'
           link_type: 'image'
 
 release_github:
