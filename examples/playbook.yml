@@ -29,4 +29,4 @@
   become: true
   become_user: root
   roles:
-    - {role: ansible-hashistack}
+    - {role: ansible_hashistack}

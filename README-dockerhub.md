@@ -1,12 +1,3 @@
-Work in progress
-
-
-License
--------
-
-BSD 2-Clause "Simplified" License
-
-Author Information
-------------------
-
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+Sorry ! This Readme is not redacted yet  
+Check the **tag** tab to see the last release  
+Check [here](https://github.com/Deltamir/ansible-hashistack) for more detailed informations  
