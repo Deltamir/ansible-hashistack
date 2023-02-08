@@ -7,8 +7,8 @@ variables:
   ANSIBLE_IMAGE: cytopia/ansible:2.13-tools
   ANSIBLE_LINT_IMAGE: haxorof/ansible-lint:v6
   GITLEAKS_IMAGE: zricethezav/gitleaks:v8.15.3
-  DOCKER_CI_IMAGE: docker:20.10.23
-  DIND_CI_IMAGE: docker:20.10.23-dind
+  DOCKER_CI_IMAGE: docker:23.0.0
+  DIND_CI_IMAGE: docker:23.0.0-dind
   PUSHRM_CI_IMAGE: chko/docker-pushrm:1.9.0
   GITLAB_CI_IMAGE: registry.gitlab.com/gitlab-org/release-cli:v0.15.0
   CURL_CI_IMAGE: curlimages/curl:7.87.0
