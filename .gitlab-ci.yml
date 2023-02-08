@@ -29,7 +29,7 @@ stages:
   - release
 
 before_script:
-  - export FULL_IMAGE_NAME="${REGISTRY_IMAGE}:${CI_COMMIT_REF_SLUG%/*}"
+  - export FULL_IMAGE_NAME="${REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME%/*}"
 
 ansible-lint:
   stage: test
