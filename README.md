@@ -65,7 +65,7 @@ A small [HCP Vault](https://portal.cloud.hashicorp.com/sign-up?product_intent=va
 Role Variables
 --------------
 
-This role have X mandatory variables. See the [examples](./examples/inventory).  
+This role have 6 mandatory variables. See the [examples](./examples/inventory).  
 
 ### `global_vault_adress`
 - URL of the master Vault
@@ -83,16 +83,23 @@ This role have X mandatory variables. See the [examples](./examples/inventory).
 ### `consul_node_role`
 - The Consul role of the node, one of: *server* or *client*
 - Default value: client
-- Currently tested only with *server*, so be sure to override it
+- Setted per-host ; Currently tested only with *server* for all nodes, so be sure to override it
 - This role does not support *bootstrap* like ansible-consul role
 
 ### `nomad_node_role`
 - The Nomad role of the node, one of: *server*, *client* or *both*
 - Default value: client
-- Currently tested only with *both*, so be sure to override it
+- Setted per-host ; Currently tested only with *both*, so be sure to override it
 
+### `consul_template_version`
+- Version of the consul_template binary to use
+- Check the last release [here](https://releases.hashicorp.com/consul-template/)
 
-Example Playbook
+### `consul_version`, `nomad_version`, `vault_version`
+- Theses are not mandatory but are recommended
+- The default values are thoses from their respective parent jobs
+
+Examples
 ----------------
 
 Example playbook [here](./examples/playbook.yml) :
@@ -104,11 +111,19 @@ Example playbook [here](./examples/playbook.yml) :
   become: true
   become_user: root
   roles:
-    - {role: ansible-hashistack}
+    - {role: ansible_hashistack}
 ```
 
 Usage via the container Image :  
 **TODO**
+```
+docker pull deltamir/ansible-hashistack
+```
+
+Installation from Galaxy
+```
+ansible-galaxy install deltamir.ansible_hashistack
+```
 
 License
 -------
@@ -117,11 +132,11 @@ License
 
 Author Information
 ------------------
-Deltamir - *ITN Security Expert and Pentester in a Telecom company*  
+Deltamir - *ITN Security Expert, DevSecOps Engineer and Certified Pentester in a Telecom company*  
 Contact via Github inbox
 
 Other
 ------------------
-This role CI and CD is handled here on [Gitlab](https://gitlab.com/Deltamir/ansible-hashistack)  
+The CI of this project is handled here on [Gitlab](https://gitlab.com/Deltamir/ansible-hashistack)  
 This project patch management is handled by a Renovate Bot on Gitlab  
 This project is mirrored here on [Github](https://github.com/Deltamir/ansible-hashistack/)
