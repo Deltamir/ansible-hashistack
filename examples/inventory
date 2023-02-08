@@ -1,0 +1,20 @@
+# NB: Replace the hosts below with your preferred node hostnames and continue
+#     the 'nodeN' pattern for additional nodes.
+
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3
+global_vault_address={{ lookup('env','VAULT_ADDR') }}
+global_vault_token="hvs.secret-token-with-the-necessary-rights"
+
+[instances]
+hashistack1.local node_name=node1 consul_node_role=server nomad_node_role=both
+hashistack2.local node_name=node2 consul_node_role=server nomad_node_role=both
+hashistack3.local node_name=node3 consul_node_role=server nomad_node_role=both
+
+[instances:vars]
+datacenter=home
+consul_version=1.14.2
+vault_version=1.11.6
+nomad_version=1.4.3
+consul_template_version=0.29.6
+consul_dnsmasq_servers=["8.8.8.8"]
