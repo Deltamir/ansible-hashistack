@@ -12,6 +12,7 @@ variables:
   PUSHRM_CI_IMAGE: chko/docker-pushrm:1.9.0
   GITLAB_CI_IMAGE: registry.gitlab.com/gitlab-org/release-cli:v0.15.0
   CURL_CI_IMAGE: curlimages/curl:7.87.0
+  YQ_CI_IMAGE: mikefarah/yq:4.30.8
   ANSIBLE_VERSION: 2.10.7+merged+base+2.10.8+dfsg-1
   ANSIBLE_FORCE_COLOR: "true"
   ANSIBLE_REQUIREMENTS_FILE: "requirements.yml"
@@ -74,7 +75,7 @@ hadolint:
 galaxy-read-description:
   stage: publish
   image:
-    name: mikefarah/yq
+    name: $YQ_CI_IMAGE
     entrypoint: [ "" ]
   script:
     - JOB_DESCRIPTION=$(yq .galaxy_info.description < meta/main.yml)

@@ -78,6 +78,12 @@
     },
     {
       "fileMatch": ["^.gitlab-ci.yml"],
+      "matchStrings": ["mikefarah\\/yq:(?<currentValue>.+?)\\n"],
+      "depNameTemplate": "mikefarah/yq",
+      "datasourceTemplate": "docker"
+    },
+    {
+      "fileMatch": ["^.gitlab-ci.yml"],
       "matchStrings": ["ANSIBLE_VERSION:\\s(?<currentValue>.+?)\\n"],
       "depNameTemplate": "debian_11/ansible",
       "datasourceTemplate": "repology",
