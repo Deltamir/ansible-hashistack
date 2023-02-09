@@ -11,8 +11,13 @@ This role leverage the [ansible-consul](https://github.com/ansible-community/ans
 *Why simple ?*  
 For starter, it's one role and not three... 
 And this role use sanes defaults in order to provide an easy configuration with only a handful mandatory variables. See the [examples](./examples/inventory).  
-Contrary to the aforementioned roles, we provide a [container](https://hub.docker.com/r/deltamir/ansible-hashistack) that can be use to deploy your clusters manually or be integrated in a CD.
-
+Contrary to the aforementioned roles, we provide a [container](https://hub.docker.com/r/deltamir/ansible-hashistack) that can be use to deploy your clusters manually or be integrated in a CD.  
+Lastly this role automatically configure interoperability between the 3 products :
+- The Vault cluster is [backed]() by the Consul cluster
+- The Nomad cluster is [Consul-enabled]() to allow service registration of jobs
+- The Nomad cluster is [integrated]() with Vault to introduce secrets to jobs
+- Vault and Nomad are themselve registered in Consul to make use  of [Intents]()
+- Vault is configured to manage Consul and Nomad ACLs through the dedicated Secret Engines **TODO**
 
 *Why secure ?*  
 This role is not a simple merge between three existing community-supported projects. On top of thoses, it will configure as well :
