@@ -2,7 +2,7 @@
 variables:
   HADOLINT_CI_IMAGE: hadolint/hadolint:v2.12.0-debian
   KANIKO_CI_IMAGE: gcr.io/kaniko-project/executor:v1.9.1-debug
-  TRIVY_CI_IMAGE: aquasec/trivy:0.37.2
+  TRIVY_CI_IMAGE: aquasec/trivy:0.37.3
   DEBIAN_BUILD_IMAGE: arm32v7/debian:11.6
   ANSIBLE_IMAGE: cytopia/ansible:2.13-tools
   ANSIBLE_LINT_IMAGE: haxorof/ansible-lint:v6
