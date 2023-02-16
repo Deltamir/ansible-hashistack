@@ -1,0 +1,13 @@
+vault {
+  address      = "{{ global_vault_address }}"
+  token        = "{{ consul_token }}"
+  unwrap_token = false
+  renew_token  = true
+}
+
+template {
+  source      = "/opt/consul/templates/gossip.key.tpl"
+  destination = "/opt/consul/templates/gossip.key"
+  perms       = 0700
+  command     = "/opt/consul_rotate_key.sh"
+}

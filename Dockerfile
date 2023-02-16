@@ -21,5 +21,8 @@ RUN apt-get update -qqy \
  && rm -rf /var/lib/apt/lists/*
 
 # hadolint ignore=DL3013
-RUN pip install --no-cache-dir ansible-modules-hashivault hvac \
+RUN pip install --no-cache-dir \
+    ansible-modules-hashivault \
+    hvac \
+    python-nomad \
  && ansible-galaxy install "git+https://gitlab.com/Deltamir/ansible-hashistack.git,${CI_COMMIT_SHA}"

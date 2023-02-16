@@ -1,0 +1,13 @@
+vault {
+  address      = "{{ global_vault_address }}"
+  token        = "{{ nomad_rotation_token }}"
+  unwrap_token = false
+  renew_token  = true
+}
+
+template {
+  source      = "/opt/nomad/templates/gossip.key.tpl"
+  destination = "/opt/nomad/templates/gossip.key"
+  perms       = 0700
+  command     = "/opt/nomad_rotate_key.sh"
+}

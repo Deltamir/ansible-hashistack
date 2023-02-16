@@ -6,15 +6,9 @@ vault {
 }
 
 template {
-  source      = "/opt/nomad/templates/gossip.key.tpl"
-  destination = "/opt/nomad/templates/gossip.key"
-  perms       = 0700
-  command     = "/opt/nomad_rotate_key.sh"
-}
-
-template {
   source      = "/opt/nomad/templates/nomad_server.crt.tpl"
   destination = "/etc/nomad/ssl/nomad_server.crt"
   perms       = 0644
   command     = "/opt/nomad_reload.sh"
 }
+

@@ -30,5 +30,5 @@
   ansible.builtin.import_role:
     name: ansible-nomad
 
-- name: Create and retrieve nomad-server policy token
+- name: Configure consul_template
   ansible.builtin.import_tasks: configure-consul-template.yml

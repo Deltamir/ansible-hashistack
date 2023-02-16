@@ -598,6 +598,7 @@
     authtype: token
     token: "{{ global_vault_token }}"
     verify: false
+  run_once: true
   delegate_to: localhost
 
 - name: Create a vault_token
