@@ -15,15 +15,17 @@
   become: true
   register: checksums
 
+# yamllint disable rule:line-length
 - name: Download consul-template binary
   ansible.builtin.get_url:
-    url: "{{ hashicorp_url }}/{{ consul_template_uri }}/{{ consul_template_version }}/consul-template_{{ consul_template_version }}_linux_arm.zip"
+    url: "{{ hashicorp_url }}/{{ consul_template_uri }}/{{ consul_template_version }}/consul-template_{{ consul_template_version }}_linux_{{ consul_template_architecture }}.zip"
     dest: "/opt/consul-template.zip"
     checksum: "sha256:{{ item.split(' ').0 }}"
     mode: '0777'
-  when: item is search("linux_arm.zip")
+  when: item is search('linux_'  + consul_template_architecture + '.zip')
   with_items: "{{ checksums.content.split('\n') }}"
   become: true
+# yamllint enable rule:line-length
 
 - name: Unzip consul-template library
   ansible.builtin.unarchive:
@@ -65,10 +67,27 @@
   become: true
   notify: "restart consul-template service"
 
+- name: Copy consul-template consul gossip rotation conf file
+  ansible.builtin.template:
+    src: consul_gossip_rotation.hcl.j2
+    dest: /opt/consul/templates/consul_gossip_rotation.hcl
+    owner: consul
+    mode: '0644'
+  become: true
+  notify: "restart consul-template service"
+
 - name: Copy consul-template nomad rotation conf file
   ansible.builtin.template:
     src: nomad_rotation.hcl.j2
     dest: /opt/nomad/templates/nomad_rotation.hcl
+    mode: '0644'
+  become: true
+  notify: "restart nomad-template service"
+
+- name: Copy consul-template nomad gossip rotation conf file
+  ansible.builtin.template:
+    src: nomad_gossip_rotation.hcl.j2
+    dest: /opt/nomad/templates/nomad_gossip_rotation.hcl
     mode: '0644'
   become: true
   notify: "restart nomad-template service"
@@ -80,7 +99,7 @@
     owner: vault
     mode: '0644'
   become: true
-  notify: "restart consul-template service"
+  notify: "restart vault-template service"
 
 - name: Copy consul gossip_key tpl file to temp
   ansible.builtin.copy:
@@ -117,14 +136,14 @@
   become: true
   notify: "restart nomad-template service"
 
-- name: Copy consul vault_server crt tpl file to temp
+- name: Copy vault vault_server crt tpl file to temp
   ansible.builtin.template:
     src: vault_server.crt.tpl.j2
     dest: /opt/vault/templates/vault_server.crt.tpl
     owner: vault
     mode: '0644'
   become: true
-  notify: "restart consul-template service"
+  notify: "restart vault-template service"
 
 - name: Copy consul rotate_key script
   ansible.builtin.template:
@@ -167,7 +186,7 @@
     owner: consul
     mode: '0744'
   become: true
-  notify: "restart consul-template service"
+  notify: "restart vault-template service"
 
 - name: Copy consul-template service file
   ansible.builtin.template:
@@ -193,6 +212,16 @@
     mode: '0744'
   become: true
   notify: "reload systemd"
+
+- name: Create job
+  community.general.nomad_job:
+    host: nomad.service.consul
+    state: present
+    content: "{{ lookup('file', 'consul_template_job.hcl') }}"
+    timeout: 120
+    validate_certs: false
+  run_once: true
+  delegate_to: localhost
 
 - name: Ensure nomad-template is in running state
   ansible.builtin.service:

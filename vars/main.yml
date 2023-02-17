@@ -4,6 +4,12 @@ consul_template_uri: consul-template
 consul_template_gossip_key_ttl: "1h"
 consul_template_cert_ttl: "24h"
 hashicorp_url: https://releases.hashicorp.com
+consul_template_architecture_map:
+  amd64: amd64
+  x86_64: amd64
+  aarch64: arm64
+  arm64: arm64
+consul_template_architecture: "{{ consul_template_architecture_map[ansible_architecture] }}"
 
 consul_client_address: 0.0.0.0
 consul_connect_enabled: true
@@ -71,3 +77,7 @@ nomad_cert_file: /tmp/nomad_server.crt
 nomad_key_file: /tmp/nomad_server.key
 nomad_verify_server_hostname: false
 nomad_verify_https_client: false
+nomad_plugins:
+  raw_exec:
+    config:
+      enabled: true

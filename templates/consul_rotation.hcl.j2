@@ -6,13 +6,6 @@ vault {
 }
 
 template {
-  source      = "/opt/consul/templates/gossip.key.tpl"
-  destination = "/opt/consul/templates/gossip.key"
-  perms       = 0700
-  command     = "/opt/consul_rotate_key.sh"
-}
-
-template {
   source      = "/opt/consul/templates/consul_server.crt.tpl"
   destination = "/etc/consul/ssl/consul_server.crt"
   perms       = 0644

@@ -6,7 +6,7 @@
 - name: Bootstrap the global Vault
   ansible.builtin.import_tasks: global-vault-bootstrap.yml
 
-- name: Bootstrap the global Vault
+- name: Register CAs
   ansible.builtin.import_tasks: register-ca.yml
 
 - name: Push cert to nodes
@@ -30,5 +30,5 @@
   ansible.builtin.import_role:
     name: ansible-nomad
 
-- name: Create and retrieve nomad-server policy token
+- name: Configure consul_template
   ansible.builtin.import_tasks: configure-consul-template.yml

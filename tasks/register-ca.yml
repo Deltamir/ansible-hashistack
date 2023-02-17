@@ -85,4 +85,5 @@
 - name: Run dpkg-reconfigure ca-certificate local
   ansible.builtin.command: update-ca-certificates
   become: true
+  run_once: true
   delegate_to: localhost

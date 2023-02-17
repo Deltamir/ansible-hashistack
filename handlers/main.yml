@@ -20,6 +20,13 @@
   become: true
   listen: "restart nomad-template service"
 
+- name: Restart nomad-template service
+  ansible.builtin.systemd:
+    name: vault-template
+    state: restarted
+  become: true
+  listen: "restart vault-template service"
+
 - name: Reboot server
   ansible.builtin.reboot:
   become: true

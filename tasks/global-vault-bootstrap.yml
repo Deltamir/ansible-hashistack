@@ -582,13 +582,11 @@
     auth_method: token
     token: "{{ global_vault_token }}"
   register: nomad_token_wrapped
-  run_once: true
   delegate_to: localhost
 
 - name: Register nomad_token token
   ansible.builtin.set_fact:
     nomad_rotation_token: "{{ nomad_token_wrapped.login.auth.client_token }}"
-  run_once: true
   delegate_to: localhost
 
 - name: Create vault policy
@@ -611,11 +609,9 @@
     auth_method: token
     token: "{{ global_vault_token }}"
   register: vault_token_wrapped
-  run_once: true
   delegate_to: localhost
 
 - name: Register vault_token token
   ansible.builtin.set_fact:
     vault_rotation_token: "{{ vault_token_wrapped.login.auth.client_token }}"
-  run_once: true
   delegate_to: localhost

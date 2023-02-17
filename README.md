@@ -21,9 +21,9 @@ Lastly this role automatically configure interoperability between the 3 products
 
 *Why secure ?*  
 This role is not a simple merge between three existing community-supported projects. On top of thoses, it will configure as well :
-1. Automatic **Gossip Key rotation** with user-defined interval for both Nomad and Consul clusters leveraging a consul-template systemd service
+1. Automatic **Gossip Key rotation** with user-defined interval for both Nomad and Consul clusters leveraging a consul-template nomad job.
 2. **PKI management** for Consul, Nomad and Vault with individual certificates for each binary and each node in order to achieve full mTLS across clusters
-3. Automatic **mTLS Certificate Key rotation** with user-defined interval for Nomad, Consul and Vault leveraging a consul-template systemd service 
+3. Automatic **mTLS Certificate Key rotation** with user-defined interval for Nomad, Consul and Vault leveraging a consul-template systemd service per node
 4. **Vault auto-unseal** with Transit Secret Engine against a master Vault configured by this role
 5. **Cross ACL management** for Consul and Nomad using Vault's secret providers **(TODO)**
 

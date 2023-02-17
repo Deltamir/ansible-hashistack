@@ -11,4 +11,4 @@
   with_items: "{{ groups['all'] }}"
   become: true
   notify:
-    - reboot server
+    - 'Reboot server'
