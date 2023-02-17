@@ -1,17 +1,10 @@
 ---
 variables:
-  HADOLINT_CI_IMAGE: hadolint/hadolint:v2.12.0-debian
-  KANIKO_CI_IMAGE: gcr.io/kaniko-project/executor:v1.9.1-debug
-  TRIVY_CI_IMAGE: aquasec/trivy:0.37.3
   DEBIAN_BUILD_IMAGE: arm32v7/debian:11.6
   ANSIBLE_IMAGE: cytopia/ansible:2.13-tools
   ANSIBLE_LINT_IMAGE: haxorof/ansible-lint:v6
   GITLEAKS_IMAGE: zricethezav/gitleaks:v8.15.3
-  DOCKER_CI_IMAGE: docker:23.0.0
-  DIND_CI_IMAGE: docker:23.0.0-dind
   PUSHRM_CI_IMAGE: chko/docker-pushrm:1.9.0
-  GITLAB_CI_IMAGE: registry.gitlab.com/gitlab-org/release-cli:v0.15.0
-  CURL_CI_IMAGE: curlimages/curl:7.87.0
   YQ_CI_IMAGE: mikefarah/yq:4.30.8
   ANSIBLE_VERSION: 2.10.7+merged+base+2.10.8+dfsg-1
   ANSIBLE_FORCE_COLOR: "true"
@@ -19,18 +12,29 @@ variables:
   GITLEAKS_ARGS: "--verbose"
   REGISTRY_IMAGE: "${REGISTRY_USER}/${CI_PROJECT_NAME}"
   ANSIBLE_ROLE: "${REGISTRY_USER}/ansible_hashistack"
-
+  GIT_AUTHOR_EMAIL: "math.germain.54@gmail.com"
+  GIT_COMMITTER_EMAIL: "math.germain.54@gmail.com"
+  SEMREL_CHANGELOG_ENABLED: 'true'
+  SEMREL_AUTO_RELEASE_ENABLED: 'true'
+  SEMREL_INFO_ON: 'protected'
+  AUTODEPLOY_TO_PROD: 'true'
+  DOCKER_RELEASE_IMAGE: "https://hub.docker.com/r/$REGISTRY_IMAGE:$CI_COMMIT_REF_NAME"
+  DOCKER_SNAPSHOT_IMAGE: "https://hub.docker.com/r/$REGISTRY_IMAGE:snapshot-$CI_COMMIT_REF_SLUG"
 
 stages:
   - test
-  - publish
   - build
-  - acceptance
-  - package-publish
-  - release
+  - package-build
+  - package-test
+  - publish
 
-before_script:
-  - export FULL_IMAGE_NAME="${REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME%/*}"
+include:
+  - project: 'to-be-continuous/semantic-release'
+    ref: '3.2.1'
+    file: '/templates/gitlab-ci-semrel.yml'
+  - project: 'to-be-continuous/docker'
+    ref: '3.5.2'
+    file: '/templates/gitlab-ci-docker.yml'
 
 ansible-lint:
   stage: test
@@ -63,17 +67,8 @@ gitleaks:
   tags:
     - vps
 
-hadolint:
-  stage: test
-  image: $HADOLINT_CI_IMAGE
-  script:
-    - echo $FULL_IMAGE_NAME
-    - hadolint Dockerfile
-  tags:
-    - vps
-
 galaxy-read-description:
-  stage: publish
+  stage: build
   image:
     name: $YQ_CI_IMAGE
     entrypoint: [ "" ]
@@ -99,104 +94,9 @@ galaxy-import:
   tags:
     - vps
 
-kaniko:
-  stage: build
-  image:
-    name: $KANIKO_CI_IMAGE
-    entrypoint: [""]
-  script:
-    - >-
-      /kaniko/executor
-      --context "${CI_PROJECT_DIR}"
-      --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
-      --compressed-caching=false
-      --force
-      --destination "${FULL_IMAGE_NAME}"
-      --build-arg "ANSIBLE_VERSION=${ANSIBLE_VERSION}"
-      --build-arg "CI_COMMIT_SHA=${CI_COMMIT_SHA}"
-      --build-arg "DEBIAN_BUILD_IMAGE=${DEBIAN_BUILD_IMAGE}"
-      --no-push
-      --tarPath packer_arm.tar
-  artifacts:
-    paths:
-      - packer_arm.tar
-    when: on_success
-    expire_in: 10 min
-  tags:
-    - vps
-
-trivy:
-  stage: acceptance
-  image:
-    name: $TRIVY_CI_IMAGE
-    entrypoint: [""]
-  variables:
-    DOCKER_HOST: tcp://docker:2375
-    DOCKER_TLS_CERTDIR: "/certs"
-    GIT_STRATEGY: none
-    TRIVY_NO_PROGRESS: "true"
-    TRIVY_CACHE_DIR: ".trivycache/"
-  services:
-    - $DIND_CI_IMAGE
-  script:
-    - trivy --version
-    - time trivy image --clear-cache
-    - time trivy image --download-db-only
-    - time trivy image --exit-code 0 --format template --template "@/contrib/junit.tpl"
-      --output "$CI_PROJECT_DIR/gl-container-scanning-report.xml" --input packer_arm.tar
-    - time trivy image --exit-code 0 --input packer_arm.tar
-  cache:
-    paths:
-      - .trivycache/
-  artifacts:
-    when: always
-    reports:
-      junit: gl-container-scanning-report.xml
-  tags:
-    - vps
-
-docker-push:
-  stage: package-publish
-  image: $DOCKER_CI_IMAGE
-  variables:
-    DOCKER_HOST: tcp://docker:2375
-    DOCKER_TLS_CERTDIR: ""
-  services:
-    - $DIND_CI_IMAGE
-  script:
-    - docker login -u $REGISTRY_USER -p $REGISTRY_PASSWORD
-    - docker image load -i packer_arm.tar
-    - docker push $FULL_IMAGE_NAME
-    - docker logout
-  tags:
-    - vps
-  rules:
-    - if: $CI_COMMIT_TAG
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-
-docker-push-staging:
-  stage: package-publish
-  image: $DOCKER_CI_IMAGE
-  variables:
-    DOCKER_HOST: tcp://docker:2375
-    DOCKER_TLS_CERTDIR: ""
-  services:
-    - $DIND_CI_IMAGE
-  script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY
-    - docker image load -i packer_arm.tar
-    - docker image tag ${FULL_IMAGE_NAME} "${CI_REGISTRY}/${FULL_IMAGE_NAME}"
-    - docker push "${CI_REGISTRY}/${FULL_IMAGE_NAME}"
-    - docker logout
-  tags:
-    - vps
-  rules:
-    - if: $CI_COMMIT_BRANCH == "staging"
-    - if: $CI_COMMIT_BRANCH == "feature-*"
-
 
 docker-pushrm:
-  stage: package-publish
+  stage: publish
   image:
     name: $PUSHRM_CI_IMAGE
     entrypoint: ["/bin/sh", "-c", "/docker-pushrm"]
@@ -214,43 +114,3 @@ docker-pushrm:
     - if: $CI_COMMIT_TAG
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
-release_gitlab:
-  stage: release
-  image: $GITLAB_CI_IMAGE
-  rules:
-    - if: $CI_COMMIT_TAG
-  script:
-    - echo "Running the release job."
-  tags:
-    - vps
-  release:
-    tag_name: $CI_COMMIT_TAG
-    ref: $CI_COMMIT_TAG
-    name: 'Release $CI_COMMIT_TAG'
-    description: $CI_COMMIT_TAG_MESSAGE
-    assets:
-      links:
-        - name: 'Ansible Galaxy'
-          url: 'https://galaxy.ansible.com/${ANSIBLE_ROLE}'
-          link_type: 'package'
-        - name: 'Docker Hub'
-          url: 'https://hub.docker.com/r/${REGISTRY_IMAGE}'
-          link_type: 'image'
-
-release_github:
-  stage: release
-  image: $CURL_CI_IMAGE
-  rules:
-    - if: $CI_COMMIT_TAG
-  tags:
-    - vps
-  script:
-    - echo "curling https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/releases"
-    - echo "using data '{"tag_name":"${CI_COMMIT_TAG}","target_commitish":"main","name":"Release ${CI_COMMIT_TAG}","body":"${CI_COMMIT_TAG_MESSAGE}","draft":false,"prerelease":false,"generate_release_notes":false}'"
-    - |
-      curl -X POST \
-        -H "Accept: application/vnd.github+json" \
-        -H "Authorization: Bearer ${GITHUB_COM_TOKEN}"\
-        -H "X-GitHub-Api-Version: 2022-11-28" \
-        -d "{\"tag_name\":\"${CI_COMMIT_TAG}\",\"target_commitish\":\"main\",\"name\":\"Release ${CI_COMMIT_TAG}\",\"body\":\"${CI_COMMIT_TAG_MESSAGE}\",\"draft\":false,\"prerelease\":false,\"generate_release_notes\":false}" \
-        "https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/releases"
