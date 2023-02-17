@@ -15,6 +15,7 @@
   become: true
   register: checksums
 
+# yamllint disable rule:line-length
 - name: Download consul-template binary
   ansible.builtin.get_url:
     url: "{{ hashicorp_url }}/{{ consul_template_uri }}/{{ consul_template_version }}/consul-template_{{ consul_template_version }}_linux_{{ consul_template_architecture }}.zip"
@@ -24,6 +25,7 @@
   when: item is search('linux_'  + consul_template_architecture + '.zip')
   with_items: "{{ checksums.content.split('\n') }}"
   become: true
+# yamllint enable rule:line-length
 
 - name: Unzip consul-template library
   ansible.builtin.unarchive:
