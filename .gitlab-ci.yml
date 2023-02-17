@@ -18,8 +18,8 @@ variables:
   SEMREL_AUTO_RELEASE_ENABLED: 'true'
   SEMREL_INFO_ON: 'protected'
   AUTODEPLOY_TO_PROD: 'true'
-  DOCKER_RELEASE_IMAGE: "docker.io/$REGISTRY_IMAGE:$CI_COMMIT_REF_NAME"
-  DOCKER_SNAPSHOT_IMAGE: "docker.io/$REGISTRY_IMAGE:snapshot-$CI_COMMIT_REF_SLUG"
+  DOCKER_RELEASE_IMAGE: "$REGISTRY_IMAGE:$CI_COMMIT_REF_NAME"
+  DOCKER_SNAPSHOT_IMAGE: "$REGISTRY_IMAGE:snapshot-$CI_COMMIT_REF_SLUG"
   DOCKER_KANIKO_VERBOSITY: "trace"
 
 stages:
@@ -69,6 +69,7 @@ gitleaks:
     - vps
 docker-hadolint:
   stage: test
+
 
 galaxy-read-description:
   stage: build
