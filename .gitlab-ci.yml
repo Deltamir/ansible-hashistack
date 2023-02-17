@@ -18,8 +18,8 @@ variables:
   SEMREL_AUTO_RELEASE_ENABLED: 'true'
   SEMREL_INFO_ON: 'protected'
   AUTODEPLOY_TO_PROD: 'true'
-  DOCKER_RELEASE_IMAGE: "https://index.docker.io/v1/$REGISTRY_IMAGE:$CI_COMMIT_REF_NAME"
-  DOCKER_SNAPSHOT_IMAGE: "https://index.docker.io/v1/$REGISTRY_IMAGE:snapshot-$CI_COMMIT_REF_SLUG"
+  DOCKER_RELEASE_IMAGE: "index.docker.io/v1/$REGISTRY_IMAGE:$CI_COMMIT_REF_NAME"
+  DOCKER_SNAPSHOT_IMAGE: "index.docker.io/v1/$REGISTRY_IMAGE:snapshot-$CI_COMMIT_REF_SLUG"
 
 stages:
   - test
