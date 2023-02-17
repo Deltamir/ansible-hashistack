@@ -21,7 +21,7 @@
     dest: "/opt/consul-template.zip"
     checksum: "sha256:{{ item.split(' ').0 }}"
     mode: '0777'
-  when: item is search("linux_{{ consul_template_architecture }}.zip")
+  when: item is search('linux_'  + consul_template_architecture + '.zip')
   with_items: "{{ checksums.content.split('\n') }}"
   become: true
 

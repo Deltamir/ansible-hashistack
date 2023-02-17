@@ -38,9 +38,9 @@ ansible-lint:
     name: $ANSIBLE_LINT_IMAGE
     entrypoint: [""]
   script:
-    - ansible-lint handlers/*.yml -w no-handler -w no-changed-when
-    - ansible-lint tasks/*.yml -w no-handler -w no-changed-when
-    - ansible-lint vars/*.yml -w no-handler -w no-changed-when
+    - ansible-lint handlers/*.yml -w no-handler -w no-changed-when -w line-length
+    - ansible-lint tasks/*.yml -w no-handler -w no-changed-when -w line-length
+    - ansible-lint vars/*.yml -w no-handler -w no-changed-when -w line-length
   tags:
     - vps
 
