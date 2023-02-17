@@ -71,6 +71,21 @@ gitleaks:
 docker-hadolint:
   stage: test
 
+docker-kaniko-build:
+  script:
+    - cat /kaniko/.docker/config.json
+    - run_build_kaniko "$DOCKER_SNAPSHOT_IMAGE" --digest-file .img-digest.txt --build-arg http_proxy="$http_proxy" --build-arg https_proxy="$https_proxy" --build-arg no_proxy="$no_proxy"
+    # push docker_image in dotenv file
+    - docker_digest=$(cat .img-digest.txt)
+    - docker_repository=${DOCKER_SNAPSHOT_IMAGE%:*}
+    - docker_tag=${DOCKER_SNAPSHOT_IMAGE##*:}
+    - echo "docker_image=$DOCKER_SNAPSHOT_IMAGE" > docker.env
+    - echo "docker_image_digest=$docker_repository@$docker_digest" >> docker.env
+    - echo "docker_repository=$docker_repository" >> docker.env
+    - echo "docker_tag=$docker_tag" >> docker.env
+    - echo "docker_digest=$docker_digest" >> docker.env
+
+
 galaxy-read-description:
   stage: build
   image:
