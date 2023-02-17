@@ -20,8 +20,6 @@ variables:
   AUTODEPLOY_TO_PROD: 'true'
   DOCKER_RELEASE_IMAGE: "index.docker.io/$REGISTRY_IMAGE:$CI_COMMIT_REF_NAME"
   DOCKER_SNAPSHOT_IMAGE: "index.docker.io/$REGISTRY_IMAGE:snapshot-$CI_COMMIT_REF_SLUG"
-  DOCKER_KANIKO_VERBOSITY: "trace"
-  DOCKER_BUILD_ARGS: '--build-arg "ANSIBLE_VERSION=${ANSIBLE_VERSION}" --build-arg "CI_COMMIT_SHA=${CI_COMMIT_SHA}" --build-arg "DEBIAN_BUILD_IMAGE=${DEBIAN_BUILD_IMAGE}"'
 
 stages:
   - test
@@ -78,11 +76,13 @@ docker-kaniko-build:
       /kaniko/executor
       --context "${CI_PROJECT_DIR}"
       --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
-      --compressed-caching=false
+      --cache --cache-dir=$KANIKO_CACHE_DIR
       --destination "${DOCKER_SNAPSHOT_IMAGE}"
       --build-arg "ANSIBLE_VERSION=${ANSIBLE_VERSION}"
       --build-arg "CI_COMMIT_SHA=${CI_COMMIT_SHA}"
       --build-arg "DEBIAN_BUILD_IMAGE=${DEBIAN_BUILD_IMAGE}"
+      --digest-file .img-digest.txt
+      $DOCKER_METADATA
     - docker_digest=$(cat .img-digest.txt)
     - docker_repository=${DOCKER_SNAPSHOT_IMAGE%:*}
     - docker_tag=${DOCKER_SNAPSHOT_IMAGE##*:}
