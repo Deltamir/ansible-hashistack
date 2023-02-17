@@ -11,7 +11,6 @@ variables:
   ANSIBLE_REQUIREMENTS_FILE: "requirements.yml"
   GITLEAKS_ARGS: "--verbose"
   DOCKER_TRIVY_SECURITY_LEVEL_THRESHOLD: 'HIGH,CRITICAL'
-  DOCKER_TRIVY_ARGS: '--template "@/contrib/junit.tpl" --output "$CI_PROJECT_DIR/gl-container-scanning-report.xml"'
   ANSIBLE_ROLE: "${DOCKER_REGISTRY_USER}/ansible_hashistack"
   SEMREL_CHANGELOG_ENABLED: 'true'
   SEMREL_AUTO_RELEASE_ENABLED: 'true'
@@ -70,6 +69,7 @@ gitleaks:
 docker-hadolint:
   stage: test
 
+#override to avoid bug with custom docker config
 docker-kaniko-build:
   script:
     - >-
@@ -92,12 +92,6 @@ docker-kaniko-build:
     - echo "docker_tag=$docker_tag" >> docker.env
     - echo "docker_digest=$docker_digest" >> docker.env
 
-docker-trivy:
-  artifacts:
-    when: always
-    reports:
-      junit: gl-container-scanning-report.xml
-
 galaxy-read-description:
   stage: build
   image:
@@ -113,6 +107,23 @@ galaxy-read-description:
   rules:
     - if: $CI_COMMIT_TAG
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+#override to get a junit report
+docker-trivy:
+  script:
+    - trivy image --clear-cache
+    - export TRIVY_USERNAME=${DOCKER_REGISTRY_SNAPSHOT_USER:-${DOCKER_REGISTRY_USER:-$CI_REGISTRY_USER}}
+    - export TRIVY_PASSWORD=${DOCKER_REGISTRY_SNAPSHOT_PASSWORD:-${DOCKER_REGISTRY_PASSWORD:-$CI_REGISTRY_PASSWORD}}
+    - export basename=$(echo "${DOCKER_SNAPSHOT_IMAGE}" | sed 's|[/:]|_|g')
+    - trivy image --download-db-only
+    - export trivy_opts="image"
+    - export trivy_opts="${trivy_opts} --no-progress --severity ${DOCKER_TRIVY_SECURITY_LEVEL_THRESHOLD} ${DOCKER_TRIVY_ARGS}"
+    - trivy ${trivy_opts} --format template --exit-code 0 --template "@/contrib/junit.tpl" --output reports/docker-trivy-${basename}.gitlab.xml $DOCKER_SNAPSHOT_IMAGE
+    - trivy ${trivy_opts} --format table --exit-code 1 $DOCKER_SNAPSHOT_IMAGE
+  artifacts:
+    when: always
+    reports:
+      junit: "reports/docker-trivy-*.gitlab.xml"
 
 docker-sbom:
   artifacts:
