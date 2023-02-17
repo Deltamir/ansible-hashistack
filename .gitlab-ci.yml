@@ -10,14 +10,14 @@ variables:
   ANSIBLE_FORCE_COLOR: "true"
   ANSIBLE_REQUIREMENTS_FILE: "requirements.yml"
   GITLEAKS_ARGS: "--verbose"
-  REGISTRY_IMAGE: "${DOCKER_REGISTRY_USER}/${CI_PROJECT_NAME}"
+  DOCKER_TRIVY_SECURITY_LEVEL_THRESHOLD: 'HIGH,CRITICAL'
+  DOCKER_TRIVY_ARGS: '--template "@/contrib/junit.tpl" --output "$CI_PROJECT_DIR/gl-container-scanning-report.xml"'
   ANSIBLE_ROLE: "${DOCKER_REGISTRY_USER}/ansible_hashistack"
-  GIT_AUTHOR_EMAIL: "math.germain.54@gmail.com"
-  GIT_COMMITTER_EMAIL: "math.germain.54@gmail.com"
   SEMREL_CHANGELOG_ENABLED: 'true'
   SEMREL_AUTO_RELEASE_ENABLED: 'true'
   SEMREL_INFO_ON: 'protected'
   AUTODEPLOY_TO_PROD: 'true'
+  REGISTRY_IMAGE: "${DOCKER_REGISTRY_USER}/${CI_PROJECT_NAME}"
   DOCKER_RELEASE_IMAGE: "index.docker.io/$REGISTRY_IMAGE:$CI_COMMIT_REF_NAME"
   DOCKER_SNAPSHOT_IMAGE: "index.docker.io/$REGISTRY_IMAGE:snapshot-$CI_COMMIT_REF_SLUG"
 
@@ -92,6 +92,11 @@ docker-kaniko-build:
     - echo "docker_tag=$docker_tag" >> docker.env
     - echo "docker_digest=$docker_digest" >> docker.env
 
+docker-trivy:
+  artifacts:
+    when: always
+    reports:
+      junit: gl-container-scanning-report.xml
 
 galaxy-read-description:
   stage: build
