@@ -1,3 +1,10 @@
+# [0.5.0](https://gitlab.com/Deltamir/ansible-hashistack/compare/0.4.1...0.5.0) (2023-02-18)
+
+
+### Features
+
+* last update to working CI after migration to tbc ([0175d44](https://gitlab.com/Deltamir/ansible-hashistack/commit/0175d44da0e8217e7771cb0c85ed6309dcb600b4))
+
 ## [0.4.1](https://gitlab.com/Deltamir/ansible-hashistack/compare/0.4.0...0.4.1) (2023-02-18)
 
 
