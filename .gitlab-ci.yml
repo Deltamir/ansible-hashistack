@@ -115,6 +115,7 @@ docker-trivy:
     - export TRIVY_USERNAME=${DOCKER_REGISTRY_SNAPSHOT_USER:-${DOCKER_REGISTRY_USER:-$CI_REGISTRY_USER}}
     - export TRIVY_PASSWORD=${DOCKER_REGISTRY_SNAPSHOT_PASSWORD:-${DOCKER_REGISTRY_PASSWORD:-$CI_REGISTRY_PASSWORD}}
     - export basename=$(echo "${DOCKER_SNAPSHOT_IMAGE}" | sed 's|[/:]|_|g')
+    - mkdir -p ./reports
     - trivy image --download-db-only
     - export trivy_opts="image"
     - export trivy_opts="${trivy_opts} --no-progress --severity ${DOCKER_TRIVY_SECURITY_LEVEL_THRESHOLD} ${DOCKER_TRIVY_ARGS}"
