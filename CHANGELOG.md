@@ -1,3 +1,10 @@
+## [0.5.4](https://gitlab.com/Deltamir/ansible-hashistack/compare/0.5.3...0.5.4) (2023-02-20)
+
+
+### Bug Fixes
+
+* Delete renovate useless regex and useless .bak ([2d4e725](https://gitlab.com/Deltamir/ansible-hashistack/commit/2d4e7252a3eca38bffe4446c32edf3f00727aa6e))
+
 ## [0.5.3](https://gitlab.com/Deltamir/ansible-hashistack/compare/0.5.2...0.5.3) (2023-02-20)
 
 
