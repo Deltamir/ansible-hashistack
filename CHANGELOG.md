@@ -1,3 +1,10 @@
+## [0.5.1](https://gitlab.com/Deltamir/ansible-hashistack/compare/0.5.0...0.5.1) (2023-02-20)
+
+
+### Bug Fixes
+
+* migrate docker snapshots to gitlab registry ([fb31967](https://gitlab.com/Deltamir/ansible-hashistack/commit/fb31967d5c03d20a339d17047b5e2cd09eedfdc9))
+
 # [0.5.0](https://gitlab.com/Deltamir/ansible-hashistack/compare/0.4.1...0.5.0) (2023-02-18)
 
 
