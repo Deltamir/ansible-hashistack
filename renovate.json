@@ -12,24 +12,6 @@
   "regexManagers": [
     {
       "fileMatch": ["^.gitlab-ci.yml"],
-      "matchStrings": ["hadolint\\/hadolint:(?<currentValue>.+?)\\n"],
-      "depNameTemplate": "hadolint/hadolint",
-      "datasourceTemplate": "docker"
-    },
-    {
-      "fileMatch": ["^.gitlab-ci.yml"],
-      "matchStrings": ["gcr.io\\/kaniko-project\\/executor:(?<currentValue>.+?)\\n"],
-      "depNameTemplate": "gcr.io/kaniko-project/executor",
-      "datasourceTemplate": "docker"
-    },
-    {
-      "fileMatch": ["^.gitlab-ci.yml"],
-      "matchStrings": ["aquasec\\/trivy:(?<currentValue>.+?)\\n"],
-      "depNameTemplate": "aquasec/trivy",
-      "datasourceTemplate": "docker"
-    },
-    {
-      "fileMatch": ["^.gitlab-ci.yml"],
       "matchStrings": ["debian:(?<currentValue>.+?)\\n"],
       "depNameTemplate": "debian",
       "datasourceTemplate": "docker"
@@ -54,26 +36,8 @@
     },
     {
       "fileMatch": ["^.gitlab-ci.yml"],
-      "matchStrings": ["IMAGE: docker:(?<currentValue>.+?)\\n"],
-      "depNameTemplate": "docker",
-      "datasourceTemplate": "docker"
-    },
-    {
-      "fileMatch": ["^.gitlab-ci.yml"],
       "matchStrings": ["chko\\/docker-pushrm:(?<currentValue>.+?)\\n"],
       "depNameTemplate": "chko/docker-pushrm",
-      "datasourceTemplate": "docker"
-    },
-    {
-      "fileMatch": ["^.gitlab-ci.yml"],
-      "matchStrings": ["curlimages\\/curl:(?<currentValue>.+?)\\n"],
-      "depNameTemplate": "curlimages/curl",
-      "datasourceTemplate": "docker"
-    },
-    {
-      "fileMatch": ["^.gitlab-ci.yml"],
-      "matchStrings": ["registry.gitlab.com\\/gitlab-org\\/release-cli:(?<currentValue>.+?)\\n"],
-      "depNameTemplate": "registry.gitlab.com/gitlab-org/release-cli",
       "datasourceTemplate": "docker"
     },
     {
