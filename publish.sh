@@ -21,5 +21,5 @@ fi
 
 nextVer=$1
 
-log_info "Pushing tags..."
+log_info "Pushing release to github.."
 curl -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${GITHUB_COM_TOKEN}" -H "X-GitHub-Api-Version: 2022-11-28"  -d "{\"tag_name\":\"${nextVer}\",\"target_commitish\":\"main\",\"name\":\"Release ${nextVer}\",\"draft\":false,\"prerelease\":false,\"generate_release_notes\":false}" "https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/releases"
