@@ -1,3 +1,10 @@
+## [0.5.3](https://gitlab.com/Deltamir/ansible-hashistack/compare/0.5.2...0.5.3) (2023-02-20)
+
+
+### Bug Fixes
+
+* Test release to github ([d177072](https://gitlab.com/Deltamir/ansible-hashistack/commit/d1770724463ecc8b23bf0dd1d486650d5ac324fb))
+
 ## [0.5.2](https://gitlab.com/Deltamir/ansible-hashistack/compare/0.5.1...0.5.2) (2023-02-20)
 
 
