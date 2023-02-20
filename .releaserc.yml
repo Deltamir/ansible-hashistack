@@ -1,0 +1,26 @@
+plugins: [
+  "@semantic-release/commit-analyzer",
+  "@semantic-release/release-notes-generator",
+  "@semantic-release/gitlab",
+  "@semantic-release/changelog",
+  [ "@semantic-release/github", {
+    "githubUrl": "https://github.com/$GITHUB_USER/$CI_PROJECT_NAME"
+    }
+  ],
+  [
+    "@semantic-release/exec",
+    {
+      "prepareCmd": "./bumpversion.sh \"${lastRelease.version}\" \"${nextRelease.version}\" \"${nextRelease.type}\"",
+      "successCmd": "./post-release.sh \"${nextRelease.version}\""
+    }
+  ],
+  [
+    "@semantic-release/git",
+    {
+      "assets": ["*.md", "templates/*.yml"]
+    }
+  ]
+]
+branches:
+  - "master"
+tagFormat: "${version}"
