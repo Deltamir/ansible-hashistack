@@ -189,8 +189,8 @@
   notify: "restart vault-template service"
 
 - name: Copy consul-template service file
-  ansible.builtin.template:
-    src: consul-template.service.j2
+  ansible.builtin.file:
+    src: consul-template.service
     dest: /etc/systemd/system/consul-template.service
     owner: consul
     mode: '0744'
@@ -198,16 +198,16 @@
   notify: "reload systemd"
 
 - name: Copy nomad-template service file
-  ansible.builtin.template:
-    src: nomad-template.service.j2
+  ansible.builtin.file:
+    src: nomad-template.service
     dest: /etc/systemd/system/nomad-template.service
     mode: '0744'
   become: true
   notify: "reload systemd"
 
 - name: Copy vault-template service file
-  ansible.builtin.template:
-    src: vault-template.service.j2
+  ansible.builtin.file:
+    src: vault-template.service
     dest: /etc/systemd/system/vault-template.service
     mode: '0744'
   become: true
