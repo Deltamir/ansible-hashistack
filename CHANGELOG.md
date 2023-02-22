@@ -1,3 +1,10 @@
+## [0.5.5](https://gitlab.com/Deltamir/ansible-hashistack/compare/0.5.4...0.5.5) (2023-02-22)
+
+
+### Bug Fixes
+
+* Move systemd unit files from template to file directory ([57f401a](https://gitlab.com/Deltamir/ansible-hashistack/commit/57f401a80ede355a07778bb63bda3f3b99c13802))
+
 ## [0.5.4](https://gitlab.com/Deltamir/ansible-hashistack/compare/0.5.3...0.5.4) (2023-02-20)
 
 
