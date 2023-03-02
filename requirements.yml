@@ -7,7 +7,7 @@ roles:
   - src: https://github.com/ansible-community/ansible-vault.git
     name: ansible-community.ansible-vault
     scm: git
-    version: 2023.02.01
+    version: 2023.03.01
   - src: https://github.com/ansible-community/ansible-consul.git
     name: ansible-community.ansible-consul
     scm: git
