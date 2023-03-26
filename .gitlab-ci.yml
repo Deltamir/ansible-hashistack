@@ -5,7 +5,7 @@ variables:
   ANSIBLE_LINT_IMAGE: haxorof/ansible-lint:v6
   GITLEAKS_IMAGE: zricethezav/gitleaks:v8.16.1
   PUSHRM_CI_IMAGE: chko/docker-pushrm:1.9.0
-  YQ_CI_IMAGE: mikefarah/yq:4.32.1
+  YQ_CI_IMAGE: mikefarah/yq:4.33.1
   ANSIBLE_VERSION: 2.10.7+merged+base+2.10.8+dfsg-1
   ANSIBLE_FORCE_COLOR: "true"
   ANSIBLE_REQUIREMENTS_FILE: "requirements.yml"
