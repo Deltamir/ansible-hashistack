@@ -32,7 +32,7 @@ include:
     ref: '3.3.1'
     file: '/templates/gitlab-ci-semrel.yml'
   - project: 'to-be-continuous/docker'
-    ref: '3.5.2'
+    ref: '3.5.3'
     file: '/templates/gitlab-ci-docker.yml'
 
 ansible-lint:
