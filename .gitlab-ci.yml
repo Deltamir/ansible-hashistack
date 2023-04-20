@@ -3,7 +3,7 @@ variables:
   DEBIAN_BUILD_IMAGE: arm32v7/debian:11.6
   ANSIBLE_IMAGE: cytopia/ansible:2.13-tools
   ANSIBLE_LINT_IMAGE: haxorof/ansible-lint:v6
-  GITLEAKS_IMAGE: zricethezav/gitleaks:v8.16.2
+  GITLEAKS_IMAGE: zricethezav/gitleaks:v8.16.3
   PUSHRM_CI_IMAGE: chko/docker-pushrm:1.9.0
   YQ_CI_IMAGE: mikefarah/yq:4.33.2
   ANSIBLE_VERSION: 2.10.7+merged+base+2.10.8+dfsg-1
