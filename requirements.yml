@@ -1,7 +1,7 @@
 collections:
   # Install a collection from Ansible Galaxy.
   - name: community.hashi_vault
-    version: 4.2.0
+    version: 4.2.1
 
 roles:
   - src: https://github.com/ansible-community/ansible-vault.git
