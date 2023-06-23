@@ -21,7 +21,7 @@ RUN apt-get update -qqy \
  && rm -rf /var/lib/apt/lists/*
 
 # hadolint ignore=DL3013
-RUN pip install --no-cache-dir \
+RUN pip install --no-cache-dir --break-system-packages \
     ansible-modules-hashivault \
     hvac \
     python-nomad \
