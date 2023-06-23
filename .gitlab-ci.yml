@@ -29,7 +29,7 @@ stages:
 
 include:
   - project: 'to-be-continuous/semantic-release'
-    ref: '3.3.1'
+    ref: '3.4.0'
     file: '/templates/gitlab-ci-semrel.yml'
   - project: 'to-be-continuous/docker'
     ref: '5.2.0'
