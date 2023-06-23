@@ -1,6 +1,6 @@
 ---
 variables:
-  DEBIAN_BUILD_IMAGE: arm32v7/debian:11.6
+  DEBIAN_BUILD_IMAGE: arm32v7/debian:11.7
   ANSIBLE_IMAGE: cytopia/ansible:2.13-tools
   ANSIBLE_LINT_IMAGE: haxorof/ansible-lint:v6
   GITLEAKS_IMAGE: zricethezav/gitleaks:v8.16.3
