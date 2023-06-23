@@ -21,6 +21,7 @@ fi
 
 nextVer=$1
 
+#TODO Add link to dockerhub
 log_info "Pushing release to github.."
 log_info "curling https://api.github.com/repos/${GITHUB_USER}/${CI_PROJECT_NAME}/releases"
 log_info "{\"tag_name\":\"${nextVer}\",\"target_commitish\":\"main\",\"name\":\"Release ${nextVer}\",\"draft\":false,\"prerelease\":false,\"generate_release_notes\":false}"
