@@ -1,3 +1,10 @@
+## [0.6.1](https://gitlab.com/Deltamir/ansible-hashistack/compare/0.6.0...0.6.1) (2023-06-23)
+
+
+### Bug Fixes
+
+* Bump to debian 12 ([9d6e0d2](https://gitlab.com/Deltamir/ansible-hashistack/commit/9d6e0d2cd60e6f63350d4423893a506ef85d5b0b))
+
 ## [0.5.5](https://gitlab.com/Deltamir/ansible-hashistack/compare/0.5.4...0.5.5) (2023-02-22)
 
 
