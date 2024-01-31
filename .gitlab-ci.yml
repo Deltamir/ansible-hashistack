@@ -71,6 +71,8 @@ docker-hadolint:
 
 #override to avoid bug with custom docker config
 docker-kaniko-build:
+  tags:
+    - vps
   script:
     - >-
       /kaniko/executor
@@ -107,6 +109,8 @@ galaxy-read-description:
   rules:
     - if: $CI_COMMIT_TAG
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  tags:
+    - vps
 
 #override to get a junit report
 docker-trivy:
@@ -125,6 +129,8 @@ docker-trivy:
     when: always
     reports:
       junit: "reports/docker-trivy-*.gitlab.xml"
+  tags:
+    - vps
 
 docker-sbom:
   artifacts:
@@ -136,6 +142,8 @@ docker-sbom:
     reports:
       cyclonedx:
         - "reports/docker-sbom-*.cyclonedx.json"
+  tags:
+    - vps
 
 
 galaxy-import:
