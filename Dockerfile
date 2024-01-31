@@ -16,7 +16,7 @@ RUN apt-get update -qqy \
   unzip \
   sshpass \
   curl \
-  ansible="${ANSIBLE_VERSION}*"  \
+  ansible  \
   python-is-python3 \
  && rm -rf /var/lib/apt/lists/*
 
